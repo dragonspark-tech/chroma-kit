@@ -75,35 +75,23 @@ export const transposeMatrix3x3 = (matrix: Matrix3x3): Matrix3x3 => {
   ];
 }
 
-/**
- * Multiplies two 3x3 matrices and returns the resulting matrix, using plain operations
- * instead of the traditional algorithm, to speed up the computation.
- *
- * @param {Matrix3x3} a - The first 3x3 matrix to multiply. Must be a 2D array with dimensions 3x3.
- * @param {Matrix3x3} b - The second 3x3 matrix to multiply. Must be a 2D array with dimensions 3x3.
- * @returns {Matrix3x3} The resulting 3x3 matrix obtained from multiplying matrix `a` by matrix `b`.
- */
-export const multiplyMatrix3x3 = (a: Matrix3x3, b: Matrix3x3): Matrix3x3 => {
-  const bT = transposeMatrix3x3(b);
-
-  return [
-    [
-      a[0][0] * bT[0][0] + a[0][1] * bT[0][1] + a[0][2] * bT[0][2],
-      a[0][0] * bT[1][0] + a[0][1] * bT[1][1] + a[0][2] * bT[1][2],
-      a[0][0] * bT[2][0] + a[0][1] * bT[2][1] + a[0][2] * bT[2][2]
-    ],
-    [
-      a[1][0] * bT[0][0] + a[1][1] * bT[0][1] + a[1][2] * bT[0][2],
-      a[1][0] * bT[1][0] + a[1][1] * bT[1][1] + a[1][2] * bT[1][2],
-      a[1][0] * bT[2][0] + a[1][1] * bT[2][1] + a[1][2] * bT[2][2]
-    ],
-    [
-      a[2][0] * bT[0][0] + a[2][1] * bT[0][1] + a[2][2] * bT[0][2],
-      a[2][0] * bT[1][0] + a[2][1] * bT[1][1] + a[2][2] * bT[1][2],
-      a[2][0] * bT[2][0] + a[2][1] * bT[2][1] + a[2][2] * bT[2][2]
-    ]
-  ];
-}
+export const multiplyMatrix3x3 = (a: Matrix3x3, b: Matrix3x3): Matrix3x3 => [
+  [
+    a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0],
+    a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1],
+    a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2],
+  ],
+  [
+    a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0],
+    a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1],
+    a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2],
+  ],
+  [
+    a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0],
+    a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1],
+    a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2],
+  ]
+];
 
 /**
  * Transposes a given 2D matrix by flipping it's rows and columns.
@@ -150,29 +138,24 @@ export const multiplyMatrix = (a: number[][], b: number[][]): number[][] => {
     return multiplyMatrix3x3(a as Matrix3x3, b as Matrix3x3);
   }
 
-  const transposedB = transposeMatrix(b);
-  const resultRows = aRows;
-  const resultCols = bCols;
-  const result: number[][] = new Array(resultRows);
+  const result: number[][] = new Array(aRows);
+  const tB = transposeMatrix(b);
 
-  for (let i = 0; i < resultRows; i++) {
-    result[i] = new Array(resultCols);
-  }
-
-  for (let i = 0; i < resultRows; i++) {
+  for (let i = 0; i < aRows; i++) {
     const rowA = a[i];
-    for (let j = 0; j < resultCols; j++) {
-      const rowB = transposedB[j];
+    const resRow = new Array(bCols);
+    for (let j = 0; j < bCols; j++) {
+      const rowB = tB[j];
       let sum = 0;
       for (let k = 0; k < aCols; k++) {
         sum += rowA[k] * rowB[k];
       }
-      result[i][j] = sum;
+      resRow[j] = sum;
     }
+    result[i] = resRow;
   }
-
   return result;
-}
+};
 
 /**
  * Multiplies multiple matrices together in the provided sequence.

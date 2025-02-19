@@ -4,19 +4,13 @@
  * This type is used to describe standard illuminants in color science, typically characterized by their
  * x, y, and z chromaticity coordinates and a name identifier.
  *
- * Properties:
- * - `name`: The string identifier or name of the illuminant.
- * - `x`: The x chromaticity coordinate of the illuminant.
- * - `y`: The y chromaticity coordinate of the illuminant.
- * - `z`: The z chromaticity coordinate of the illuminant.
- *
  * @see https://en.wikipedia.org/wiki/Standard_illuminant
  */
 export type Illuminant = {
   name: string;
-  x: number;
-  y: number;
-  z: number;
+  xR: number;
+  yR: number;
+  zR: number;
 }
 
 /**
@@ -30,9 +24,9 @@ export type Illuminant = {
  */
 export const IlluminantA: Illuminant = {
   name: 'A',
-  x: 1.09850,
-  y: 1.00000,
-  z: 0.35585
+  xR: 1.09850,
+  yR: 1.00000,
+  zR: 0.35585
 };
 
 /**
@@ -46,9 +40,9 @@ export const IlluminantA: Illuminant = {
  */
 export const IlluminantD50: Illuminant = {
   name: 'D50',
-  x: 0.96422,
-  y: 1.00000,
-  z: 0.82521
+  xR: 0.96422,
+  yR: 1.00000,
+  zR: 0.82521
 };
 
 /**
@@ -64,7 +58,7 @@ export const IlluminantD50: Illuminant = {
  */
 export const IlluminantD65: Illuminant = {
   name: 'D65',
-  x: 0.95047,
-  y: 1.00000,
-  z: 1.08883
+  xR: 0.95047,
+  yR: 1.00000,
+  zR: 1.08883
 };

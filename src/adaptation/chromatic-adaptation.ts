@@ -17,8 +17,8 @@ import { coneMatrixes } from './_cone-matrixes';
  * @see https://en.wikipedia.org/wiki/Chromatic_adaptation
  */
 export const computeAdaptationMatrix = (sourceIlluminant: Illuminant, targetIlluminant: Illuminant, coneModel: ConeResponseModel): Matrix3x3 => {
-  const xyzTarget = [sourceIlluminant.x, sourceIlluminant.y, sourceIlluminant.z];
-  const xyzSource = [targetIlluminant.x, targetIlluminant.y, targetIlluminant.z];
+  const xyzTarget = [sourceIlluminant.xR, sourceIlluminant.yR, sourceIlluminant.zR];
+  const xyzSource = [targetIlluminant.xR, targetIlluminant.yR, targetIlluminant.zR];
 
   const lmsSource = multiplyMatrixByVector(coneModel.matrix, xyzSource);
   const lmsTarget = multiplyMatrixByVector(coneModel.matrix, xyzTarget);

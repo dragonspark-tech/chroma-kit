@@ -22,11 +22,12 @@ const config = {
       file: 'dist/index.esm.min.js',
       format: 'esm',
       plugins: [terser({
-        ecma: 5,
+        ecma: 6,
         module: true,
         toplevel: true,
-        compress: { pure_getters: true },
+        compress: { pure_getters: true, passes: 2 },
         format: { wrap_func_args: false },
+        mangle: true
       })],
       sourcemap: true
     },
@@ -35,7 +36,7 @@ const config = {
       file: 'dist/index.cjs.min.js',
       format: 'cjs',
       plugins: [terser({
-        ecma: 5,
+        ecma: 6,
         module: true,
         toplevel: true,
         compress: { pure_getters: true },

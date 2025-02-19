@@ -1,6 +1,8 @@
 ﻿import type { RGBColor } from './rgb';
 import { normalize } from '../../utils/math';
 
+const RGB_INVERSE = 1 / 255;
+
 /**
  * Normalizes the RGB color values to ensure they fall within the range of 0 to 1.
  *
@@ -8,9 +10,9 @@ import { normalize } from '../../utils/math';
  * @returns {RGBColor} A new RGBColor object with each color channel normalized.
  */
 export const normalizeRGBColor = (color: RGBColor): RGBColor => ({
-  r: normalize(color.r, 0, 255),
-  g: normalize(color.g, 0, 255),
-  b: normalize(color.b, 0, 255)
+  r: color.r * RGB_INVERSE,
+  g: color.g * RGB_INVERSE,
+  b: color.b * RGB_INVERSE,
 });
 
 /**
