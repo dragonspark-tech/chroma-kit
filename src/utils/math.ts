@@ -7,9 +7,7 @@
  * @return {number} The clamped value constrained within the range defined by a and b.
  */
 export const clamp = (value: number, a: number, b: number): number => {
-  return a < b
-    ? (value < a ? a : value > b ? b : value)
-    : (value < b ? b : value > a ? a : value);
+  return a < b ? (value < a ? a : value > b ? b : value) : value < b ? b : value > a ? a : value;
 };
 
 /**

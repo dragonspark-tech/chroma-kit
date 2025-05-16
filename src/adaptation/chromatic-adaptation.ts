@@ -16,7 +16,11 @@ import { coneMatrixes } from './_cone-matrixes';
  *
  * @see https://en.wikipedia.org/wiki/Chromatic_adaptation
  */
-export const computeAdaptationMatrix = (sourceIlluminant: Illuminant, targetIlluminant: Illuminant, coneModel: ConeResponseModel): Matrix3x3 => {
+export const computeAdaptationMatrix = (
+  sourceIlluminant: Illuminant,
+  targetIlluminant: Illuminant,
+  coneModel: ConeResponseModel
+): Matrix3x3 => {
   const xyzTarget = [sourceIlluminant.xR, sourceIlluminant.yR, sourceIlluminant.zR];
   const xyzSource = [targetIlluminant.xR, targetIlluminant.yR, targetIlluminant.zR];
 
@@ -33,7 +37,11 @@ export const computeAdaptationMatrix = (sourceIlluminant: Illuminant, targetIllu
     [0, 0, scaleS]
   ];
 
-  return multiplyMatrices(coneModel.inverseMatrix, scalingFactorMatrix, coneModel.matrix) as Matrix3x3;
+  return multiplyMatrices(
+    coneModel.inverseMatrix,
+    scalingFactorMatrix,
+    coneModel.matrix
+  ) as Matrix3x3;
 };
 
 /**
@@ -46,8 +54,13 @@ export const computeAdaptationMatrix = (sourceIlluminant: Illuminant, targetIllu
  * @param {ConeResponseModel} coneModel - The cone response model to be used for the adaptation.
  * @returns {Matrix3x3} The 3x3 chromatic adaptation matrix.
  */
-export const getAdaptationMatrix = (sourceIlluminant: Illuminant, targetIlluminant: Illuminant, coneModel: ConeResponseModel): Matrix3x3 => {
-  const precomputedMatrix: Matrix3x3 | undefined = coneMatrixes[`${coneModel.name}_${sourceIlluminant.name}_TO_${targetIlluminant.name}`];
+export const getAdaptationMatrix = (
+  sourceIlluminant: Illuminant,
+  targetIlluminant: Illuminant,
+  coneModel: ConeResponseModel
+): Matrix3x3 => {
+  const precomputedMatrix: Matrix3x3 | undefined =
+    coneMatrixes[`${coneModel.name}_${sourceIlluminant.name}_TO_${targetIlluminant.name}`];
   if (precomputedMatrix) {
     return precomputedMatrix;
   }

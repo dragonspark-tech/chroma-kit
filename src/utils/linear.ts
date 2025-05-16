@@ -12,7 +12,11 @@
  *
  * Where each letter represents a numerical value in the matrix.
  */
-export type Matrix3x3 = [[number, number, number], [number, number, number], [number, number, number]];
+export type Matrix3x3 = [
+  [number, number, number],
+  [number, number, number],
+  [number, number, number]
+];
 
 /**
  * Multiplies a matrix by a vector and returns the resulting vector.
@@ -30,7 +34,11 @@ export type Matrix3x3 = [[number, number, number], [number, number, number], [nu
  * @returns {number[]} - The resulting vector after the matrix-vector multiplication.
  * @throws {Error} Throws an error if the matrix or vector is empty, or if their dimensions are incompatible.
  */
-export const multiplyMatrixByVector = (matrix: number[][], vector: number[], result?: number[]): number[] => {
+export const multiplyMatrixByVector = (
+  matrix: number[][],
+  vector: number[],
+  result?: number[]
+): number[] => {
   if (matrix.length === 0 || vector.length === 0) {
     throw new Error('Matrix and vector must have valid non-empty dimensions.');
   }
@@ -40,7 +48,7 @@ export const multiplyMatrixByVector = (matrix: number[][], vector: number[], res
 
   for (const row of matrix) {
     if (row.length !== colsPerRow) {
-      throw new Error('All matrix rows must match the vector\'s length.');
+      throw new Error("All matrix rows must match the vector's length.");
     }
   }
 
@@ -73,23 +81,23 @@ export const transposeMatrix3x3 = (matrix: Matrix3x3): Matrix3x3 => {
     [matrix[0][1], matrix[1][1], matrix[2][1]],
     [matrix[0][2], matrix[1][2], matrix[2][2]]
   ];
-}
+};
 
 export const multiplyMatrix3x3 = (a: Matrix3x3, b: Matrix3x3): Matrix3x3 => [
   [
     a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0],
     a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1],
-    a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2],
+    a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2]
   ],
   [
     a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0],
     a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1],
-    a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2],
+    a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2]
   ],
   [
     a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0],
     a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1],
-    a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2],
+    a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2]
   ]
 ];
 
@@ -112,8 +120,7 @@ export const transposeMatrix = (matrix: number[][]): number[][] => {
     }
   }
   return transposed;
-}
-
+};
 
 /**
  * Multiplies two matrices and returns the resulting matrix. When working with 3x3 matrices,
@@ -184,4 +191,4 @@ export const multiplyMatrices = (...matrices: number[][][]): number[][] => {
   }
 
   return result;
-}
+};

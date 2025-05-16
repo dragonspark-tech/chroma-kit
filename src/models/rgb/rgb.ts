@@ -1,52 +1,21 @@
-﻿import { XYZColor, xyzToLab } from '../xyz/xyz';
+﻿import { XYZColor, xyzToLab, xyzToLMS, xyzToOKLab } from '../xyz/xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { RGB_XYZ_MATRIX } from './constants';
-import { linearizeRGBColor, normalizeRGBColor } from './transform';
+import { denormalizeRGBColor, linearizeRGBColor, normalizeRGBColor } from './transform';
 import { getAdaptationMatrix } from '../../adaptation/chromatic-adaptation';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
 import { BradfordConeModel } from '../../adaptation/cone-response';
 import { LabColor } from '../lab/lab';
+import { LMSColor } from '../lms/lms';
+import { OklabColor, oklabToOklch } from '../oklab/oklab';
+import { OklchColor } from '../oklch/oklch';
+import { LchColor } from '../lch/lch';
 
 export type RGBColor = {
   r: number;
   g: number;
   b: number;
   a?: number;
-}
-
-
-/**
- * Converts an RGB color to the CIE 1931 XYZ color space.
- *
- * @param {RGBColor} color - The input color in the RGB color space.
- * @param {boolean} [useChromaticAdaptation=true] - Determines whether chromatic adaptation
- *        is applied during the conversion. If true, the base D65 color is adapted to D50.
- * @returns {XYZColor} The resulting XYZ color, including the alpha channel if present.
- */
-export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = false): XYZColor => {
-  const lC = linearizeRGBColor(color);
-  const xyz = multiplyMatrixByVector(RGB_XYZ_MATRIX, [lC.r, lC.g, lC.b]);
-
-  if (useChromaticAdaptation) {
-    const adaptationMatrix = getAdaptationMatrix(IlluminantD65, IlluminantD50, BradfordConeModel);
-    const adaptedXYZ = multiplyMatrixByVector(adaptationMatrix, xyz);
-
-    return {
-      x: adaptedXYZ[0],
-      y: adaptedXYZ[1],
-      z: adaptedXYZ[2],
-      alpha: color.a,
-      illuminant: IlluminantD50
-    };
-  }
-
-  return {
-    x: xyz[0],
-    y: xyz[1],
-    z: xyz[2],
-    alpha: color.a,
-    illuminant: IlluminantD65
-  };
 };
 
 /**
@@ -69,7 +38,8 @@ export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = fals
 export const hexToRGB = (hex: string): RGBColor => {
   // Avoid allocating a new string when possible.
   let offset = 0;
-  if (hex.charCodeAt(0) === 35) { // 35 === '#'
+  if (hex.charCodeAt(0) === 35) {
+    // 35 === '#'
     offset = 1;
   }
   const len = hex.length - offset;
@@ -117,10 +87,155 @@ export const hexToRGB = (hex: string): RGBColor => {
       a = ((v6 << 4) | v7) / 255;
     }
   } else {
-    throw new Error("Invalid hex color format");
+    throw new Error('Invalid hex color format');
   }
   return normalizeRGBColor({ r, g, b, a });
 };
 
-export const rgbToLab = (rgb: RGBColor): LabColor =>
-  xyzToLab(rgbToXYZ(rgb));
+/**
+ * Converts an RGBColor object to a hexadecimal color string.
+ *
+ * The output will be the shortest valid hex string:
+ * - 3-digit hex (`#RGB`) if possible
+ * - 4-digit hex (`#RGBA`) if possible
+ * - 6-digit hex (`#RRGGBB`) otherwise
+ * - 8-digit hex (`#RRGGBBAA`) if alpha is present and not 1
+ *
+ * @param {RGBColor} color - The color to convert.
+ * @returns {string} The hexadecimal color string.
+ */
+export function rgbToHex(color: RGBColor): string {
+  const nC = denormalizeRGBColor(color);
+
+  let r = Math.round(nC.r),
+    g = Math.round(nC.g),
+    b = Math.round(nC.b);
+  let a = nC.a;
+  let alpha: number | undefined = undefined;
+  if (a !== undefined) {
+    alpha = Math.round(a * 255);
+  }
+
+  // Check for shorthand possibility (e.g., #abc or #abcd)
+  const isShort = (n: number) => (n & 0xf0) >> 4 === (n & 0x0f);
+  const canShort =
+    isShort(r) && isShort(g) && isShort(b) && (alpha === undefined || isShort(alpha));
+
+  if (canShort) {
+    let hex = `#${((r & 0xf0) >> 4).toString(16)}${((g & 0xf0) >> 4).toString(16)}${((b & 0xf0) >> 4).toString(16)}`;
+    if (alpha !== undefined && alpha !== 255) {
+      hex += ((alpha & 0xf0) >> 4).toString(16);
+    }
+    return hex;
+  }
+
+  // Full hex
+  let hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  if (alpha !== undefined && alpha !== 255) {
+    hex += alpha.toString(16).padStart(2, '0');
+  }
+  return hex;
+}
+
+/**
+ * Converts an RGB color to the CIE 1931 XYZ color space.
+ *
+ * @param {RGBColor} color - The input color in the RGB color space.
+ * @param {boolean} [useChromaticAdaptation=true] - Determines whether chromatic adaptation
+ *        is applied during the conversion. If true, the base D65 color is adapted to D50.
+ * @returns {XYZColor} The resulting XYZ color, including the alpha channel if present.
+ */
+export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = false): XYZColor => {
+  const lC = linearizeRGBColor(color);
+  const xyz = multiplyMatrixByVector(RGB_XYZ_MATRIX, [lC.r, lC.g, lC.b]);
+
+  if (useChromaticAdaptation) {
+    const adaptationMatrix = getAdaptationMatrix(IlluminantD65, IlluminantD50, BradfordConeModel);
+    const adaptedXYZ = multiplyMatrixByVector(adaptationMatrix, xyz);
+
+    return {
+      x: adaptedXYZ[0],
+      y: adaptedXYZ[1],
+      z: adaptedXYZ[2],
+      alpha: color.a,
+      illuminant: IlluminantD50
+    };
+  }
+
+  return {
+    x: xyz[0],
+    y: xyz[1],
+    z: xyz[2],
+    alpha: color.a,
+    illuminant: IlluminantD65
+  };
+};
+
+/**
+ * Converts an RGB color to the LMS color space.
+ *
+ * The conversion process involves two steps:
+ * 1. Converting from RGB to XYZ color space using rgbToXYZ()
+ * 2. Converting from XYZ to LMS color space using xyzToLMS()
+ *
+ * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
+ * @returns {LMSColor} The resulting color in LMS color space, containing l, m, s components
+ *                     and an optional alpha value.
+ */
+export const rgbToLMS = (rgb: RGBColor): LMSColor => xyzToLMS(rgbToXYZ(rgb));
+
+/**
+ * Converts an RGB color to the CIE 1976 (L*, a*, b*) color space.
+ *
+ * The conversion process involves two steps:
+ * 1. Converting from RGB to XYZ color space using rgbToXYZ()
+ * 2. Converting from XYZ to Lab color space using xyzToLab()
+ *
+ * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
+ * @returns {LabColor} The resulting color in Lab color space, containing l (lightness),
+ *                     a (green-red), b (blue-yellow) components and an optional alpha value.
+ */
+export const rgbToLab = (rgb: RGBColor): LabColor => xyzToLab(rgbToXYZ(rgb));
+
+/**
+ * Converts an RGB color to the CIE 1976 (L*, C*, h) color space.
+ *
+ * The conversion process involves two steps:
+ * 1. Converting from RGB to XYZ color space using rgbToXYZ()
+ * 2. Converting from XYZ to LCH color space using xyzToLCH()
+ *
+ * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
+ * @returns {LchColor} The resulting color in LCH color space, containing l (lightness),
+ *                     c (chroma), and h (hue) components and an optional alpha value.
+ */
+export const rgbToLCH = (rgb: RGBColor): LchColor => xyzToLCH(rgbToXYZ(rgb));
+
+/**
+ * Converts an RGB color to the Oklab color space.
+ *
+ * The conversion process involves two steps:
+ * 1. Converting from RGB to XYZ using rgbToXYZ()
+ * 2. Converting from XYZ to Oklab using xyzToOKLab()
+ *
+ * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
+ * @returns {OklabColor} The resulting color in Oklab color space, containing l, a, b components
+ *                     and an optional alpha value.
+ */
+export const rgbToOKLab = (rgb: RGBColor): OklabColor => xyzToOKLab(rgbToXYZ(rgb));
+
+/**
+ * Converts an RGB color to the Oklch color space.
+ *
+ * The conversion process involves two steps:
+ * 1. Converting from RGB to Oklab using rgbToOKLab()
+ * 2. Converting from Oklab to Oklch using oklabToOklch()
+ *
+ * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
+ * @returns {OklchColor} The resulting color in Oklch color space, containing l, c, h components
+ *                     and an optional alpha value.
+ */
+export const rgbToOklch = (rgb: RGBColor): OklchColor => oklabToOklch(rgbToOKLab(rgb));
+
+function xyzToLCH(arg0: XYZColor): LchColor {
+  throw new Error('Function not implemented.');
+}

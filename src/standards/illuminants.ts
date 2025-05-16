@@ -11,7 +11,7 @@ export type Illuminant = {
   xR: number;
   yR: number;
   zR: number;
-}
+};
 
 /**
  * CIE standard illuminant A is intended to represent typical, domestic, tungsten-filament lighting.
@@ -24,8 +24,8 @@ export type Illuminant = {
  */
 export const IlluminantA: Illuminant = {
   name: 'A',
-  xR: 1.09850,
-  yR: 1.00000,
+  xR: 1.0985,
+  yR: 1.0,
   zR: 0.35585
 };
 
@@ -41,7 +41,7 @@ export const IlluminantA: Illuminant = {
 export const IlluminantD50: Illuminant = {
   name: 'D50',
   xR: 0.96422,
-  yR: 1.00000,
+  yR: 1.0,
   zR: 0.82521
 };
 
@@ -59,6 +59,6 @@ export const IlluminantD50: Illuminant = {
 export const IlluminantD65: Illuminant = {
   name: 'D65',
   xR: 0.95047,
-  yR: 1.00000,
+  yR: 1.0,
   zR: 1.08883
 };
