@@ -1,14 +1,17 @@
-/**
- * A 3x3 matrix representing the transformation from the Oklab color space
- * to the LMS color space. This matrix is used to convert Oklab color values
- * back to their corresponding LMS values.
- *
- * Each sub-array represents the transformation coefficients for the L, M, and S
- * channels, respectively. The coefficients are based on the standard defined by
- * the International Commission on Illumination (CIE).
- */
 export const OKLAB_LMS_MATRIX = [
   [0.9999999985, 0.3963377922, 0.2158037581],
   [1.0000000089, -0.1055613423, -0.0638541748],
   [1.0000000547, -0.0894841821, -1.2914855379]
+];
+
+export const LMS_OKLAB_MATRIX = [
+  [0.2104542553, 0.793617785, -0.0040720468],
+  [1.9779984951, -2.428592205, 0.4505937099],
+  [0.0259040371, 0.7827717662, -0.808675766]
+];
+
+export const OKLCH_THROUGH_LMS_XYZ_MATRIX = [
+  [ 1.2270138511, -0.5577999807,  0.2812561490],
+  [-0.0405801784,  1.1122568696, -0.0716766787],
+  [-0.0763812845, -0.4214819784,  1.5861632204]
 ];

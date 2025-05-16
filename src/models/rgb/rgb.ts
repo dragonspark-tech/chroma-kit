@@ -1,4 +1,4 @@
-﻿import { XYZColor, xyzToLab, xyzToLCh, xyzToLMS, xyzToOKLab } from '../xyz/xyz';
+﻿import { XYZColor, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz/xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { RGB_XYZ_MATRIX } from './constants';
 import { denormalizeRGBColor, linearizeRGBColor, normalizeRGBColor } from './transform';
@@ -6,9 +6,8 @@ import { getAdaptationMatrix } from '../../adaptation/chromatic-adaptation';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
 import { BradfordConeModel } from '../../adaptation/cone-response';
 import { LabColor } from '../lab/lab';
-import { LMSColor } from '../lms/lms';
-import { OklabColor, oklabToOklch } from '../oklab/oklab';
-import { OklchColor } from '../oklch/oklch';
+import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
+import { OKLChColor } from '../oklch/oklch';
 import { LChColor } from '../lch/lch';
 
 export type RGBColor = {
@@ -18,23 +17,6 @@ export type RGBColor = {
   a?: number;
 };
 
-/**
- * Converts a hexadecimal color string into an RGBColor object.
- *
- * The input string can be in the following formats:
- * - 3-digit hex (`#RGB`)
- * - 4-digit hex (`#RGBA`)
- * - 6-digit hex (`#RRGGBB`)
- * - 8-digit hex (`#RRGGBBAA`)
- *
- * The function supports both shorthand and full hex notations with or without a leading `#`.
- *
- * @param {string} hex - The hexadecimal color string to convert.
- * @returns {RGBColor} An object representing the color in RGBA format with `r`, `g`, `b` values (0-255),
- *                     and an optional `a` alpha value (0-1). If the alpha value is not provided in the input,
- *                     it will be omitted from the returned object.
- * @throws {Error} If the input string is not a valid hexadecimal color format.
- */
 export const hexToRGB = (hex: string): RGBColor => {
   // Avoid allocating a new string when possible.
   let offset = 0;
@@ -92,18 +74,6 @@ export const hexToRGB = (hex: string): RGBColor => {
   return normalizeRGBColor({ r, g, b, a });
 };
 
-/**
- * Converts an RGBColor object to a hexadecimal color string.
- *
- * The output will be the shortest valid hex string:
- * - 3-digit hex (`#RGB`) if possible
- * - 4-digit hex (`#RGBA`) if possible
- * - 6-digit hex (`#RRGGBB`) otherwise
- * - 8-digit hex (`#RRGGBBAA`) if alpha is present and not 1
- *
- * @param {RGBColor} color - The color to convert.
- * @returns {string} The hexadecimal color string.
- */
 export function rgbToHex(color: RGBColor): string {
   const nC = denormalizeRGBColor(color);
 
@@ -137,14 +107,6 @@ export function rgbToHex(color: RGBColor): string {
   return hex;
 }
 
-/**
- * Converts an RGB color to the CIE 1931 XYZ color space.
- *
- * @param {RGBColor} color - The input color in the RGB color space.
- * @param {boolean} [useChromaticAdaptation=true] - Determines whether chromatic adaptation
- *        is applied during the conversion. If true, the base D65 color is adapted to D50.
- * @returns {XYZColor} The resulting XYZ color, including the alpha channel if present.
- */
 export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = false): XYZColor => {
   const lC = linearizeRGBColor(color);
   const xyz = multiplyMatrixByVector(RGB_XYZ_MATRIX, [lC.r, lC.g, lC.b]);
@@ -171,67 +133,14 @@ export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = fals
   };
 };
 
-/**
- * Converts an RGB color to the LMS color space.
- *
- * The conversion process involves two steps:
- * 1. Converting from RGB to XYZ color space using rgbToXYZ()
- * 2. Converting from XYZ to LMS color space using xyzToLMS()
- *
- * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
- * @returns {LMSColor} The resulting color in LMS color space, containing l, m, s components
- *                     and an optional alpha value.
- */
-export const rgbToLMS = (rgb: RGBColor): LMSColor => xyzToLMS(rgbToXYZ(rgb));
+export const rgbToLab = (rgb: RGBColor): LabColor =>
+  xyzToLab(rgbToXYZ(rgb));
 
-/**
- * Converts an RGB color to the CIE 1976 (L*, a*, b*) color space.
- *
- * The conversion process involves two steps:
- * 1. Converting from RGB to XYZ color space using rgbToXYZ()
- * 2. Converting from XYZ to Lab color space using xyzToLab()
- *
- * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
- * @returns {LabColor} The resulting color in Lab color space, containing l (lightness),
- *                     a (green-red), b (blue-yellow) components and an optional alpha value.
- */
-export const rgbToLab = (rgb: RGBColor): LabColor => xyzToLab(rgbToXYZ(rgb));
+export const rgbToLCH = (rgb: RGBColor): LChColor =>
+  xyzToLCh(rgbToXYZ(rgb));
 
-/**
- * Converts an RGB color to the CIE 1976 (L*, C*, h) color space.
- *
- * The conversion process involves two steps:
- * 1. Converting from RGB to XYZ color space using rgbToXYZ()
- * 2. Converting from XYZ to LCH color space using xyzToLCH()
- *
- * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
- * @returns {LChColor} The resulting color in LCH color space, containing l (lightness),
- *                     c (chroma), and h (hue) components and an optional alpha value.
- */
-export const rgbToLCH = (rgb: RGBColor): LChColor => xyzToLCh(rgbToXYZ(rgb));
+export const rgbToOKLab = (rgb: RGBColor, useChromaticAdaptation: boolean = false): OKLabColor =>
+  xyzToOKLab(rgbToXYZ(rgb, useChromaticAdaptation));
 
-/**
- * Converts an RGB color to the Oklab color space.
- *
- * The conversion process involves two steps:
- * 1. Converting from RGB to XYZ using rgbToXYZ()
- * 2. Converting from XYZ to Oklab using xyzToOKLab()
- *
- * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
- * @returns {OklabColor} The resulting color in Oklab color space, containing l, a, b components
- *                     and an optional alpha value.
- */
-export const rgbToOKLab = (rgb: RGBColor): OklabColor => xyzToOKLab(rgbToXYZ(rgb));
-
-/**
- * Converts an RGB color to the Oklch color space.
- *
- * The conversion process involves two steps:
- * 1. Converting from RGB to Oklab using rgbToOKLab()
- * 2. Converting from Oklab to Oklch using oklabToOklch()
- *
- * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
- * @returns {OklchColor} The resulting color in Oklch color space, containing l, c, h components
- *                     and an optional alpha value.
- */
-export const rgbToOklch = (rgb: RGBColor): OklchColor => oklabToOklch(rgbToOKLab(rgb));
+export const rgbToOKLCh = (rgb: RGBColor, useChromaticAdaptation: boolean = false): OKLChColor =>
+  oklabToOKLCh(rgbToOKLab(rgb, useChromaticAdaptation));
