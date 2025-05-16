@@ -1,4 +1,4 @@
-﻿import { XYZColor, xyzToLab, xyzToLMS, xyzToOKLab } from '../xyz/xyz';
+﻿import { XYZColor, xyzToLab, xyzToLCh, xyzToLMS, xyzToOKLab } from '../xyz/xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { RGB_XYZ_MATRIX } from './constants';
 import { denormalizeRGBColor, linearizeRGBColor, normalizeRGBColor } from './transform';
@@ -9,7 +9,7 @@ import { LabColor } from '../lab/lab';
 import { LMSColor } from '../lms/lms';
 import { OklabColor, oklabToOklch } from '../oklab/oklab';
 import { OklchColor } from '../oklch/oklch';
-import { LchColor } from '../lch/lch';
+import { LChColor } from '../lch/lch';
 
 export type RGBColor = {
   r: number;
@@ -205,10 +205,10 @@ export const rgbToLab = (rgb: RGBColor): LabColor => xyzToLab(rgbToXYZ(rgb));
  * 2. Converting from XYZ to LCH color space using xyzToLCH()
  *
  * @param {RGBColor} rgb - The input color in sRGB color space, containing r, g, b components
- * @returns {LchColor} The resulting color in LCH color space, containing l (lightness),
+ * @returns {LChColor} The resulting color in LCH color space, containing l (lightness),
  *                     c (chroma), and h (hue) components and an optional alpha value.
  */
-export const rgbToLCH = (rgb: RGBColor): LchColor => xyzToLCH(rgbToXYZ(rgb));
+export const rgbToLCH = (rgb: RGBColor): LChColor => xyzToLCh(rgbToXYZ(rgb));
 
 /**
  * Converts an RGB color to the Oklab color space.
@@ -235,7 +235,3 @@ export const rgbToOKLab = (rgb: RGBColor): OklabColor => xyzToOKLab(rgbToXYZ(rgb
  *                     and an optional alpha value.
  */
 export const rgbToOklch = (rgb: RGBColor): OklchColor => oklabToOklch(rgbToOKLab(rgb));
-
-function xyzToLCH(arg0: XYZColor): LchColor {
-  throw new Error('Function not implemented.');
-}

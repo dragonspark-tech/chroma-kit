@@ -2,7 +2,7 @@ import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
 import { XYZColor, xyzToLMS, xyzToRGB } from '../xyz/xyz';
 import { ϵ, κ } from './constants';
 import { RGBColor } from '../rgb/rgb';
-import { LchColor } from '../lch/lch';
+import { LChColor } from '../lch/lch';
 import { LMSColor, lmsToOklab } from '../lms/lms';
 import { OklabColor, oklabToOklch } from '../oklab/oklab';
 import { OklchColor } from '../oklch/oklch';
@@ -86,11 +86,11 @@ export const labToLMS = (color: LabColor): LMSColor => xyzToLMS(labToXYZ(color))
  *
  * @param {LabColor} color - The input color in Lab color space, containing l (lightness),
  *                          a (green-red), b (blue-yellow) components and an optional alpha value.
- * @returns {LchColor} The resulting color in LCH color space, containing l (lightness),
+ * @returns {LChColor} The resulting color in LCH color space, containing l (lightness),
  *                     c (chroma), and h (hue) components and the optional alpha value if provided.
  */
-export const labToLCH = (color: LabColor): LchColor => {
-  const c = Math.hypot(color.a, color.b); // √(a² + b²)
+export const labToLCH = (color: LabColor): LChColor => {
+  const c = Math.hypot(color.a, color.b);
   const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
   return { l: color.l, c, h };
 };

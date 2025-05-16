@@ -1,5 +1,5 @@
 import { LabColor } from '../lab/lab';
-import { LchColor } from '../lch/lch';
+import { LChColor } from '../lch/lch';
 import { LMSColor } from '../lms/lms';
 import { OklabColor, oklabToLab, oklabToLCh, oklabToLMS, oklabToXYZ } from '../oklab/oklab';
 import { RGBColor } from '../rgb/rgb';
@@ -78,18 +78,18 @@ export const oklchToLMS = (color: OklchColor): LMSColor => {
 export const oklchToLab = (color: OklchColor): LabColor => oklabToLab(oklchToOklab(color));
 
 /**
- * Converts a color from the Oklch color space to the Lch color space.
+ * Converts a color from the Oklch color space to the LCh color space.
  *
  * The conversion process involves two steps:
  * 1. Converting from Oklch to Oklab using oklchToOklab()
- * 2. Converting from Oklab to Lch using oklabToLCh()
+ * 2. Converting from Oklab to LCh using oklabToLCh()
  *
  * @param {OklchColor} color - The input color in Oklch color space, containing l, c, h components
  *                          and an optional alpha transparency value.
- * @returns {LchColor} The resulting color in Lch color space, containing l, c, h components
+ * @returns {LChColor} The resulting color in LCh color space, containing l, c, h components
  *                     and the optional alpha value if provided.
  */
-export const oklchToLCh = (color: OklchColor): LchColor => oklabToLCh(oklchToOklab(color));
+export const oklchToLCh = (color: OklchColor): LChColor => oklabToLCh(oklchToOklab(color));
 
 /**
  * Converts a color from the Oklch color space to the Oklab color space.

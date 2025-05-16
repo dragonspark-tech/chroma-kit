@@ -1,4 +1,4 @@
-﻿import type { LabColor } from '../lab/lab';
+﻿import { LabColor, labToLCH } from '../lab/lab';
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
 import { ϵ, κ } from '../lab/constants';
 import { RGBColor } from '../rgb/rgb';
@@ -8,7 +8,7 @@ import { XYZ_RGB_MATRIX } from './constants';
 import { LMSColor, lmsToOklab } from '../lms/lms';
 import { LMS_XYZ_MATRIX } from '../lms/constants';
 import { OklabColor, oklabToOklch } from '../oklab/oklab';
-import { LchColor } from '../lch/lch';
+import { LChColor } from '../lch/lch';
 import { OklchColor } from '../oklch/oklch';
 
 export type XYZColor = {
@@ -95,16 +95,10 @@ export const xyzToLab = (color: XYZColor): LabColor => {
  *
  * @param {XYZColor} color - The input color in XYZ color space, containing x, y, z components
  *                          and an optional alpha transparency value.
- * @returns {LchColor} The resulting color in LCH color space, containing l (lightness),
+ * @returns {LChColor} The resulting color in LCH color space, containing l (lightness),
  */
-export const xyzToLch = (color: XYZColor): LchColor => {
-  const { l, a, b, alpha } = xyzToLab(color);
-
-  const c = Math.hypot(a, b);
-  const h = c === 0 ? Number.NaN : ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360;
-
-  return { l, c, h, alpha };
-};
+export const xyzToLCh = (color: XYZColor): LChColor =>
+  labToLCH(xyzToLab(color))
 
 /**
  * Converts a color from the XYZ color space to the Oklab color space.

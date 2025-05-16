@@ -1,10 +1,10 @@
-import { XYZColor, xyzToLab, xyzToLch, xyzToRGB } from '../xyz/xyz';
+import { XYZColor, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz/xyz';
 import { LMS_OKLAB_MATRIX, LMS_XYZ_MATRIX } from './constants';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { OklabColor, oklabToOklch } from '../oklab/oklab';
 import { RGBColor } from '../rgb/rgb';
 import { LabColor } from '../lab/lab';
-import { LchColor } from '../lch/lch';
+import { LChColor } from '../lch/lch';
 import { OklchColor } from '../oklch/oklch';
 
 export type LMSColor = {
@@ -63,14 +63,14 @@ export const lmsToLab = (color: LMSColor): LabColor => xyzToLab(lmsToXYZ(color))
  *
  * The conversion process involves two steps:
  * 1. Converting from LMS to XYZ using lmsToXYZ()
- * 2. Converting from XYZ to LCH using xyzToLch()
+ * 2. Converting from XYZ to LCH using xyzToLCh()
  *
  * @param {LMSColor} color - The input color in LMS color space, containing l, m, s components
  *                          and an optional alpha transparency value.
- * @returns {LchColor} The resulting color in LCH color space, containing l (lightness),
+ * @returns {LChColor} The resulting color in LCH color space, containing l (lightness),
  *                     c (chroma), h (hue) components and the optional alpha value if provided.
  */
-export const lmsToLCh = (color: LMSColor): LchColor => xyzToLch(lmsToXYZ(color));
+export const lmsToLCh = (color: LMSColor): LChColor => xyzToLCh(lmsToXYZ(color));
 
 /**
  * Converts a color from the LMS color space to the Oklab color space.
