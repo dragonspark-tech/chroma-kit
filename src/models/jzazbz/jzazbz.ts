@@ -1,23 +1,12 @@
-import {
-  b,
-  c1,
-  c2,
-  c3,
-  d,
-  d0, g,
-  JZAZBZ_XYZ_LMS_IABZ,
-  JZAZBZ_XYZ_LMS_MATRIX,
-  m1,
-  m2p
-} from './constants';
-import { XYZColor, xyzToLab, xyzToLCh, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz/xyz';
+import { b, c1, c2, c3, d, d0, g, JZAZBZ_XYZ_LMS_IABZ, JZAZBZ_XYZ_LMS_MATRIX, m1, m2p } from './constants';
+import { XYZColor, xyzToLab, xyzToLCh, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { RGBColor } from '../rgb/rgb';
-import { LabColor } from '../lab/lab';
-import { LChColor } from '../lch/lch';
-import { OKLabColor } from '../oklab/oklab';
-import { OKLChColor } from '../oklch/oklch';
-import { JzCzHzColor } from '../jzczhz/jzczhz';
+import { RGBColor } from '../rgb';
+import { LabColor } from '../lab';
+import { LChColor } from '../lch';
+import { OKLabColor } from '../oklab';
+import { OKLChColor } from '../oklch';
+import { JzCzHzColor } from '../jzczhz';
 import { IlluminantD65 } from '../../standards/illuminants';
 
 /**

@@ -1,17 +1,17 @@
-﻿import { LabColor, labToLCH } from '../lab/lab';
+﻿import { LabColor, labToLCH } from '../lab';
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { ϵ, κ } from '../lab/constants';
-import { RGBColor } from '../rgb/rgb';
+import { ϵ, κ } from '../lab';
+import { RGBColor } from '../rgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { delinearizeRGBColor } from '../rgb/transform';
+import { delinearizeRGBColor } from '../rgb';
 import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
-import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
-import { LChColor } from '../lch/lch';
-import { OKLChColor } from '../oklch/oklch';
-import { LMS_OKLAB_MATRIX } from '../oklab/constants';
-import { JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz/jzazbz';
-import { JzCzHzColor } from '../jzczhz/jzczhz';
-import { b, d, d0, g } from '../jzazbz/constants';
+import { OKLabColor, oklabToOKLCh } from '../oklab';
+import { LChColor } from '../lch';
+import { OKLChColor } from '../oklch';
+import { LMS_OKLAB_MATRIX } from '../oklab';
+import { JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
+import { JzCzHzColor } from '../jzczhz';
+import { b, d, d0, g } from '../jzazbz';
 
 /**
  * Represents a color in the CIE XYZ color space.

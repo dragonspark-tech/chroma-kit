@@ -1,10 +1,10 @@
-import { LabColor, labToXYZ } from '../lab/lab';
-import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
-import { OKLChColor } from '../oklch/oklch';
-import { RGBColor } from '../rgb/rgb';
-import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz/xyz';
-import { JzAzBzColor } from '../jzazbz/jzazbz';
-import { JzCzHzColor } from '../jzczhz/jzczhz';
+import { LabColor, labToXYZ } from '../lab';
+import { OKLabColor, oklabToOKLCh } from '../oklab';
+import { OKLChColor } from '../oklch';
+import { RGBColor } from '../rgb';
+import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz';
+import { JzAzBzColor } from '../jzazbz';
+import { JzCzHzColor } from '../jzczhz';
 
 /**
  * Represents a color in the CIE LCh color space.

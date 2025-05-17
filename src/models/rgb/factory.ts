@@ -1,5 +1,5 @@
 import { BaseColorFactory } from '../factory';
-import { RGBColor, hexToRGB, rgbToHex } from './rgb';
+import { hexToRGB, RGBColor, rgbToHex } from './rgb';
 import { linearizeRGBColor } from './transform';
 
 /**

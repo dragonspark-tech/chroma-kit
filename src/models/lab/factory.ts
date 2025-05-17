@@ -1,6 +1,5 @@
 import { BaseColorFactory } from '../factory';
 import { LabColor } from './lab';
-import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
 
 /**
  * Factory for creating and manipulating Lab colors.

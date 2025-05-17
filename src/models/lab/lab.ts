@@ -1,12 +1,12 @@
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz/xyz';
+import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz';
 import { ϵ, κ } from './constants';
-import { RGBColor } from '../rgb/rgb';
-import { LChColor } from '../lch/lch';
-import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
-import { OKLChColor } from '../oklch/oklch';
-import { JzAzBzColor } from '../jzazbz/jzazbz';
-import { JzCzHzColor } from '../jzczhz/jzczhz';
+import { RGBColor } from '../rgb';
+import { LChColor } from '../lch';
+import { OKLabColor, oklabToOKLCh } from '../oklab';
+import { OKLChColor } from '../oklch';
+import { JzAzBzColor } from '../jzazbz';
+import { JzCzHzColor } from '../jzczhz';
 
 /**
  * Represents a color in the CIE Lab color space.

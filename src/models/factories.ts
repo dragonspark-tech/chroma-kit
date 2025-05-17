@@ -1,4 +1,4 @@
-// Base factory types
+// Base
 export { type ColorFactory, BaseColorFactory, supportsCSSRepresentation } from './factory';
 
 // RGB color factory

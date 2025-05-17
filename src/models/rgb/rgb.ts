@@ -1,16 +1,16 @@
-﻿import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz/xyz';
+﻿import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { RGB_INVERSE, RGB_XYZ_MATRIX } from './constants';
 import { denormalizeRGBColor, linearizeRGBColor, normalizeRGBColor } from './transform';
 import { getAdaptationMatrix } from '../../adaptation/chromatic-adaptation';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
 import { BradfordConeModel } from '../../adaptation/cone-response';
-import { LabColor } from '../lab/lab';
-import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
-import { OKLChColor } from '../oklch/oklch';
-import { LChColor } from '../lch/lch';
-import { JzAzBzColor } from '../jzazbz/jzazbz';
-import { JzCzHzColor } from '../jzczhz/jzczhz';
+import { LabColor } from '../lab';
+import { OKLabColor, oklabToOKLCh } from '../oklab';
+import { OKLChColor } from '../oklch';
+import { LChColor } from '../lch';
+import { JzAzBzColor } from '../jzazbz';
+import { JzCzHzColor } from '../jzczhz';
 
 /**
  * Represents a color in the RGB color space.

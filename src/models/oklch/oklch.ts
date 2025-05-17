@@ -1,10 +1,10 @@
-import { LabColor } from '../lab/lab';
-import { LChColor } from '../lch/lch';
-import { OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab/oklab';
-import { RGBColor } from '../rgb/rgb';
-import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToRGB } from '../xyz/xyz';
-import { JzAzBzColor } from '../jzazbz/jzazbz';
-import { JzCzHzColor } from '../jzczhz/jzczhz';
+import { LabColor } from '../lab';
+import { LChColor } from '../lch';
+import { OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab';
+import { RGBColor } from '../rgb';
+import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToRGB } from '../xyz';
+import { JzAzBzColor } from '../jzazbz';
+import { JzCzHzColor } from '../jzczhz';
 
 /**
  * Represents a color in the OKLCh color space.

@@ -1,12 +1,12 @@
 import { OKLAB_LMS_MATRIX, OKLCH_THROUGH_LMS_XYZ_MATRIX } from './constants';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz/xyz';
-import { RGBColor } from '../rgb/rgb';
-import { LabColor } from '../lab/lab';
-import { LChColor } from '../lch/lch';
-import { JzAzBzColor } from '../jzazbz/jzazbz';
-import { JzCzHzColor } from '../jzczhz/jzczhz';
-import { OKLChColor } from '../oklch/oklch';
+import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz';
+import { RGBColor } from '../rgb';
+import { LabColor } from '../lab';
+import { LChColor } from '../lch';
+import { JzAzBzColor } from '../jzazbz';
+import { JzCzHzColor } from '../jzczhz';
+import { OKLChColor } from '../oklch';
 
 /**
  * Represents a color in the OKLab color space.

@@ -1,11 +1,11 @@
-import { LChColor } from '../models/lch/lch';
-import { OKLabColor } from '../models/oklab/oklab';
-import { OKLChColor } from '../models/oklch/oklch';
-import { JzAzBzColor } from '../models/jzazbz/jzazbz';
-import { JzCzHzColor } from '../models/jzczhz/jzczhz';
-import { LabColor } from '../models/lab/lab';
-import { RGBColor } from '../models/rgb/rgb';
-import { XYZColor } from '../models/xyz/xyz';
+import { LChColor } from '../models/lch';
+import { OKLabColor } from '../models/oklab';
+import { OKLChColor } from '../models/oklch';
+import { JzAzBzColor } from '../models/jzazbz';
+import { JzCzHzColor } from '../models/jzczhz';
+import { LabColor } from '../models/lab';
+import { RGBColor } from '../models/rgb';
+import { XYZColor } from '../models/xyz';
 
 type Color =
   | RGBColor
