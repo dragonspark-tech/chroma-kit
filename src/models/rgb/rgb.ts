@@ -10,6 +10,17 @@ import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
 import { OKLChColor } from '../oklch/oklch';
 import { LChColor } from '../lch/lch';
 
+/**
+ * Represents a color in the RGB color space.
+ *
+ * The RGB color model is an additive color model in which red, green, and blue light
+ * are added together in various ways to reproduce a broad array of colors.
+ *
+ * @property {number} r - The red component (0-1 for normalized values, 0-255 for denormalized)
+ * @property {number} g - The green component (0-1 for normalized values, 0-255 for denormalized)
+ * @property {number} b - The blue component (0-1 for normalized values, 0-255 for denormalized)
+ * @property {number} [a] - The alpha (opacity) component (0-1), optional
+ */
 export type RGBColor = {
   r: number;
   g: number;
@@ -17,6 +28,22 @@ export type RGBColor = {
   a?: number;
 };
 
+/**
+ * Converts a hexadecimal color string to an RGB color object.
+ *
+ * This function supports various hex formats:
+ * - 3 digits: #RGB (shorthand, each digit is repeated)
+ * - 4 digits: #RGBA (shorthand with alpha)
+ * - 6 digits: #RRGGBB (full hex)
+ * - 8 digits: #RRGGBBAA (full hex with alpha)
+ *
+ * The leading '#' character is optional. The function uses character code
+ * comparisons for performance and returns a normalized RGB color (values in 0-1 range).
+ *
+ * @param {string} hex - The hexadecimal color string to convert
+ * @returns {RGBColor} The RGB color object with normalized values (0-1)
+ * @throws {Error} If the hex string format is invalid
+ */
 export const hexToRGB = (hex: string): RGBColor => {
   // Avoid allocating a new string when possible.
   let offset = 0;
@@ -74,6 +101,19 @@ export const hexToRGB = (hex: string): RGBColor => {
   return normalizeRGBColor({ r, g, b, a });
 };
 
+/**
+ * Converts an RGB color object to a hexadecimal color string.
+ *
+ * This function automatically determines whether to use shorthand notation
+ * when possible (e.g., #abc instead of #aabbcc). It handles alpha values
+ * and will include them in the hex string only if they're defined and not 255 (fully opaque).
+ *
+ * The function first denormalizes the RGB values (converts from 0-1 to 0-255 range),
+ * then formats them as a hex string.
+ *
+ * @param {RGBColor} color - The RGB color object to convert
+ * @returns {string} The hexadecimal color string (with leading '#')
+ */
 export function rgbToHex(color: RGBColor): string {
   const nC = denormalizeRGBColor(color);
 
@@ -107,6 +147,18 @@ export function rgbToHex(color: RGBColor): string {
   return hex;
 }
 
+/**
+ * Converts an RGB color to the CIE XYZ color space.
+ *
+ * This function first linearizes the RGB color values (removes gamma correction),
+ * then applies the RGB to XYZ transformation matrix. Optionally, it can perform
+ * chromatic adaptation to convert from the D65 white point (standard for sRGB)
+ * to the D50 white point (commonly used in other color spaces).
+ *
+ * @param {RGBColor} color - The RGB color to convert
+ * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
+ * @returns {XYZColor} The color in XYZ space, with the appropriate illuminant specified
+ */
 export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = false): XYZColor => {
   const lC = linearizeRGBColor(color);
   const xyz = multiplyMatrixByVector(RGB_XYZ_MATRIX, [lC.r, lC.g, lC.b]);
@@ -133,14 +185,55 @@ export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = fals
   };
 };
 
+/**
+ * Converts an RGB color to the CIE Lab color space.
+ *
+ * This function first converts the RGB color to XYZ, then from XYZ to Lab.
+ * The Lab color space is designed to be perceptually uniform and device-independent.
+ *
+ * @param {RGBColor} rgb - The RGB color to convert
+ * @returns {LabColor} The color in Lab space
+ */
 export const rgbToLab = (rgb: RGBColor): LabColor =>
   xyzToLab(rgbToXYZ(rgb));
 
+/**
+ * Converts an RGB color to the CIE LCh color space.
+ *
+ * This function first converts the RGB color to XYZ, then from XYZ to LCh.
+ * The LCh color space is a cylindrical representation of Lab, using lightness,
+ * chroma (saturation), and hue components.
+ *
+ * @param {RGBColor} rgb - The RGB color to convert
+ * @returns {LChColor} The color in LCh space
+ */
 export const rgbToLCH = (rgb: RGBColor): LChColor =>
   xyzToLCh(rgbToXYZ(rgb));
 
+/**
+ * Converts an RGB color to the OKLab color space.
+ *
+ * This function first converts the RGB color to XYZ, then from XYZ to OKLab.
+ * OKLab is a perceptually uniform color space designed to better represent
+ * how humans perceive color differences.
+ *
+ * @param {RGBColor} rgb - The RGB color to convert
+ * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
+ * @returns {OKLabColor} The color in OKLab space
+ */
 export const rgbToOKLab = (rgb: RGBColor, useChromaticAdaptation: boolean = false): OKLabColor =>
   xyzToOKLab(rgbToXYZ(rgb, useChromaticAdaptation));
 
+/**
+ * Converts an RGB color to the OKLCh color space.
+ *
+ * This function first converts the RGB color to OKLab, then from OKLab to OKLCh.
+ * OKLCh is a cylindrical representation of OKLab, using lightness, chroma (saturation),
+ * and hue components, with improved perceptual uniformity over traditional LCh.
+ *
+ * @param {RGBColor} rgb - The RGB color to convert
+ * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
+ * @returns {OKLChColor} The color in OKLCh space
+ */
 export const rgbToOKLCh = (rgb: RGBColor, useChromaticAdaptation: boolean = false): OKLChColor =>
   oklabToOKLCh(rgbToOKLab(rgb, useChromaticAdaptation));
