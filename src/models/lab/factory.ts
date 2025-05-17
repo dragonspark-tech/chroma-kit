@@ -49,7 +49,6 @@ export interface LabFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {LabFactory} A new Lab factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function lab(l: number, a: number, b: number, alpha?: number): LabFactory {
   const color: LabColor = { space: 'lab', l, a, b, alpha };
 
@@ -82,7 +81,6 @@ export function lab(l: number, a: number, b: number, alpha?: number): LabFactory
  * @param {LabColor} color - The Lab color to convert
  * @returns {string} CSS-compatible string representation of the Lab color
  */
-/*@__NO_SIDE_EFFECTS__*/
 function labToCSSString(color: LabColor): string {
   const { l, a, b, alpha } = color;
 

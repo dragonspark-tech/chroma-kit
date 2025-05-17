@@ -50,7 +50,6 @@ export interface RGBFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {RGBFactory} A new RGB factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function rgb(r: number, g: number, b: number, alpha?: number): RGBFactory {
   const color: RGBColor = { space: 'rgb', r, g, b, alpha };
 
@@ -84,7 +83,6 @@ export function rgb(r: number, g: number, b: number, alpha?: number): RGBFactory
  * @param {boolean} [linearize=false] - Whether to linearize the RGB values
  * @returns {RGBFactory} A new RGB factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function hexToFactory(hex: string, linearize: boolean = false): RGBFactory {
   const color = hexToRGB(hex);
   const finalColor = linearize ? linearizeRGBColor(color) : color;
@@ -97,7 +95,6 @@ export function hexToFactory(hex: string, linearize: boolean = false): RGBFactor
  * @param {string} hex - Hex color string (e.g., "#FF0000" or "FF0000")
  * @returns {RGBFactory} A new RGB factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function hex(hex: string): RGBFactory {
   return hexToFactory(hex);
 }
@@ -108,7 +105,6 @@ export function hex(hex: string): RGBFactory {
  * @param {string} hex - Hex color string (e.g., "#FF0000" or "FF0000")
  * @returns {RGBFactory} A new RGB factory with linearized values
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function hexLinear(hex: string): RGBFactory {
   return hexToFactory(hex, true);
 }
@@ -119,7 +115,6 @@ export function hexLinear(hex: string): RGBFactory {
  * @param {RGBColor} color - The RGB color to convert
  * @returns {string} CSS-compatible string representation of the RGB color
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function rgbToCSSString(color: RGBColor): string {
   const { r, g, b, alpha } = color;
 

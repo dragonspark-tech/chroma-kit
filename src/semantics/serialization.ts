@@ -34,7 +34,6 @@ type ColorSpace = Color['space'];
  * It uses the `Record` utility type to ensure that each key corresponds to a predefined
  * `ColorSpace` and the associated values are readonly arrays of strings.
  */
-/*@__NO_SIDE_EFFECTS__*/
 const colorMappings: Record<ColorSpace, readonly string[]> = {
   rgb: ['r', 'g', 'b'],
   xyz: ['x', 'y', 'z'],
@@ -48,7 +47,6 @@ const colorMappings: Record<ColorSpace, readonly string[]> = {
   jzczhz: ['jz', 'cz', 'hz']
 } as const;
 
-/*@__NO_SIDE_EFFECTS__*/
 const assertNever = (x: never): never => {
   throw new Error(`Unhandled colorspace: ${x as string}`);
 };
@@ -60,7 +58,6 @@ const assertNever = (x: never): never => {
  * @return {Color} The parsed color object containing the color space, its components, and optional alpha value.
  * @throws {Error} If the input string is not valid or not in ChromaKit v1 format.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function parseV1(src: string): Color {
   const tokens = src.trim().split(/\s+/);
   const tag = tokens.shift()?.toLowerCase();
@@ -126,7 +123,6 @@ export function parseV1(src: string): Color {
  * @param {Color} color - The color object to be serialized. Must contain a color space, numeric values for the color space, and optionally an alpha value.
  * @return {string} A string representing the serialized color in the v1 format.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function serializeV1(color: Color): string {
   const { space, alpha } = color;
 

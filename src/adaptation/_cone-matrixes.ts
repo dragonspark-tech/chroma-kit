@@ -1,6 +1,5 @@
 import type { Matrix3x3 } from '../utils/linear';
 
-/*@__NO_SIDE_EFFECTS__*/
 export const BRADFORD_D50_TO_D65: Matrix3x3 = [
   [
     0.9555766462451653,
@@ -19,7 +18,6 @@ export const BRADFORD_D50_TO_D65: Matrix3x3 = [
   ]
 ];
 
-/*@__NO_SIDE_EFFECTS__*/
 export const BRADFORD_D65_TO_D50: Matrix3x3 = [
   [
     1.0478112719598691,
@@ -38,7 +36,6 @@ export const BRADFORD_D65_TO_D50: Matrix3x3 = [
   ]
 ];
 
-/*@__NO_SIDE_EFFECTS__*/
 export const coneMatrixes: {[key: string]: Matrix3x3} = {
   'BRADFORD_D50_TO_D65': BRADFORD_D50_TO_D65,
   'BRADFORD_D65_TO_D50': BRADFORD_D65_TO_D50

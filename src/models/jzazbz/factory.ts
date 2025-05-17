@@ -49,7 +49,6 @@ export interface JzAzBzFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {JzAzBzFactory} A new JzAzBz factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function jzazbz(jz: number, az: number, bz: number, alpha?: number): JzAzBzFactory {
   const color: JzAzBzColor = { space: 'jzazbz', jz, az, bz, alpha };
 

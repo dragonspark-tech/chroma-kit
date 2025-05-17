@@ -21,7 +21,6 @@ export type ConeResponseModel = {
  *
  * Consider using {@linkcode BradfordConeModel} instead for better precision.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const XYZScalingConeModel: ConeResponseModel = {
   name: 'XYZ_SCALING',
   matrix: [
@@ -42,7 +41,6 @@ export const XYZScalingConeModel: ConeResponseModel = {
  * This model includes transformation matrices to convert cone responses
  * between different color viewing conditions.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const BradfordConeModel: ConeResponseModel = {
   name: 'BRADFORD',
   matrix: [
@@ -65,7 +63,6 @@ export const BradfordConeModel: ConeResponseModel = {
  *
  * Consider using {@linkcode BradfordConeModel} instead for better precision.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const VonKriesConeModel: ConeResponseModel = {
   name: 'VONKRIES',
   matrix: [

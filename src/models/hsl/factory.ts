@@ -50,7 +50,6 @@ export interface HSLFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {HSLFactory} A new HSL factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function hsl(h: number, s: number, l: number, alpha?: number): HSLFactory {
   const color: HSLColor = { space: 'hsl', h, s, l, alpha };
 
@@ -83,7 +82,6 @@ export function hsl(h: number, s: number, l: number, alpha?: number): HSLFactory
  * @param {HSLColor} color - The HSL color to convert
  * @returns {string} CSS-compatible string representation of the HSL color
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function hslToCSSString(color: HSLColor): string {
   const { h, s, l, alpha } = color;
 
@@ -106,7 +104,6 @@ export function hslToCSSString(color: HSLColor): string {
  * @param {HSLColor} color - The HSL color to convert
  * @returns {string} CSS-compatible RGB string representation of the HSL color
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function hslToRGBString(color: HSLColor): string {
   return rgbToCSSString(hslToRGB(color));
 }

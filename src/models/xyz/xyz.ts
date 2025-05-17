@@ -44,7 +44,6 @@ export type XYZColor = {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {RGBColor} The color in RGB space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToRGB = (color: XYZColor): RGBColor => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
   return delinearizeRGBColor({
@@ -66,7 +65,6 @@ export const xyzToRGB = (color: XYZColor): RGBColor => {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {HSLColor} The color in HSL space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToHSL = (color: XYZColor): HSLColor => rgbToHSL(xyzToRGB(color));
 
 /**
@@ -79,7 +77,6 @@ export const xyzToHSL = (color: XYZColor): HSLColor => rgbToHSL(xyzToRGB(color))
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {HSVColor} The color in HSV space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToHSV = (color: XYZColor): HSVColor => rgbToHSV(xyzToRGB(color));
 
 /**
@@ -97,7 +94,6 @@ export const xyzToHSV = (color: XYZColor): HSVColor => rgbToHSV(xyzToRGB(color))
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {LabColor} The color in Lab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToLab = (color: XYZColor): LabColor => {
   const i = color.illuminant || IlluminantD65;
 
@@ -129,7 +125,6 @@ export const xyzToLab = (color: XYZColor): LabColor => {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {LChColor} The color in LCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToLCh = (color: XYZColor): LChColor => labToLCH(xyzToLab(color));
 
 /**
@@ -146,7 +141,6 @@ export const xyzToLCh = (color: XYZColor): LChColor => labToLCH(xyzToLab(color))
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {OKLabColor} The color in OKLab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToOKLab = (color: XYZColor): OKLabColor => {
   const [l, m, s] = multiplyMatrixByVector(XYZ_OKLCH_THROUGH_LMS_MATRIX, [
     color.x,
@@ -169,7 +163,6 @@ export const xyzToOKLab = (color: XYZColor): OKLabColor => {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {OKLChColor} The color in OKLCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToOKLCh = (color: XYZColor): OKLChColor => oklabToOKLCh(xyzToOKLab(color));
 
 /**
@@ -189,7 +182,6 @@ export const xyzToOKLCh = (color: XYZColor): OKLChColor => oklabToOKLCh(xyzToOKL
  * @param {number} [peakLuminance=10000] - The peak luminance in cd/m² that Y=1 maps to
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzAzBzColor => {
   const Xp = b * color.x - (b - 1) * color.z;
   const Yp = g * color.y - (g - 1) * color.x;
@@ -220,6 +212,5 @@ export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance in cd/m² that Y=1 maps to
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const xyzToJzCzHz = (color: XYZColor, peakLuminance: number = 10000): JzCzHzColor =>
   jzazbzToJzCzHz(xyzToJzAzBz(color, peakLuminance));

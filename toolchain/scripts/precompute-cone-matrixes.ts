@@ -9,11 +9,11 @@ export const precomputeConeMatrixes = () => {
   const BRADFORD_D65_TO_D50 = computeAdaptationMatrix(IlluminantD65, IlluminantD50, BradfordConeModel);
 
   const makeMatrixCode = (variableName: string, matrix: Matrix3x3): string =>
-    `\n/*@__NO_SIDE_EFFECTS__*/\nexport const ${variableName}: Matrix3x3 = ${JSON.stringify(matrix, null, 2)};\n`;
+    `\nexport const ${variableName}: Matrix3x3 = ${JSON.stringify(matrix, null, 2)};\n`;
 
   const preflight = `import type { Matrix3x3 } from '../utils/linear';\n`;
 
-  const packageNames = `\n/*@__NO_SIDE_EFFECTS__*/\nexport const coneMatrixes: {[key: string]: Matrix3x3} = {
+  const packageNames = `\nexport const coneMatrixes: {[key: string]: Matrix3x3} = {
   'BRADFORD_D50_TO_D65': BRADFORD_D50_TO_D65,
   'BRADFORD_D65_TO_D50': BRADFORD_D65_TO_D50
 };`;

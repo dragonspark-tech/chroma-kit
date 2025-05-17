@@ -57,7 +57,6 @@ export interface XYZFactory extends ColorFactory {
  * @param {Illuminant} [illuminant] - Reference white point (defaults to D65)
  * @returns {XYZFactory} A new XYZ factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function xyz(
   x: number,
   y: number,

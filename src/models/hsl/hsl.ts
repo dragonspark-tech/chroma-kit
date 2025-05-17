@@ -36,7 +36,6 @@ export type HSLColor = {
  * @param {HSLColor} color - The HSL color to convert
  * @returns {RGBColor} The color in RGB space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToRGB = (color: HSLColor): RGBColor => {
   let [h, s, l] = [color.h, color.s, color.l];
 
@@ -63,7 +62,6 @@ export const hslToRGB = (color: HSLColor): RGBColor => {
  * @param {HSLColor} color - The HSL color to convert
  * @returns {HSVColor} The color in HSV space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToHSV = (color: HSLColor): HSVColor => {
   let [h, s, l] = [color.h, color.s, color.l];
 
@@ -87,7 +85,6 @@ export const hslToHSV = (color: HSLColor): HSVColor => {
  * @param {HSLColor} color - The HSL color to convert
  * @returns {XYZColor} The color in XYZ space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToXYZ = (color: HSLColor): XYZColor =>
   rgbToXYZ(hslToRGB(color));
 
@@ -100,7 +97,6 @@ export const hslToXYZ = (color: HSLColor): XYZColor =>
  * @param {HSLColor} color - The HSL color to convert
  * @returns {LabColor} The color in Lab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToLab = (color: HSLColor): LabColor =>
   rgbToLab(hslToRGB(color));
 
@@ -114,7 +110,6 @@ export const hslToLab = (color: HSLColor): LabColor =>
  * @param {HSLColor} color - The HSL color to convert
  * @returns {LChColor} The color in LCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToLCh = (color: HSLColor): LChColor =>
   rgbToLCH(hslToRGB(color));
 
@@ -129,7 +124,6 @@ export const hslToLCh = (color: HSLColor): LChColor =>
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLabColor} The color in OKLab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToOKLab = (color: HSLColor, useChromaticAdaptation: boolean = false): OKLabColor =>
   rgbToOKLab(hslToRGB(color), useChromaticAdaptation);
 
@@ -144,7 +138,6 @@ export const hslToOKLab = (color: HSLColor, useChromaticAdaptation: boolean = fa
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLChColor} The color in OKLCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToOKLCh = (color: HSLColor, useChromaticAdaptation: boolean = false): OKLChColor =>
   rgbToOKLCh(hslToRGB(color), useChromaticAdaptation);
 
@@ -158,7 +151,6 @@ export const hslToOKLCh = (color: HSLColor, useChromaticAdaptation: boolean = fa
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToJzAzBz = (color: HSLColor, peakLuminance: number = 10000): JzAzBzColor =>
   rgbToJzAzBz(hslToRGB(color), peakLuminance);
 
@@ -174,6 +166,5 @@ export const hslToJzAzBz = (color: HSLColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hslToJzCzHz = (color: HSLColor, peakLuminance: number = 10000): JzCzHzColor =>
   rgbToJzCzHz(hslToRGB(color), peakLuminance);

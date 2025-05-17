@@ -3,7 +3,7 @@ import { HSVColor, hsvToHSL, hsvToRGB } from './hsv';
 import { convertColor } from '../../conversion/conversion';
 import { serializeV1 } from '../../semantics/serialization';
 import { rgbToCSSString } from '../rgb/factory';
-import { hslToCSSString } from '../hsl';
+import { hslToCSSString } from '../hsl/factory';
 
 /**
  * Interface for HSV color factory functions
@@ -51,7 +51,6 @@ export interface HSVFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {HSVFactory} A new HSV factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function hsv(h: number, s: number, v: number, alpha?: number): HSVFactory {
   const color: HSVColor = { space: 'hsv', h, s, v, alpha };
 
@@ -85,7 +84,6 @@ export function hsv(h: number, s: number, v: number, alpha?: number): HSVFactory
  * @param {HSVColor} color - The HSV color to convert
  * @returns {string} CSS-compatible RGB string representation of the HSV color
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function hsvToRGBString(color: HSVColor): string {
   return rgbToCSSString(hsvToRGB(color));
 }

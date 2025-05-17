@@ -49,7 +49,6 @@ export interface LChFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {LChFactory} A new LCh factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function lch(l: number, c: number, h: number, alpha?: number): LChFactory {
   // Normalize hue to 0-360 range
   const normalizedH = ((h % 360) + 360) % 360;
@@ -84,7 +83,6 @@ export function lch(l: number, c: number, h: number, alpha?: number): LChFactory
  * @param {LChColor} color - The LCh color to convert
  * @returns {string} CSS-compatible string representation of the LCh color
  */
-/*@__NO_SIDE_EFFECTS__*/
 function lchToCSSString(color: LChColor): string {
   const { l, c, h, alpha } = color;
 

@@ -37,7 +37,6 @@ export type LChColor = {
  * @param {LChColor} color - The LCh color to convert
  * @returns {RGBColor} The color in RGB space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToRGB = (color: LChColor): RGBColor => xyzToRGB(lchToXYZ(color));
 
 /**
@@ -50,7 +49,6 @@ export const lchToRGB = (color: LChColor): RGBColor => xyzToRGB(lchToXYZ(color))
  * @param {LChColor} color - The LCh color to convert
  * @returns {HSLColor} The color in HSL space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToHSL = (color: LChColor): HSLColor => rgbToHSL(lchToRGB(color));
 
 /**
@@ -63,7 +61,6 @@ export const lchToHSL = (color: LChColor): HSLColor => rgbToHSL(lchToRGB(color))
  * @param {LChColor} color - The LCh color to convert
  * @returns {HSVColor} The color in HSV space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToHSV = (color: LChColor): HSVColor => rgbToHSV(lchToRGB(color));
 
 /**
@@ -74,7 +71,6 @@ export const lchToHSV = (color: LChColor): HSVColor => rgbToHSV(lchToRGB(color))
  * @param {LChColor} color - The LCh color to convert
  * @returns {XYZColor} The color in XYZ space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToXYZ = (color: LChColor): XYZColor => labToXYZ(lchToLab(color));
 
 /**
@@ -87,7 +83,6 @@ export const lchToXYZ = (color: LChColor): XYZColor => labToXYZ(lchToLab(color))
  * @param {LChColor} color - The LCh color to convert
  * @returns {LabColor} The color in Lab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToLab = (color: LChColor): LabColor => {
   const hRad = (color.h * Math.PI) / 180; // deg → rad
   return {
@@ -108,7 +103,6 @@ export const lchToLab = (color: LChColor): LabColor => {
  * @param {LChColor} color - The LCh color to convert
  * @returns {OKLabColor} The color in OKLab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToOKLab = (color: LChColor): OKLabColor => xyzToOKLab(lchToXYZ(color));
 
 /**
@@ -119,7 +113,6 @@ export const lchToOKLab = (color: LChColor): OKLabColor => xyzToOKLab(lchToXYZ(c
  * @param {LChColor} color - The LCh color to convert
  * @returns {OKLChColor} The color in OKLCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToOKLCh = (color: LChColor): OKLChColor => oklabToOKLCh(lchToOKLab(color));
 
 /**
@@ -132,7 +125,6 @@ export const lchToOKLCh = (color: LChColor): OKLChColor => oklabToOKLCh(lchToOKL
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToJzAzBz = (color: LChColor, peakLuminance: number = 10000): JzAzBzColor =>
   xyzToJzAzBz(lchToXYZ(color), peakLuminance);
 
@@ -148,6 +140,5 @@ export const lchToJzAzBz = (color: LChColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const lchToJzCzHz = (color: LChColor, peakLuminance: number = 10000): JzCzHzColor =>
   xyzToJzCzHz(lchToXYZ(color), peakLuminance);

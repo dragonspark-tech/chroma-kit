@@ -82,7 +82,6 @@ export abstract class BaseColorFactory implements ColorFactory {
  * @param {ColorFactory} factory - The color factory to check
  * @returns {boolean} True if the factory supports CSS representation
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function supportsCSSRepresentation(factory: ColorFactory): factory is ColorFactory & {
   toCSSString: () => string;
 } {

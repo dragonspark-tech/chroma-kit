@@ -41,7 +41,6 @@ export type LabColor = {
  * @param {LabColor} color - The Lab color to convert
  * @returns {RGBColor} The color in RGB space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToRGB = (color: LabColor): RGBColor => {
   const result = convertColor<LabColor, RGBColor>(color, 'rgb');
   if (!result) {
@@ -59,7 +58,6 @@ export const labToRGB = (color: LabColor): RGBColor => {
  * @param {LabColor} color - The Lab color to convert
  * @returns {HSLColor} The color in HSL space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToHSL = (color: LabColor): HSLColor => {
   const result = convertColor<LabColor, HSLColor>(color, 'hsl');
   if (!result) {
@@ -77,7 +75,6 @@ export const labToHSL = (color: LabColor): HSLColor => {
  * @param {LabColor} color - The Lab color to convert
  * @returns {HSVColor} The color in HSV space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToHSV = (color: LabColor): HSVColor => {
   const result = convertColor<LabColor, HSVColor>(color, 'hsv');
   if (!result) {
@@ -98,7 +95,6 @@ export const labToHSV = (color: LabColor): HSVColor => {
  * @param {Illuminant} [illuminant] - The reference white point to use (defaults to D65)
  * @returns {XYZColor} The color in XYZ space with the specified illuminant
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => {
   const i = illuminant || IlluminantD65;
 
@@ -135,7 +131,6 @@ export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => 
  * @param {LabColor} color - The Lab color to convert
  * @returns {LChColor} The color in LCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToLCH = (color: LabColor): LChColor => {
   const c = Math.hypot(color.a, color.b);
   const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
@@ -151,7 +146,6 @@ export const labToLCH = (color: LabColor): LChColor => {
  * @param {LabColor} color - The Lab color to convert
  * @returns {OKLabColor} The color in OKLab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToOKLab = (color: LabColor): OKLabColor => {
   const result = convertColor<LabColor, OKLabColor>(color, 'oklab');
   if (!result) {
@@ -169,7 +163,6 @@ export const labToOKLab = (color: LabColor): OKLabColor => {
  * @param {LabColor} color - The Lab color to convert
  * @returns {OKLChColor} The color in OKLCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToOKLCh = (color: LabColor): OKLChColor => {
   const result = convertColor<LabColor, OKLChColor>(color, 'oklch');
   if (!result) {
@@ -188,7 +181,6 @@ export const labToOKLCh = (color: LabColor): OKLChColor => {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzAzBzColor => {
   // First convert to XYZ
   const xyz = labToXYZ(color);
@@ -211,7 +203,6 @@ export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const labToJzCzHz = (color: LabColor, peakLuminance: number = 10000): JzCzHzColor => {
   // First convert to XYZ
   const xyz = labToXYZ(color);

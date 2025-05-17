@@ -1,7 +1,3 @@
-﻿import './conversion/register-conversions';
-export * from './conversion/conversion';
-
-export * from './models/factories';
 export * from './models/rgb/rgb';
 export * from './models/xyz/xyz';
 export * from './models/oklab/oklab';

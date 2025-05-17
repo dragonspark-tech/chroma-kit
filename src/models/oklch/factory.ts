@@ -49,7 +49,6 @@ export interface OKLChFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {OKLChFactory} A new OKLCh factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function oklch(l: number, c: number, h: number, alpha?: number): OKLChFactory {
   // Normalize hue to 0-360 range
   const normalizedH = ((h % 360) + 360) % 360;
@@ -84,7 +83,6 @@ export function oklch(l: number, c: number, h: number, alpha?: number): OKLChFac
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {string} CSS-compatible string representation of the OKLCh color
  */
-/*@__NO_SIDE_EFFECTS__*/
 function oklchToCSSString(color: OKLChColor): string {
   const { l, c, h, alpha } = color;
 

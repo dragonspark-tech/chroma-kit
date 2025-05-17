@@ -49,7 +49,6 @@ export interface OKLabFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {OKLabFactory} A new OKLab factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function oklab(l: number, a: number, b: number, alpha?: number): OKLabFactory {
   const color: OKLabColor = { space: 'oklab', l, a, b, alpha };
 
@@ -82,7 +81,6 @@ export function oklab(l: number, a: number, b: number, alpha?: number): OKLabFac
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {string} CSS-compatible string representation of the OKLab color
  */
-/*@__NO_SIDE_EFFECTS__*/
 function oklabToCSSString(color: OKLabColor): string {
   const { l, a, b, alpha } = color;
 

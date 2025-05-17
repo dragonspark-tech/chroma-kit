@@ -1,6 +1,12 @@
 // Base
 export { type ColorFactory, BaseColorFactory, supportsCSSRepresentation } from './factory';
 
+// HSL
+export { type HSLFactory, hsl } from './hsl/factory';
+
+// HSV
+export { type HSVFactory, hsv } from './hsv/factory';
+
 // RGB color factory
 export { type RGBFactory, rgb, hex, hexLinear } from './rgb/factory';
 

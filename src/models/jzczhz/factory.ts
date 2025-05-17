@@ -49,7 +49,6 @@ export interface JzCzHzFactory extends ColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {JzCzHzFactory} A new JzCzHz factory
  */
-/*@__NO_SIDE_EFFECTS__*/
 export function jzczhz(jz: number, cz: number, hz: number, alpha?: number): JzCzHzFactory {
   // Normalize hue to 0-360 range
   const normalizedHz = ((hz % 360) + 360) % 360;

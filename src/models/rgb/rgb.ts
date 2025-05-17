@@ -45,7 +45,6 @@ export type RGBColor = {
  * @param {number} c - The input number from which the hexadecimal digit is derived.
  * @returns {number} The calculated hexadecimal digit.
  */
-/*@__NO_SIDE_EFFECTS__*/
 const hexDigit = (c: number): number => (c & 0xf) + (c >> 6) * 9;
 
 /**
@@ -64,7 +63,6 @@ const hexDigit = (c: number): number => (c & 0xf) + (c >> 6) * 9;
  *   and optionally alpha transparency (normalized between 0 and 1).
  * @throws {Error} If the provided `hex` string has an invalid format or length.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const hexToRGB = (hex: string): RGBColor => {
   let i = hex.charCodeAt(0) === 35 ? 1 : 0;
   const n = hex.length - i;
@@ -121,7 +119,6 @@ export const hexToRGB = (hex: string): RGBColor => {
  * @param {RGBColor} color - The RGB color object to convert
  * @returns {string} The hexadecimal color string (with leading '#')
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToHex = (color: RGBColor): string => {
   const nC = denormalizeRGBColor(color);
 
@@ -155,7 +152,6 @@ export const rgbToHex = (color: RGBColor): string => {
   return hex;
 };
 
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToHSL = (color: RGBColor): HSLColor => {
   const [r, g, b] = [color.r, color.g, color.b];
 
@@ -187,7 +183,6 @@ export const rgbToHSL = (color: RGBColor): HSLColor => {
   };
 };
 
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToHSV = (color: RGBColor): HSVColor => {
   const [r, g, b] = [color.r, color.g, color.b];
 
@@ -230,7 +225,6 @@ export const rgbToHSV = (color: RGBColor): HSVColor => {
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {XYZColor} The color in XYZ space, with the appropriate illuminant specified
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = false): XYZColor => {
   const lC = linearizeRGBColor(color);
   const xyz = multiplyMatrixByVector(RGB_XYZ_MATRIX, [lC.r, lC.g, lC.b]);
@@ -268,7 +262,6 @@ export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = fals
  * @param {RGBColor} color - The RGB color to convert
  * @returns {LabColor} The color in Lab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToLab = (color: RGBColor): LabColor => xyzToLab(rgbToXYZ(color));
 
 /**
@@ -281,7 +274,6 @@ export const rgbToLab = (color: RGBColor): LabColor => xyzToLab(rgbToXYZ(color))
  * @param {RGBColor} color - The RGB color to convert
  * @returns {LChColor} The color in LCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToLCH = (color: RGBColor): LChColor => xyzToLCh(rgbToXYZ(color));
 
 /**
@@ -295,7 +287,6 @@ export const rgbToLCH = (color: RGBColor): LChColor => xyzToLCh(rgbToXYZ(color))
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLabColor} The color in OKLab space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToOKLab = (color: RGBColor, useChromaticAdaptation: boolean = false): OKLabColor =>
   xyzToOKLab(rgbToXYZ(color, useChromaticAdaptation));
 
@@ -310,7 +301,6 @@ export const rgbToOKLab = (color: RGBColor, useChromaticAdaptation: boolean = fa
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLChColor} The color in OKLCh space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToOKLCh = (color: RGBColor, useChromaticAdaptation: boolean = false): OKLChColor =>
   oklabToOKLCh(rgbToOKLab(color, useChromaticAdaptation));
 
@@ -324,7 +314,6 @@ export const rgbToOKLCh = (color: RGBColor, useChromaticAdaptation: boolean = fa
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToJzAzBz = (color: RGBColor, peakLuminance: number = 10000): JzAzBzColor =>
   xyzToJzAzBz(rgbToXYZ(color), peakLuminance);
 
@@ -340,6 +329,5 @@ export const rgbToJzAzBz = (color: RGBColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const rgbToJzCzHz = (color: RGBColor, peakLuminance: number = 10000): JzCzHzColor =>
   xyzToJzCzHz(rgbToXYZ(color), peakLuminance);

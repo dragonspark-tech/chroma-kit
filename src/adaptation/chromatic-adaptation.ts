@@ -16,7 +16,6 @@ import { coneMatrixes } from './_cone-matrixes';
  *
  * @see https://en.wikipedia.org/wiki/Chromatic_adaptation
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const computeAdaptationMatrix = (
   sourceIlluminant: Illuminant,
   targetIlluminant: Illuminant,
@@ -55,7 +54,6 @@ export const computeAdaptationMatrix = (
  * @param {ConeResponseModel} coneModel - The cone response model to be used for the adaptation.
  * @returns {Matrix3x3} The 3x3 chromatic adaptation matrix.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const getAdaptationMatrix = (
   sourceIlluminant: Illuminant,
   targetIlluminant: Illuminant,

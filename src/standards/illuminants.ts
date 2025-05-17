@@ -22,7 +22,6 @@ export type Illuminant = {
  *
  * @see https://cie.co.at/publications/colorimetry-part-2-cie-standard-illuminants-0
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const IlluminantA: Illuminant = {
   name: 'A',
   xR: 1.0985,
@@ -39,7 +38,6 @@ export const IlluminantA: Illuminant = {
  *
  * @see https://cie.co.at/publications/colorimetry-part-2-cie-standard-illuminants-0
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const IlluminantD50: Illuminant = {
   name: 'D50',
   xR: 0.96422,
@@ -58,7 +56,6 @@ export const IlluminantD50: Illuminant = {
  *
  * @see https://cie.co.at/publications/colorimetry-part-2-cie-standard-illuminants-0
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const IlluminantD65: Illuminant = {
   name: 'D65',
   xR: 0.95047,

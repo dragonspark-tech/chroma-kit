@@ -6,7 +6,6 @@
  * @param {number} b - The second boundary value.
  * @return {number} The clamped value constrained within the range defined by a and b.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const clamp = (value: number, a: number, b: number): number => {
   return a < b ? (value < a ? a : value > b ? b : value) : value < b ? b : value > a ? a : value;
 };
@@ -18,7 +17,6 @@ export const clamp = (value: number, a: number, b: number): number => {
  * @param {number} [digits=0] The number of decimal places to round to. Defaults to 0 if not specified.
  * @return {number} The rounded number.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const round = (num: number, digits: number = 0): number => {
   if (digits === 0) {
     return Math.round(num);
@@ -34,7 +32,6 @@ export const round = (num: number, digits: number = 0): number => {
  * @param {number} [digits=0] - The number of decimal places to round down to. Defaults to 0.
  * @return {number} The rounded down value.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const floor = (num: number, digits: number = 0): number => {
   if (digits === 0) {
     return Math.floor(num);
@@ -52,7 +49,6 @@ export const floor = (num: number, digits: number = 0): number => {
  * @param {number} [max=1] - The maximum value of the range.
  * @returns {number} - The normalized value within the specified range.
  */
-/*@__NO_SIDE_EFFECTS__*/
 export const normalize = (value: number, min: number, max: number): number => {
   return (value - min) / (max - min);
 };
