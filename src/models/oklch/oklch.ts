@@ -2,7 +2,9 @@ import { LabColor } from '../lab/lab';
 import { LChColor } from '../lch/lch';
 import { OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab/oklab';
 import { RGBColor } from '../rgb/rgb';
-import { XYZColor, xyzToRGB } from '../xyz/xyz';
+import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToRGB } from '../xyz/xyz';
+import { JzAzBzColor } from '../jzazbz/jzazbz';
+import { JzCzHzColor } from '../jzczhz/jzczhz';
 
 /**
  * Represents a color in the OKLCh color space.
@@ -87,3 +89,31 @@ export const oklchToOKLab = (color: OKLChColor): OKLabColor => {
 
   return { l: color.l, a, b, alpha: color.alpha };
 };
+
+/**
+ * Converts an OKLCh color to the JzAzBz color space.
+ *
+ * This function first converts the OKLCh color to XYZ, then from XYZ to JzAzBz.
+ * JzAzBz is a color space designed to be perceptually uniform and device-independent.
+ *
+ * @param {OKLChColor} color - The OKLCh color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {JzAzBzColor} The color in JzAzBz space
+ */
+export const oklchToJzAzBz = (color: OKLChColor, peakLuminance: number = 10000): JzAzBzColor =>
+  xyzToJzAzBz(oklchToXYZ(color), peakLuminance);
+
+/**
+ * Converts an OKLCh color to the JzCzHz color space.
+ *
+ * This function first converts the OKLCh color to XYZ, then from XYZ to JzCzHz.
+ * The JzCzHz color space is a cylindrical representation of JzAzBz, using lightness,
+ * chroma (saturation), and hue components, with improved perceptual uniformity
+ * for both low and high luminance levels, making it suitable for HDR content.
+ *
+ * @param {OKLChColor} color - The OKLCh color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {JzCzHzColor} The color in JzCzHz space
+ */
+export const oklchToJzCzHz = (color: OKLChColor, peakLuminance: number = 10000): JzCzHzColor =>
+  xyzToJzCzHz(oklchToXYZ(color), peakLuminance);

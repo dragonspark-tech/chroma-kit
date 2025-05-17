@@ -1,4 +1,4 @@
-﻿import { XYZColor, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz/xyz';
+﻿import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz/xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { RGB_XYZ_MATRIX } from './constants';
 import { denormalizeRGBColor, linearizeRGBColor, normalizeRGBColor } from './transform';
@@ -9,6 +9,8 @@ import { LabColor } from '../lab/lab';
 import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
 import { OKLChColor } from '../oklch/oklch';
 import { LChColor } from '../lch/lch';
+import { JzAzBzColor } from '../jzazbz/jzazbz';
+import { JzCzHzColor } from '../jzczhz/jzczhz';
 
 /**
  * Represents a color in the RGB color space.
@@ -191,11 +193,11 @@ export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = fals
  * This function first converts the RGB color to XYZ, then from XYZ to Lab.
  * The Lab color space is designed to be perceptually uniform and device-independent.
  *
- * @param {RGBColor} rgb - The RGB color to convert
+ * @param {RGBColor} color - The RGB color to convert
  * @returns {LabColor} The color in Lab space
  */
-export const rgbToLab = (rgb: RGBColor): LabColor =>
-  xyzToLab(rgbToXYZ(rgb));
+export const rgbToLab = (color: RGBColor): LabColor =>
+  xyzToLab(rgbToXYZ(color));
 
 /**
  * Converts an RGB color to the CIE LCh color space.
@@ -204,11 +206,11 @@ export const rgbToLab = (rgb: RGBColor): LabColor =>
  * The LCh color space is a cylindrical representation of Lab, using lightness,
  * chroma (saturation), and hue components.
  *
- * @param {RGBColor} rgb - The RGB color to convert
+ * @param {RGBColor} color - The RGB color to convert
  * @returns {LChColor} The color in LCh space
  */
-export const rgbToLCH = (rgb: RGBColor): LChColor =>
-  xyzToLCh(rgbToXYZ(rgb));
+export const rgbToLCH = (color: RGBColor): LChColor =>
+  xyzToLCh(rgbToXYZ(color));
 
 /**
  * Converts an RGB color to the OKLab color space.
@@ -217,12 +219,12 @@ export const rgbToLCH = (rgb: RGBColor): LChColor =>
  * OKLab is a perceptually uniform color space designed to better represent
  * how humans perceive color differences.
  *
- * @param {RGBColor} rgb - The RGB color to convert
+ * @param {RGBColor} color - The RGB color to convert
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLabColor} The color in OKLab space
  */
-export const rgbToOKLab = (rgb: RGBColor, useChromaticAdaptation: boolean = false): OKLabColor =>
-  xyzToOKLab(rgbToXYZ(rgb, useChromaticAdaptation));
+export const rgbToOKLab = (color: RGBColor, useChromaticAdaptation: boolean = false): OKLabColor =>
+  xyzToOKLab(rgbToXYZ(color, useChromaticAdaptation));
 
 /**
  * Converts an RGB color to the OKLCh color space.
@@ -231,9 +233,37 @@ export const rgbToOKLab = (rgb: RGBColor, useChromaticAdaptation: boolean = fals
  * OKLCh is a cylindrical representation of OKLab, using lightness, chroma (saturation),
  * and hue components, with improved perceptual uniformity over traditional LCh.
  *
- * @param {RGBColor} rgb - The RGB color to convert
+ * @param {RGBColor} color - The RGB color to convert
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLChColor} The color in OKLCh space
  */
-export const rgbToOKLCh = (rgb: RGBColor, useChromaticAdaptation: boolean = false): OKLChColor =>
-  oklabToOKLCh(rgbToOKLab(rgb, useChromaticAdaptation));
+export const rgbToOKLCh = (color: RGBColor, useChromaticAdaptation: boolean = false): OKLChColor =>
+  oklabToOKLCh(rgbToOKLab(color, useChromaticAdaptation));
+
+/**
+ * Converts an RGB color to the JzAzBz color space.
+ *
+ * This function first converts the RGB color to XYZ, then from XYZ to JzAzBz.
+ * JzAzBz is a color space designed to be perceptually uniform and device-independent.
+ *
+ * @param {RGBColor} color - The RGB color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {JzAzBzColor} The color in JzAzBz space
+ */
+export const rgbToJzAzBz = (color: RGBColor, peakLuminance: number = 10000): JzAzBzColor =>
+  xyzToJzAzBz(rgbToXYZ(color), peakLuminance);
+
+/**
+ * Converts an RGB color to the JzCzHz color space.
+ *
+ * This function first converts the RGB color to XYZ, then from XYZ to JzCzHz.
+ * The JzCzHz color space is a cylindrical representation of JzAzBz, using lightness,
+ * chroma (saturation), and hue components, with improved perceptual uniformity
+ * for both low and high luminance levels, making it suitable for HDR content.
+ *
+ * @param {RGBColor} color - The RGB color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {JzCzHzColor} The color in JzCzHz space
+ */
+export const rgbToJzCzHz = (color: RGBColor, peakLuminance: number = 10000): JzCzHzColor =>
+  xyzToJzCzHz(rgbToXYZ(color), peakLuminance);

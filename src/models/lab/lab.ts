@@ -1,10 +1,12 @@
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { XYZColor, xyzToOKLab, xyzToRGB } from '../xyz/xyz';
+import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz/xyz';
 import { ϵ, κ } from './constants';
 import { RGBColor } from '../rgb/rgb';
 import { LChColor } from '../lch/lch';
 import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
 import { OKLChColor } from '../oklch/oklch';
+import { JzAzBzColor } from '../jzazbz/jzazbz';
+import { JzCzHzColor } from '../jzczhz/jzczhz';
 
 /**
  * Represents a color in the CIE Lab color space.
@@ -114,3 +116,31 @@ export const labToOKLab = (color: LabColor): OKLabColor => {
 export const labToOKLCh = (color: LabColor): OKLChColor => {
   return oklabToOKLCh(labToOKLab(color));
 };
+
+/**
+ * Converts a color from CIE Lab to the JzAzBz color space.
+ *
+ * This function first converts the Lab color to XYZ, then from XYZ to JzAzBz.
+ * JzAzBz is a color space designed to be perceptually uniform and device-independent.
+ *
+ * @param {LabColor} color - The Lab color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {JzAzBzColor} The color in JzAzBz space
+ */
+export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzAzBzColor =>
+  xyzToJzAzBz(labToXYZ(color), peakLuminance);
+
+/**
+ * Converts a color from CIE Lab to the JzCzHz color space.
+ *
+ * This function first converts the Lab color to XYZ, then from XYZ to JzCzHz.
+ * The JzCzHz color space is a cylindrical representation of JzAzBz, using lightness,
+ * chroma (saturation), and hue components, with improved perceptual uniformity
+ * for both low and high luminance levels, making it suitable for HDR content.
+ *
+ * @param {LabColor} color - The Lab color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {JzCzHzColor} The color in JzCzHz space
+ */
+export const labToJzCzHz = (color: LabColor, peakLuminance: number = 10000): JzCzHzColor =>
+  xyzToJzCzHz(labToXYZ(color), peakLuminance);

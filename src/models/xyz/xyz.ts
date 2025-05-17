@@ -4,11 +4,14 @@ import { ϵ, κ } from '../lab/constants';
 import { RGBColor } from '../rgb/rgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { delinearizeRGBColor } from '../rgb/transform';
-import { XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
+import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
 import { OKLabColor, oklabToOKLCh } from '../oklab/oklab';
 import { LChColor } from '../lch/lch';
 import { OKLChColor } from '../oklch/oklch';
 import { LMS_OKLAB_MATRIX } from '../oklab/constants';
+import { JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz/jzazbz';
+import { JzCzHzColor } from '../jzczhz/jzczhz';
+import { b, d, d0, g } from '../jzazbz/constants';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -127,3 +130,53 @@ export const xyzToOKLab = (color: XYZColor): OKLabColor => {
  */
 export const xyzToOKLCh = (color: XYZColor): OKLChColor =>
   oklabToOKLCh(xyzToOKLab(color));
+
+/**
+ * Converts a color from CIE XYZ to JzAzBz color space.
+ *
+ * This function implements the XYZ to JzAzBz conversion algorithm, which includes:
+ * 1. Pre-adapting XYZ values using chromatic adaptation factors
+ * 2. Converting to LMS cone responses using a transformation matrix
+ * 3. Applying the inverse Perceptual Quantizer (PQ) function to the LMS values
+ * 4. Converting to Iz, az, bz using another transformation matrix
+ * 5. Applying non-linear compression to Iz to get the Jz lightness component
+ *
+ * The JzAzBz color space is designed to be perceptually uniform with improved
+ * accuracy for both low and high luminance levels, making it suitable for HDR content.
+ *
+ * @param {XYZColor} color - The XYZ color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance in cd/m² that Y=1 maps to
+ * @returns {JzAzBzColor} The color in JzAzBz space
+ */
+export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzAzBzColor => {
+  const Xp =  b * color.x - (b - 1) * color.z;
+  const Yp =  g * color.y - (g - 1) * color.x;
+  const Zp =  color.z;
+
+  const [L, M, S] = multiplyMatrixByVector(XYZ_JZAZBZ_LMS_MATRIX, [Xp, Yp, Zp]);
+
+  const Lp = jzazbzPQInverse(L, peakLuminance);
+  const Mp = jzazbzPQInverse(M, peakLuminance);
+  const Sp = jzazbzPQInverse(S, peakLuminance);
+
+  const [Iz, az, bz] = multiplyMatrixByVector(XYZ_JZAZBZ_LMS_IABZ, [Lp, Mp, Sp]);
+
+  const jz = ((1 + d) * Iz) / (1 + d * Iz) - d0;
+
+  return { jz, az, bz, alpha: color.alpha };
+}
+
+/**
+ * Converts a color from CIE XYZ to JzCzHz color space.
+ *
+ * This function first converts the XYZ color to JzAzBz, then from JzAzBz to JzCzHz.
+ * The JzCzHz color space is a cylindrical representation of JzAzBz, using lightness,
+ * chroma (saturation), and hue components, with improved perceptual uniformity
+ * for both low and high luminance levels, making it suitable for HDR content.
+ *
+ * @param {XYZColor} color - The XYZ color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance in cd/m² that Y=1 maps to
+ * @returns {JzCzHzColor} The color in JzCzHz space
+ */
+export const xyzToJzCzHz = (color: XYZColor, peakLuminance: number = 10000): JzCzHzColor =>
+  jzazbzToJzCzHz(xyzToJzAzBz(color, peakLuminance));
