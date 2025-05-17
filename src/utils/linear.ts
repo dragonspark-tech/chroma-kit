@@ -34,6 +34,7 @@ export type Matrix3x3 = [
  * @returns {number[]} - The resulting vector after the matrix-vector multiplication.
  * @throws {Error} Throws an error if the matrix or vector is empty, or if their dimensions are incompatible.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const multiplyMatrixByVector = (
   matrix: number[][],
   vector: number[],
@@ -75,6 +76,7 @@ export const multiplyMatrixByVector = (
  * @param {Matrix3x3} matrix - A 3x3 matrix represented as a two-dimensional array.
  * @returns {Matrix3x3} A new 3x3 matrix that is the transpose of the input matrix.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const transposeMatrix3x3 = (matrix: Matrix3x3): Matrix3x3 => {
   return [
     [matrix[0][0], matrix[1][0], matrix[2][0]],
@@ -83,6 +85,14 @@ export const transposeMatrix3x3 = (matrix: Matrix3x3): Matrix3x3 => {
   ];
 };
 
+/**
+ * Multiplies two 3x3 matrices and returns the result as a new 3x3 matrix.
+ *
+ * @param {Matrix3x3} a - The first 3x3 matrix.
+ * @param {Matrix3x3} b - The second 3x3 matrix.
+ * @returns {Matrix3x3} - The resulting 3x3 matrix after multiplication.
+ */
+/*@__NO_SIDE_EFFECTS__*/
 export const multiplyMatrix3x3 = (a: Matrix3x3, b: Matrix3x3): Matrix3x3 => [
   [
     a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0],
@@ -108,6 +118,7 @@ export const multiplyMatrix3x3 = (a: Matrix3x3, b: Matrix3x3): Matrix3x3 => [
  * @param {number[][]} matrix - A two-dimensional array of numbers representing the matrix to be transposed.
  * @returns {number[][]} A new two-dimensional array representing the transposed matrix.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const transposeMatrix = (matrix: number[][]): number[][] => {
   const rows = matrix.length;
   if (rows === 0) return [];
@@ -131,6 +142,7 @@ export const transposeMatrix = (matrix: number[][]): number[][] => {
  * @returns {number[][]} The resulting matrix after multiplication. Each sub-array represents a row of the resulting matrix.
  * @throws {Error} Throws an error if the number of columns in the first matrix does not match the number of rows in the second matrix.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const multiplyMatrix = (a: number[][], b: number[][]): number[][] => {
   const aRows = a.length;
   const aCols = aRows ? a[0].length : 0;
@@ -175,6 +187,7 @@ export const multiplyMatrix = (a: number[][], b: number[][]): number[][] => {
  * @returns {number[][]} The resulting matrix from the multiplication of all input matrices.
  * @throws {Error} Throws an error if no matrices are provided.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const multiplyMatrices = (...matrices: number[][][]): number[][] => {
   if (matrices.length === 0) {
     throw new Error('No matrices provided for multiplication.');

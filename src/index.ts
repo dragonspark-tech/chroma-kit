@@ -1,4 +1,7 @@
-﻿export * from './models/rgb';
+﻿// Import the register-conversions module to register all conversions
+import './conversion/register-conversions';
+
+export * from './models/rgb';
 export * from './models/xyz';
 export * from './models/oklab';
 export * from './models/oklch';
@@ -7,3 +10,4 @@ export * from './models/lch';
 export * from './models/jzazbz';
 export * from './models/jzczhz';
 export * from './models/factories';
+export * from './conversion/conversion';

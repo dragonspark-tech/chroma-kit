@@ -7,6 +7,7 @@ import { RGB_INVERSE } from './constants';
  * @param {RGBColor} color - An object representing an RGB color with properties `r`, `g`, and `b`.
  * @returns {RGBColor} A new RGBColor object with each color channel normalized.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const normalizeRGBColor = (color: RGBColor): RGBColor => ({
   space: 'rgb',
 
@@ -22,6 +23,7 @@ export const normalizeRGBColor = (color: RGBColor): RGBColor => ({
  * @param {RGBColor} color - An object representing an RGB color with properties `r`, `g`, and `b`.
  * @returns {RGBColor} A new RGBColor object with each color channel denormalized.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const denormalizeRGBColor = (color: RGBColor): RGBColor => ({
   space: 'rgb',
 
@@ -40,6 +42,7 @@ export const denormalizeRGBColor = (color: RGBColor): RGBColor => ({
  * @param {number} channel - The input color channel value, normalized in the range [0, 1].
  * @returns {number} The gamma-corrected color channel value.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const applyRGBGammaTransfer = (channel: number): number =>
   channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
 
@@ -51,6 +54,7 @@ export const applyRGBGammaTransfer = (channel: number): number =>
  *                           Each property represents a color channel value in the range [0, 1].
  * @returns {RGBColor} A new RGBColor object with each color channel linearized using the gamma transfer function.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const linearizeRGBColor = (color: RGBColor): RGBColor => {
   return {
     space: 'rgb',
@@ -69,6 +73,7 @@ export const linearizeRGBColor = (color: RGBColor): RGBColor => {
  * @param {number} channel - The linear color channel value in the range [0, 1].
  * @returns {number} The gamma-corrected color channel value.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const applyRGBInverseGammaTransfer = (channel: number): number =>
   channel <= 0.0031308 ? channel * 12.92 : 1.055 * channel ** (1 / 2.4) - 0.055;
 
@@ -80,6 +85,7 @@ export const applyRGBInverseGammaTransfer = (channel: number): number =>
  *                           Each property represents a linear color channel value in the range [0, 1].
  * @returns {RGBColor} A new RGBColor object with each color channel converted back to gamma-corrected form.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const delinearizeRGBColor = (color: RGBColor): RGBColor => {
   return {
     space: 'rgb',

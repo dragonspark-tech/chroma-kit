@@ -9,5 +9,6 @@
  * @param {any} n - The value to be checked.
  * @returns {boolean} `true` if the value is `null` or `undefined`, otherwise `false`.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const isNone = (n: any): boolean =>
   n === null || n === undefined;

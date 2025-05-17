@@ -1,86 +1,43 @@
-import { BaseColorFactory } from '../factory';
+import { ColorFactory } from '../factory';
 import { LChColor } from './lch';
+import { convertColor } from '../../conversion/conversion';
+import { serializeV1 } from '../../semantics/serialization';
 
 /**
- * Factory for creating and manipulating LCh colors.
+ * Interface for LCh color factory functions
  */
-export class LChFactory extends BaseColorFactory {
-  private color: LChColor;
-
+export interface LChFactory extends ColorFactory {
   /**
-   * Creates a new LCh color factory.
+   * Gets the lightness component.
    *
-   * @param {number} l - Lightness component (0-100)
-   * @param {number} c - Chroma component
-   * @param {number} h - Hue component (0-360 degrees)
-   * @param {number} [alpha] - Alpha component (0-1)
+   * @returns {number} Lightness component (0-100)
    */
-  constructor(l: number, c: number, h: number, alpha?: number) {
-    super();
-    // Normalize hue to 0-360 range
-    const normalizedH = ((h % 360) + 360) % 360;
-    this.color = { space: 'lch', l, c, h: normalizedH, alpha };
-  }
+  l: number;
+  /**
+   * Gets the chroma component.
+   *
+   * @returns {number} Chroma component
+   */
+  c: number;
+  /**
+   * Gets the hue component.
+   *
+   * @returns {number} Hue component (0-360 degrees)
+   */
+  h: number;
+  /**
+   * Gets the alpha component.
+   *
+   * @returns {number|undefined} Alpha component (0-1) or undefined
+   */
+  alpha: number | undefined;
 
   /**
    * Converts the factory to a plain LCh color object.
    *
    * @returns {LChColor} Plain LCh color object
    */
-  toColor(): LChColor {
-    return this.color;
-  }
-
-  /**
-   * Converts the LCh color to a CSS-compatible string representation.
-   *
-   * @returns {string} CSS-compatible string representation of the LCh color
-   */
-  toCSSString(): string {
-    const { l, c, h, alpha } = this.color;
-
-    if (alpha !== undefined && alpha < 1) {
-      return `lch(${l.toFixed(1)}% ${c.toFixed(1)} ${h.toFixed(1)} / ${alpha.toFixed(3)})`;
-    }
-
-    return `lch(${l.toFixed(1)}% ${c.toFixed(1)} ${h.toFixed(1)})`;
-  }
-
-  /**
-   * Gets the lightness component.
-   *
-   * @returns {number} Lightness component (0-100)
-   */
-  get l(): number {
-    return this.color.l;
-  }
-
-  /**
-   * Gets the chroma component.
-   *
-   * @returns {number} Chroma component
-   */
-  get c(): number {
-    return this.color.c;
-  }
-
-  /**
-   * Gets the hue component.
-   *
-   * @returns {number} Hue component (0-360 degrees)
-   */
-  get h(): number {
-    return this.color.h;
-  }
-
-  /**
-   * Gets the alpha component.
-   *
-   * @returns {number|undefined} Alpha component (0-1) or undefined
-   */
-  get alpha(): number | undefined {
-    return this.color.alpha;
-  }
+  toColor(): LChColor;
 }
 
 /**
@@ -92,6 +49,48 @@ export class LChFactory extends BaseColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {LChFactory} A new LCh factory
  */
+/*@__NO_SIDE_EFFECTS__*/
 export function lch(l: number, c: number, h: number, alpha?: number): LChFactory {
-  return new LChFactory(l, c, h, alpha);
+  // Normalize hue to 0-360 range
+  const normalizedH = ((h % 360) + 360) % 360;
+  const color: LChColor = { space: 'lch', l, c, h: normalizedH, alpha };
+
+  return {
+    // Properties
+    l,
+    c,
+    h: normalizedH,
+    alpha,
+
+    // Methods
+    toColor: () => color,
+
+    toString: (options?: { css?: boolean }) => {
+      if (options?.css) {
+        return lchToCSSString(color);
+      }
+      return serializeV1(color);
+    },
+
+    toCSSString: () => lchToCSSString(color),
+
+    to: (colorSpace: string) => convertColor(color, colorSpace)
+  };
+}
+
+/**
+ * Converts an LCh color to a CSS-compatible string representation.
+ *
+ * @param {LChColor} color - The LCh color to convert
+ * @returns {string} CSS-compatible string representation of the LCh color
+ */
+/*@__NO_SIDE_EFFECTS__*/
+function lchToCSSString(color: LChColor): string {
+  const { l, c, h, alpha } = color;
+
+  if (alpha !== undefined && alpha < 1) {
+    return `lch(${l.toFixed(1)}% ${c.toFixed(1)} ${h.toFixed(1)} / ${alpha.toFixed(3)})`;
+  }
+
+  return `lch(${l.toFixed(1)}% ${c.toFixed(1)} ${h.toFixed(1)})`;
 }

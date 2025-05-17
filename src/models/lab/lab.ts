@@ -1,12 +1,13 @@
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz';
+import { XYZColor } from '../xyz';
 import { ϵ, κ } from './constants';
 import { RGBColor } from '../rgb';
 import { LChColor } from '../lch';
-import { OKLabColor, oklabToOKLCh } from '../oklab';
+import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the CIE Lab color space.
@@ -32,12 +33,20 @@ export type LabColor = {
 /**
  * Converts a color from CIE Lab to RGB color space.
  *
- * This function first converts the Lab color to XYZ, then from XYZ to RGB.
+ * This function uses the automatic conversion system to find the optimal path
+ * from Lab to RGB, which typically goes through XYZ.
  *
  * @param {LabColor} color - The Lab color to convert
  * @returns {RGBColor} The color in RGB space
  */
-export const labToRGB = (color: LabColor): RGBColor => xyzToRGB(labToXYZ(color));
+/*@__NO_SIDE_EFFECTS__*/
+export const labToRGB = (color: LabColor): RGBColor => {
+  const result = convertColor<LabColor, RGBColor>(color, 'rgb');
+  if (!result) {
+    throw new Error('Could not convert from Lab to RGB');
+  }
+  return result;
+};
 
 /**
  * Converts a color from CIE Lab to CIE XYZ color space.
@@ -51,6 +60,7 @@ export const labToRGB = (color: LabColor): RGBColor => xyzToRGB(labToXYZ(color))
  * @param {Illuminant} [illuminant] - The reference white point to use (defaults to D65)
  * @returns {XYZColor} The color in XYZ space with the specified illuminant
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => {
   const i = illuminant || IlluminantD65;
 
@@ -87,64 +97,91 @@ export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => 
  * @param {LabColor} color - The Lab color to convert
  * @returns {LChColor} The color in LCh space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const labToLCH = (color: LabColor): LChColor => {
   const c = Math.hypot(color.a, color.b);
   const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
-  return { space: 'lch', l: color.l, c, h };
+  return { space: 'lch', l: color.l, c, h, alpha: color.alpha };
 };
 
 /**
  * Converts a color from CIE Lab to OKLab color space.
  *
- * This function first converts the Lab color to XYZ, then from XYZ to OKLab.
- * The OKLab color space is designed to be perceptually uniform with improved
- * accuracy compared to the traditional Lab space.
+ * This function uses the automatic conversion system to find the optimal path
+ * from Lab to OKLab, which typically goes through XYZ.
  *
  * @param {LabColor} color - The Lab color to convert
  * @returns {OKLabColor} The color in OKLab space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const labToOKLab = (color: LabColor): OKLabColor => {
-  return xyzToOKLab(labToXYZ(color));
+  const result = convertColor<LabColor, OKLabColor>(color, 'oklab');
+  if (!result) {
+    throw new Error('Could not convert from Lab to OKLab');
+  }
+  return result;
 };
 
 /**
  * Converts a color from CIE Lab to OKLCh color space.
  *
- * This function first converts the Lab color to OKLab, then from OKLab to OKLCh.
- * The OKLCh color space is a cylindrical representation of OKLab, using lightness,
- * chroma (saturation), and hue components, with improved perceptual uniformity.
+ * This function uses the automatic conversion system to find the optimal path
+ * from Lab to OKLCh, which typically goes through XYZ and OKLab.
  *
  * @param {LabColor} color - The Lab color to convert
  * @returns {OKLChColor} The color in OKLCh space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const labToOKLCh = (color: LabColor): OKLChColor => {
-  return oklabToOKLCh(labToOKLab(color));
+  const result = convertColor<LabColor, OKLChColor>(color, 'oklch');
+  if (!result) {
+    throw new Error('Could not convert from Lab to OKLCh');
+  }
+  return result;
 };
 
 /**
  * Converts a color from CIE Lab to the JzAzBz color space.
  *
- * This function first converts the Lab color to XYZ, then from XYZ to JzAzBz.
- * JzAzBz is a color space designed to be perceptually uniform and device-independent.
+ * This function uses the automatic conversion system to find the optimal path
+ * from Lab to JzAzBz, which typically goes through XYZ.
  *
  * @param {LabColor} color - The Lab color to convert
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzAzBzColor =>
-  xyzToJzAzBz(labToXYZ(color), peakLuminance);
+/*@__NO_SIDE_EFFECTS__*/
+export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzAzBzColor => {
+  // First convert to XYZ
+  const xyz = labToXYZ(color);
+
+  // Then use the automatic conversion system with the peak luminance parameter
+  const result = convertColor<XYZColor, JzAzBzColor>(xyz, 'jzazbz', peakLuminance);
+  if (!result) {
+    throw new Error('Could not convert from XYZ to JzAzBz');
+  }
+  return result;
+};
 
 /**
  * Converts a color from CIE Lab to the JzCzHz color space.
  *
- * This function first converts the Lab color to XYZ, then from XYZ to JzCzHz.
- * The JzCzHz color space is a cylindrical representation of JzAzBz, using lightness,
- * chroma (saturation), and hue components, with improved perceptual uniformity
- * for both low and high luminance levels, making it suitable for HDR content.
+ * This function uses the automatic conversion system to find the optimal path
+ * from Lab to JzCzHz, which typically goes through XYZ and JzAzBz.
  *
  * @param {LabColor} color - The Lab color to convert
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const labToJzCzHz = (color: LabColor, peakLuminance: number = 10000): JzCzHzColor =>
-  xyzToJzCzHz(labToXYZ(color), peakLuminance);
+/*@__NO_SIDE_EFFECTS__*/
+export const labToJzCzHz = (color: LabColor, peakLuminance: number = 10000): JzCzHzColor => {
+  // First convert to XYZ
+  const xyz = labToXYZ(color);
+
+  // Then use the automatic conversion system with the peak luminance parameter
+  const result = convertColor<XYZColor, JzCzHzColor>(xyz, 'jzczhz', peakLuminance);
+  if (!result) {
+    throw new Error('Could not convert from XYZ to JzCzHz');
+  }
+  return result;
+};

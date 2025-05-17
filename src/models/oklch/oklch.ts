@@ -36,6 +36,7 @@ export type OKLChColor = {
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {RGBColor} The color in RGB space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklchToRGB = (color: OKLChColor): RGBColor => {
   const xyz = oklchToXYZ(color);
   return xyzToRGB(xyz);
@@ -49,6 +50,7 @@ export const oklchToRGB = (color: OKLChColor): RGBColor => {
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {XYZColor} The color in XYZ space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklchToXYZ = (color: OKLChColor): XYZColor => {
   const oklab = oklchToOKLab(color);
   return oklabToXYZ(oklab);
@@ -62,6 +64,7 @@ export const oklchToXYZ = (color: OKLChColor): XYZColor => {
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {LabColor} The color in Lab space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklchToLab = (color: OKLChColor): LabColor => oklabToLab(oklchToOKLab(color));
 
 /**
@@ -72,6 +75,7 @@ export const oklchToLab = (color: OKLChColor): LabColor => oklabToLab(oklchToOKL
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {LChColor} The color in LCh space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklchToLCh = (color: OKLChColor): LChColor => oklabToLCh(oklchToOKLab(color));
 
 /**
@@ -84,6 +88,7 @@ export const oklchToLCh = (color: OKLChColor): LChColor => oklabToLCh(oklchToOKL
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {OKLabColor} The color in OKLab space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklchToOKLab = (color: OKLChColor): OKLabColor => {
   const hRad = (color.h * Math.PI) / 180;
   const a = color.c * Math.cos(hRad);
@@ -102,6 +107,7 @@ export const oklchToOKLab = (color: OKLChColor): OKLabColor => {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklchToJzAzBz = (color: OKLChColor, peakLuminance: number = 10000): JzAzBzColor =>
   xyzToJzAzBz(oklchToXYZ(color), peakLuminance);
 
@@ -117,5 +123,6 @@ export const oklchToJzAzBz = (color: OKLChColor, peakLuminance: number = 10000):
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklchToJzCzHz = (color: OKLChColor, peakLuminance: number = 10000): JzCzHzColor =>
   xyzToJzCzHz(oklchToXYZ(color), peakLuminance);

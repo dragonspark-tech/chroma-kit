@@ -1,5 +1,6 @@
 ﻿import { type Matrix3x3 } from '../../utils/linear';
 
+/*@__NO_SIDE_EFFECTS__*/
 export const RGB_INVERSE = 1 / 255;
 
 /**
@@ -13,6 +14,7 @@ export const RGB_INVERSE = 1 / 255;
  * Y = 0.2126729*R + 0.7151522*G + 0.0721750*B
  * Z = 0.0193339*R + 0.1191920*G + 0.9503041*B
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const RGB_XYZ_MATRIX: Matrix3x3 = [
   [0.4124564, 0.3575761, 0.1804375],
   [0.2126729, 0.7151522, 0.072175],

@@ -37,6 +37,7 @@ export type OKLabColor = {
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {RGBColor} The color in RGB space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklabToRGB = (color: OKLabColor): RGBColor => xyzToRGB(oklabToXYZ(color));
 
 /**
@@ -50,6 +51,7 @@ export const oklabToRGB = (color: OKLabColor): RGBColor => xyzToRGB(oklabToXYZ(c
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {XYZColor} The color in XYZ space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklabToXYZ = (color: OKLabColor): XYZColor => {
   const [l, m, s] = multiplyMatrixByVector(OKLAB_LMS_MATRIX, [color.l, color.a, color.b]);
   const linear = [l ** 3, m ** 3, s ** 3];
@@ -57,7 +59,7 @@ export const oklabToXYZ = (color: OKLabColor): XYZColor => {
   const xyz = multiplyMatrixByVector(OKLCH_THROUGH_LMS_XYZ_MATRIX, linear);
 
   return { space: 'xyz', x: xyz[0], y: xyz[1], z: xyz[2], alpha: color.alpha };
-}
+};
 
 /**
  * Converts a color from OKLab to CIE Lab color space.
@@ -67,6 +69,7 @@ export const oklabToXYZ = (color: OKLabColor): XYZColor => {
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {LabColor} The color in Lab space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklabToLab = (color: OKLabColor): LabColor => xyzToLab(oklabToXYZ(color));
 
 /**
@@ -77,6 +80,7 @@ export const oklabToLab = (color: OKLabColor): LabColor => xyzToLab(oklabToXYZ(c
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {LChColor} The color in LCh space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklabToLCh = (color: OKLabColor): LChColor => xyzToLCh(oklabToXYZ(color));
 
 /**
@@ -89,6 +93,7 @@ export const oklabToLCh = (color: OKLabColor): LChColor => xyzToLCh(oklabToXYZ(c
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {OKLChColor} The color in OKLCh space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const oklabToOKLCh = (color: OKLabColor): OKLChColor => {
   const C = Math.hypot(color.a, color.b);
   const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
@@ -106,6 +111,7 @@ export const oklabToOKLCh = (color: OKLabColor): OKLChColor => {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const okLabToJzAzBz = (color: OKLabColor, peakLuminance: number = 10000): JzAzBzColor =>
   xyzToJzAzBz(oklabToXYZ(color), peakLuminance);
 
@@ -121,5 +127,6 @@ export const okLabToJzAzBz = (color: OKLabColor, peakLuminance: number = 10000):
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const okLabToJzCzHz = (color: OKLabColor, peakLuminance: number = 10000): JzCzHzColor =>
   xyzToJzCzHz(oklabToXYZ(color), peakLuminance);

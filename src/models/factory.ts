@@ -25,6 +25,8 @@ export interface ColorFactory {
    * @throws {Error} If the color space is not representable in CSS
    */
   toCSSString?(): string;
+
+  to(colorSpace: string): ColorFactory | null;
 }
 
 /**
@@ -63,6 +65,15 @@ export abstract class BaseColorFactory implements ColorFactory {
    * @returns {any} Plain color object
    */
   abstract toColor(): any;
+
+  /**
+   * Converts the current color to the specified color space.
+   *
+   * @param {string} colorSpace - The target color space to convert to.
+   * @return {ColorFactory | null} The converted color object in the specified color space,
+   * or null if conversion is not possible.
+   */
+  abstract to(colorSpace: string): ColorFactory | null;
 }
 
 /**
@@ -71,6 +82,9 @@ export abstract class BaseColorFactory implements ColorFactory {
  * @param {ColorFactory} factory - The color factory to check
  * @returns {boolean} True if the factory supports CSS representation
  */
-export function supportsCSSRepresentation(factory: ColorFactory): factory is ColorFactory & { toCSSString: () => string } {
+/*@__NO_SIDE_EFFECTS__*/
+export function supportsCSSRepresentation(factory: ColorFactory): factory is ColorFactory & {
+  toCSSString: () => string;
+} {
   return typeof (factory as any).toCSSString === 'function';
 }

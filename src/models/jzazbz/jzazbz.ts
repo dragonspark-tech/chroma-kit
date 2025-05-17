@@ -40,6 +40,7 @@ export type JzAzBzColor = {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {RGBColor} The color in RGB space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzToRGB = (color: JzAzBzColor, peakLuminance: number = 10000): RGBColor =>
   xyzToRGB(jzazbzToXYZ(color, peakLuminance));
 
@@ -57,6 +58,7 @@ export const jzazbzToRGB = (color: JzAzBzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {XYZColor} The color in XYZ space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzToXYZ = (color: JzAzBzColor, peakLuminance: number = 10000): XYZColor => {
   const JzPrime = color.jz + d0;
   const Iz = JzPrime / (1 + d - d * JzPrime);
@@ -85,6 +87,7 @@ export const jzazbzToXYZ = (color: JzAzBzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {LabColor} The color in Lab space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzToLab = (color: JzAzBzColor, peakLuminance: number = 10000): LabColor =>
   xyzToLab(jzazbzToXYZ(color, peakLuminance));
 
@@ -97,6 +100,7 @@ export const jzazbzToLab = (color: JzAzBzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {LChColor} The color in LCh space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzToLCh = (color: JzAzBzColor, peakLuminance: number = 10000): LChColor =>
   xyzToLCh(jzazbzToXYZ(color, peakLuminance));
 
@@ -109,6 +113,7 @@ export const jzazbzToLCh = (color: JzAzBzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {OKLabColor} The color in OKLab space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzToOKLab = (color: JzAzBzColor, peakLuminance: number = 10000): OKLabColor =>
   xyzToOKLab(jzazbzToXYZ(color, peakLuminance));
 
@@ -121,6 +126,7 @@ export const jzazbzToOKLab = (color: JzAzBzColor, peakLuminance: number = 10000)
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {OKLChColor} The color in OKLCh space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzToOKLCh = (color: JzAzBzColor, peakLuminance: number = 10000): OKLChColor =>
   xyzToOKLCh(jzazbzToXYZ(color, peakLuminance));
 
@@ -134,6 +140,7 @@ export const jzazbzToOKLCh = (color: JzAzBzColor, peakLuminance: number = 10000)
  * @param {JzAzBzColor} color - The JzAzBz color to convert
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzToJzCzHz = (color: JzAzBzColor): JzCzHzColor => {
   const cz = Math.hypot(color.az, color.bz);
   const hz = ((Math.atan2(color.bz, color.az) * 180) / Math.PI + 360) % 360;
@@ -150,6 +157,7 @@ export const jzazbzToJzCzHz = (color: JzAzBzColor): JzCzHzColor => {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {number} The linear light value
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzPQInverse = (E: number, peakLuminance: number = 10000): number => {
   const x = (E / peakLuminance) ** m1;
   const num = c1 + c2 * x;
@@ -167,6 +175,7 @@ export const jzazbzPQInverse = (E: number, peakLuminance: number = 10000): numbe
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {number} The encoded non-linear value
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const jzazbzPQForward = (Ep: number, peakLuminance: number = 10000): number => {
   const y = Math.pow(Ep, 1 / m2p);
   const num = c1 - y;

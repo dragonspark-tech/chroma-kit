@@ -5,6 +5,7 @@
  * a linear or power function during the XYZ to Lab conversion process.
  * It helps handle very small values in the conversion to avoid numerical issues.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const δ = 0.20689655172413793;
 
 /**
@@ -14,6 +15,7 @@ export const δ = 0.20689655172413793;
  * functions that convert between XYZ and Lab color spaces. Values below
  * this threshold use a linear approximation instead of the cube root function.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const ϵ = 0.008856451679035631;
 
 /**
@@ -23,4 +25,5 @@ export const ϵ = 0.008856451679035631;
  * in the linear portion of the Lab conversion functions to ensure
  * continuity and smoothness at the transition point defined by ϵ.
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const κ = 903.2962962962963;

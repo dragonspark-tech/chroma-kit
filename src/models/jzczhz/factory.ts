@@ -1,71 +1,43 @@
-import { BaseColorFactory } from '../factory';
+import { ColorFactory } from '../factory';
 import { JzCzHzColor } from './jzczhz';
+import { convertColor } from '../../conversion/conversion';
+import { serializeV1 } from '../../semantics/serialization';
 
 /**
- * Factory for creating and manipulating JzCzHz colors.
+ * Interface for JzCzHz color factory functions
  */
-export class JzCzHzFactory extends BaseColorFactory {
-  private color: JzCzHzColor;
-
+export interface JzCzHzFactory extends ColorFactory {
   /**
-   * Creates a new JzCzHz color factory.
+   * Gets the lightness component.
    *
-   * @param {number} jz - Lightness component
-   * @param {number} cz - Chroma component
-   * @param {number} hz - Hue component (0-360 degrees)
-   * @param {number} [alpha] - Alpha component (0-1)
+   * @returns {number} Lightness component
    */
-  constructor(jz: number, cz: number, hz: number, alpha?: number) {
-    super();
-    // Normalize hue to 0-360 range
-    const normalizedHz = ((hz % 360) + 360) % 360;
-    this.color = { space: 'jzczhz', jz, cz, hz: normalizedHz, alpha };
-  }
+  jz: number;
+  /**
+   * Gets the chroma component.
+   *
+   * @returns {number} Chroma component
+   */
+  cz: number;
+  /**
+   * Gets the hue component.
+   *
+   * @returns {number} Hue component (0-360 degrees)
+   */
+  hz: number;
+  /**
+   * Gets the alpha component.
+   *
+   * @returns {number|undefined} Alpha component (0-1) or undefined
+   */
+  alpha: number | undefined;
 
   /**
    * Converts the factory to a plain JzCzHz color object.
    *
    * @returns {JzCzHzColor} Plain JzCzHz color object
    */
-  toColor(): JzCzHzColor {
-    return this.color;
-  }
-
-  /**
-   * Gets the lightness component.
-   *
-   * @returns {number} Lightness component
-   */
-  get jz(): number {
-    return this.color.jz;
-  }
-
-  /**
-   * Gets the chroma component.
-   *
-   * @returns {number} Chroma component
-   */
-  get cz(): number {
-    return this.color.cz;
-  }
-
-  /**
-   * Gets the hue component.
-   *
-   * @returns {number} Hue component (0-360 degrees)
-   */
-  get hz(): number {
-    return this.color.hz;
-  }
-
-  /**
-   * Gets the alpha component.
-   *
-   * @returns {number|undefined} Alpha component (0-1) or undefined
-   */
-  get alpha(): number | undefined {
-    return this.color.alpha;
-  }
+  toColor(): JzCzHzColor;
 }
 
 /**
@@ -77,6 +49,26 @@ export class JzCzHzFactory extends BaseColorFactory {
  * @param {number} [alpha] - Alpha component (0-1)
  * @returns {JzCzHzFactory} A new JzCzHz factory
  */
+/*@__NO_SIDE_EFFECTS__*/
 export function jzczhz(jz: number, cz: number, hz: number, alpha?: number): JzCzHzFactory {
-  return new JzCzHzFactory(jz, cz, hz, alpha);
+  // Normalize hue to 0-360 range
+  const normalizedHz = ((hz % 360) + 360) % 360;
+  const color: JzCzHzColor = { space: 'jzczhz', jz, cz, hz: normalizedHz, alpha };
+
+  return {
+    // Properties
+    jz,
+    cz,
+    hz: normalizedHz,
+    alpha,
+
+    // Methods
+    toColor: () => color,
+
+    toString: (options?: { css?: boolean }) => {
+      return serializeV1(color);
+    },
+
+    to: (colorSpace: string) => convertColor(color, colorSpace)
+  };
 }

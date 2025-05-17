@@ -1,17 +1,13 @@
-﻿import { LabColor, labToLCH } from '../lab';
+﻿import { LabColor, labToLCH, ϵ, κ } from '../lab';
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { ϵ, κ } from '../lab';
-import { RGBColor } from '../rgb';
+import { delinearizeRGBColor, RGBColor } from '../rgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { delinearizeRGBColor } from '../rgb';
 import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
-import { OKLabColor, oklabToOKLCh } from '../oklab';
+import { LMS_OKLAB_MATRIX, OKLabColor, oklabToOKLCh } from '../oklab';
 import { LChColor } from '../lch';
 import { OKLChColor } from '../oklch';
-import { LMS_OKLAB_MATRIX } from '../oklab';
-import { JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
+import { b, d, d0, g, JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
-import { b, d, d0, g } from '../jzazbz';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -46,9 +42,16 @@ export type XYZColor = {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {RGBColor} The color in RGB space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const xyzToRGB = (color: XYZColor): RGBColor => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
-  return delinearizeRGBColor({ space: 'rgb', r: lRGB[0], g: lRGB[1], b: lRGB[2], alpha: color.alpha });
+  return delinearizeRGBColor({
+    space: 'rgb',
+    r: lRGB[0],
+    g: lRGB[1],
+    b: lRGB[2],
+    alpha: color.alpha
+  });
 };
 
 /**
@@ -66,6 +69,7 @@ export const xyzToRGB = (color: XYZColor): RGBColor => {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {LabColor} The color in Lab space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const xyzToLab = (color: XYZColor): LabColor => {
   const i = color.illuminant || IlluminantD65;
 
@@ -97,8 +101,8 @@ export const xyzToLab = (color: XYZColor): LabColor => {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {LChColor} The color in LCh space
  */
-export const xyzToLCh = (color: XYZColor): LChColor =>
-  labToLCH(xyzToLab(color))
+/*@__NO_SIDE_EFFECTS__*/
+export const xyzToLCh = (color: XYZColor): LChColor => labToLCH(xyzToLab(color));
 
 /**
  * Converts a color from CIE XYZ to OKLab color space.
@@ -114,8 +118,13 @@ export const xyzToLCh = (color: XYZColor): LChColor =>
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {OKLabColor} The color in OKLab space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const xyzToOKLab = (color: XYZColor): OKLabColor => {
-  const [l, m, s] = multiplyMatrixByVector(XYZ_OKLCH_THROUGH_LMS_MATRIX, [color.x, color.y, color.z]);
+  const [l, m, s] = multiplyMatrixByVector(XYZ_OKLCH_THROUGH_LMS_MATRIX, [
+    color.x,
+    color.y,
+    color.z
+  ]);
   const nonLinear = [Math.cbrt(l), Math.cbrt(m), Math.cbrt(s)];
 
   const oklab = multiplyMatrixByVector(LMS_OKLAB_MATRIX, nonLinear);
@@ -132,8 +141,8 @@ export const xyzToOKLab = (color: XYZColor): OKLabColor => {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {OKLChColor} The color in OKLCh space
  */
-export const xyzToOKLCh = (color: XYZColor): OKLChColor =>
-  oklabToOKLCh(xyzToOKLab(color));
+/*@__NO_SIDE_EFFECTS__*/
+export const xyzToOKLCh = (color: XYZColor): OKLChColor => oklabToOKLCh(xyzToOKLab(color));
 
 /**
  * Converts a color from CIE XYZ to JzAzBz color space.
@@ -152,10 +161,11 @@ export const xyzToOKLCh = (color: XYZColor): OKLChColor =>
  * @param {number} [peakLuminance=10000] - The peak luminance in cd/m² that Y=1 maps to
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzAzBzColor => {
-  const Xp =  b * color.x - (b - 1) * color.z;
-  const Yp =  g * color.y - (g - 1) * color.x;
-  const Zp =  color.z;
+  const Xp = b * color.x - (b - 1) * color.z;
+  const Yp = g * color.y - (g - 1) * color.x;
+  const Zp = color.z;
 
   const [L, M, S] = multiplyMatrixByVector(XYZ_JZAZBZ_LMS_MATRIX, [Xp, Yp, Zp]);
 
@@ -168,7 +178,7 @@ export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzA
   const jz = ((1 + d) * Iz) / (1 + d * Iz) - d0;
 
   return { space: 'jzazbz', jz, az, bz, alpha: color.alpha };
-}
+};
 
 /**
  * Converts a color from CIE XYZ to JzCzHz color space.
@@ -182,5 +192,6 @@ export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance in cd/m² that Y=1 maps to
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
+/*@__NO_SIDE_EFFECTS__*/
 export const xyzToJzCzHz = (color: XYZColor, peakLuminance: number = 10000): JzCzHzColor =>
   jzazbzToJzCzHz(xyzToJzAzBz(color, peakLuminance));
