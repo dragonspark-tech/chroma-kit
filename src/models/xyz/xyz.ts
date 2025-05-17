@@ -1,6 +1,6 @@
 ﻿import { LabColor, labToLCH, ϵ, κ } from '../lab';
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { delinearizeRGBColor, RGBColor } from '../rgb';
+import { delinearizeRGBColor, RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
 import { LMS_OKLAB_MATRIX, OKLabColor, oklabToOKLCh } from '../oklab';
@@ -8,6 +8,8 @@ import { LChColor } from '../lch';
 import { OKLChColor } from '../oklch';
 import { b, d, d0, g, JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
+import { HSLColor } from '../hsl';
+import { HSVColor } from '../hsv';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -53,6 +55,32 @@ export const xyzToRGB = (color: XYZColor): RGBColor => {
     alpha: color.alpha
   });
 };
+
+/**
+ * Converts a color from CIE XYZ to HSL color space.
+ *
+ * This function first converts the XYZ color to RGB, then from RGB to HSL.
+ * The HSL color space is a cylindrical representation of RGB, using hue,
+ * saturation, and lightness components.
+ *
+ * @param {XYZColor} color - The XYZ color to convert
+ * @returns {HSLColor} The color in HSL space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const xyzToHSL = (color: XYZColor): HSLColor => rgbToHSL(xyzToRGB(color));
+
+/**
+ * Converts a color from CIE XYZ to HSV color space.
+ *
+ * This function first converts the XYZ color to RGB, then from RGB to HSV.
+ * The HSV color space is a cylindrical representation of RGB, using hue,
+ * saturation, and value components.
+ *
+ * @param {XYZColor} color - The XYZ color to convert
+ * @returns {HSVColor} The color in HSV space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const xyzToHSV = (color: XYZColor): HSVColor => rgbToHSV(xyzToRGB(color));
 
 /**
  * Converts a color from CIE XYZ to CIE Lab color space.

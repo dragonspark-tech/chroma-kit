@@ -1,13 +1,15 @@
 import { b, c1, c2, c3, d, d0, g, JZAZBZ_XYZ_LMS_IABZ, JZAZBZ_XYZ_LMS_MATRIX, m1, m2p } from './constants';
 import { XYZColor, xyzToLab, xyzToLCh, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { RGBColor } from '../rgb';
+import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { JzCzHzColor } from '../jzczhz';
 import { IlluminantD65 } from '../../standards/illuminants';
+import { HSLColor } from '../hsl';
+import { HSVColor } from '../hsv';
 
 /**
  * Represents a color in the JzAzBz color space.
@@ -43,6 +45,36 @@ export type JzAzBzColor = {
 /*@__NO_SIDE_EFFECTS__*/
 export const jzazbzToRGB = (color: JzAzBzColor, peakLuminance: number = 10000): RGBColor =>
   xyzToRGB(jzazbzToXYZ(color, peakLuminance));
+
+/**
+ * Converts a color from JzAzBz to HSL color space.
+ *
+ * This function first converts the JzAzBz color to RGB, then from RGB to HSL.
+ * The HSL color space is a cylindrical representation of RGB, using hue,
+ * saturation, and lightness components.
+ *
+ * @param {JzAzBzColor} color - The JzAzBz color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {HSLColor} The color in HSL space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const jzazbzToHSL = (color: JzAzBzColor, peakLuminance: number = 10000): HSLColor =>
+  rgbToHSL(jzazbzToRGB(color, peakLuminance));
+
+/**
+ * Converts a color from JzAzBz to HSV color space.
+ *
+ * This function first converts the JzAzBz color to RGB, then from RGB to HSV.
+ * The HSV color space is a cylindrical representation of RGB, using hue,
+ * saturation, and value components.
+ *
+ * @param {JzAzBzColor} color - The JzAzBz color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {HSVColor} The color in HSV space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const jzazbzToHSV = (color: JzAzBzColor, peakLuminance: number = 10000): HSVColor =>
+  rgbToHSV(jzazbzToRGB(color, peakLuminance));
 
 /**
  * Converts a color from JzAzBz to CIE XYZ color space.

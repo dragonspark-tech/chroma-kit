@@ -7,6 +7,8 @@ import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
+import { HSLColor } from '../hsl';
+import { HSVColor } from '../hsv';
 import { convertColor } from '../../conversion/conversion';
 
 /**
@@ -44,6 +46,42 @@ export const labToRGB = (color: LabColor): RGBColor => {
   const result = convertColor<LabColor, RGBColor>(color, 'rgb');
   if (!result) {
     throw new Error('Could not convert from Lab to RGB');
+  }
+  return result;
+};
+
+/**
+ * Converts a color from CIE Lab to HSL color space.
+ *
+ * This function uses the automatic conversion system to find the optimal path
+ * from Lab to HSL, which typically goes through XYZ and RGB.
+ *
+ * @param {LabColor} color - The Lab color to convert
+ * @returns {HSLColor} The color in HSL space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const labToHSL = (color: LabColor): HSLColor => {
+  const result = convertColor<LabColor, HSLColor>(color, 'hsl');
+  if (!result) {
+    throw new Error('Could not convert from Lab to HSL');
+  }
+  return result;
+};
+
+/**
+ * Converts a color from CIE Lab to HSV color space.
+ *
+ * This function uses the automatic conversion system to find the optimal path
+ * from Lab to HSV, which typically goes through XYZ and RGB.
+ *
+ * @param {LabColor} color - The Lab color to convert
+ * @returns {HSVColor} The color in HSV space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const labToHSV = (color: LabColor): HSVColor => {
+  const result = convertColor<LabColor, HSVColor>(color, 'hsv');
+  if (!result) {
+    throw new Error('Could not convert from Lab to HSV');
   }
   return result;
 };

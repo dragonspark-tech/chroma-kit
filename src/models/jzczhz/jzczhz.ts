@@ -5,7 +5,9 @@ import {
   jzazbzToOKLab,
   jzazbzToOKLCh,
   jzazbzToRGB,
-  jzazbzToXYZ
+  jzazbzToXYZ,
+  jzazbzToHSL,
+  jzazbzToHSV
 } from '../jzazbz';
 import { XYZColor } from '../xyz';
 import { RGBColor } from '../rgb';
@@ -13,6 +15,8 @@ import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
+import { HSLColor } from '../hsl';
+import { HSVColor } from '../hsv';
 
 /**
  * Represents a color in the JzCzHz color space.
@@ -47,6 +51,36 @@ export type JzCzHzColor = {
 /*@__NO_SIDE_EFFECTS__*/
 export const jzczhzToRGB = (color: JzCzHzColor, peakLuminance: number = 10000): RGBColor =>
   jzazbzToRGB(jzczhzToJzAzBz(color), peakLuminance);
+
+/**
+ * Converts a color from JzCzHz to HSL color space.
+ *
+ * This function first converts the JzCzHz color to JzAzBz, then from JzAzBz to HSL.
+ * The HSL color space is a cylindrical representation of RGB, using hue,
+ * saturation, and lightness components.
+ *
+ * @param {JzCzHzColor} color - The JzCzHz color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {HSLColor} The color in HSL space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const jzczhzToHSL = (color: JzCzHzColor, peakLuminance: number = 10000): HSLColor =>
+  jzazbzToHSL(jzczhzToJzAzBz(color), peakLuminance);
+
+/**
+ * Converts a color from JzCzHz to HSV color space.
+ *
+ * This function first converts the JzCzHz color to JzAzBz, then from JzAzBz to HSV.
+ * The HSV color space is a cylindrical representation of RGB, using hue,
+ * saturation, and value components.
+ *
+ * @param {JzCzHzColor} color - The JzCzHz color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {HSVColor} The color in HSV space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const jzczhzToHSV = (color: JzCzHzColor, peakLuminance: number = 10000): HSVColor =>
+  jzazbzToHSV(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
  * Converts a color from JzCzHz to CIE XYZ color space.

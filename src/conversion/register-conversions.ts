@@ -1,5 +1,5 @@
 import { registerConversion } from './conversion';
-import { rgbToXYZ } from '../models/rgb';
+import { rgbToHSL, rgbToHSV, rgbToXYZ } from '../models/rgb';
 import {
   xyzToJzAzBz,
   xyzToJzCzHz,
@@ -14,11 +14,24 @@ import { oklabToOKLCh, oklabToXYZ } from '../models/oklab';
 import { oklchToOKLab } from '../models/oklch';
 import { jzazbzToJzCzHz, jzazbzToXYZ } from '../models/jzazbz';
 import { jzczhzToJzAzBz } from '../models/jzczhz';
+import { lchToLab } from '../models/lch';
+import { hslToHSV, hslToRGB } from '../models/hsl';
+import { hsvToHSL, hsvToRGB } from '../models/hsv';
 
 // Register all conversions
 export function registerAllConversions() {
   // RGB conversions
   registerConversion('rgb', 'xyz', rgbToXYZ);
+  registerConversion('rgb', 'hsl', rgbToHSL);
+  registerConversion('rgb', 'hsv', rgbToHSV);
+
+  // HSL conversions
+  registerConversion('hsl', 'rgb', hslToRGB);
+  registerConversion('hsl', 'hsv', hslToHSV);
+
+  // HSV conversions
+  registerConversion('hsv', 'rgb', hsvToRGB);
+  registerConversion('hsv', 'hsl', hsvToHSL);
 
   // XYZ conversions
   registerConversion('xyz', 'rgb', xyzToRGB);
@@ -32,6 +45,9 @@ export function registerAllConversions() {
   // Lab conversions
   registerConversion('lab', 'xyz', labToXYZ);
   registerConversion('lab', 'lch', labToLCH);
+
+  // LCh conversions
+  registerConversion('lch', 'lab', lchToLab);
 
   // OKLab conversions
   registerConversion('oklab', 'xyz', oklabToXYZ);

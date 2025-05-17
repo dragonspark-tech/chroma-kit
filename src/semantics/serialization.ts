@@ -6,9 +6,13 @@ import { JzCzHzColor } from '../models/jzczhz';
 import { LabColor } from '../models/lab';
 import { RGBColor } from '../models/rgb';
 import { XYZColor } from '../models/xyz';
+import { HSLColor } from '../models/hsl';
+import { HSVColor } from '../models/hsv';
 
 type Color =
   | RGBColor
+  | HSLColor
+  | HSVColor
   | XYZColor
   | LabColor
   | LChColor
@@ -34,6 +38,8 @@ type ColorSpace = Color['space'];
 const colorMappings: Record<ColorSpace, readonly string[]> = {
   rgb: ['r', 'g', 'b'],
   xyz: ['x', 'y', 'z'],
+  hsl: ['h', 's', 'l'],
+  hsv: ['h', 's', 'v'],
   lab: ['l', 'a', 'b'],
   lch: ['l', 'c', 'h'],
   oklab: ['l', 'a', 'b'],
@@ -78,6 +84,14 @@ export function parseV1(src: string): Color {
     case 'rgb': {
       const [r, g, b] = nums;
       return { space, r, g, b, alpha };
+    }
+    case 'hsl': {
+      const [h, s, l] = nums;
+      return { space, h, s, l, alpha };
+    }
+    case 'hsv': {
+      const [h, s, v] = nums;
+      return { space, h, s, v, alpha };
     }
     case 'xyz': {
       const [x, y, z] = nums;

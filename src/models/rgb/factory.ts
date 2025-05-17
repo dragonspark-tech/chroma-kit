@@ -120,7 +120,7 @@ export function hexLinear(hex: string): RGBFactory {
  * @returns {string} CSS-compatible string representation of the RGB color
  */
 /*@__NO_SIDE_EFFECTS__*/
-function rgbToCSSString(color: RGBColor): string {
+export function rgbToCSSString(color: RGBColor): string {
   const { r, g, b, alpha } = color;
 
   // Convert to 0-255 range for CSS

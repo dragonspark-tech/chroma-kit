@@ -1,10 +1,12 @@
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab';
-import { RGBColor } from '../rgb';
+import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
 import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToRGB } from '../xyz';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
+import { HSLColor } from '../hsl';
+import { HSVColor } from '../hsv';
 
 /**
  * Represents a color in the OKLCh color space.
@@ -41,6 +43,32 @@ export const oklchToRGB = (color: OKLChColor): RGBColor => {
   const xyz = oklchToXYZ(color);
   return xyzToRGB(xyz);
 };
+
+/**
+ * Converts a color from OKLCh to HSL color space.
+ *
+ * This function first converts the OKLCh color to RGB, then from RGB to HSL.
+ * The HSL color space is a cylindrical representation of RGB, using hue,
+ * saturation, and lightness components.
+ *
+ * @param {OKLChColor} color - The OKLCh color to convert
+ * @returns {HSLColor} The color in HSL space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const oklchToHSL = (color: OKLChColor): HSLColor => rgbToHSL(oklchToRGB(color));
+
+/**
+ * Converts a color from OKLCh to HSV color space.
+ *
+ * This function first converts the OKLCh color to RGB, then from RGB to HSV.
+ * The HSV color space is a cylindrical representation of RGB, using hue,
+ * saturation, and value components.
+ *
+ * @param {OKLChColor} color - The OKLCh color to convert
+ * @returns {HSVColor} The color in HSV space
+ */
+/*@__NO_SIDE_EFFECTS__*/
+export const oklchToHSV = (color: OKLChColor): HSVColor => rgbToHSV(oklchToRGB(color));
 
 /**
  * Converts a color from OKLCh to CIE XYZ color space.

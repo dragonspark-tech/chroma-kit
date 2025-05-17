@@ -11,6 +11,8 @@ import { OKLChColor } from '../oklch';
 import { LChColor } from '../lch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
+import { HSLColor } from '../hsl';
+import { HSVColor } from '../hsv';
 
 /**
  * Represents a color in the RGB color space.
@@ -120,7 +122,7 @@ export const hexToRGB = (hex: string): RGBColor => {
  * @returns {string} The hexadecimal color string (with leading '#')
  */
 /*@__NO_SIDE_EFFECTS__*/
-export function rgbToHex(color: RGBColor): string {
+export const rgbToHex = (color: RGBColor): string => {
   const nC = denormalizeRGBColor(color);
 
   let r = Math.round(nC.r),
@@ -151,6 +153,69 @@ export function rgbToHex(color: RGBColor): string {
     hex += alpha.toString(16).padStart(2, '0');
   }
   return hex;
+};
+
+/*@__NO_SIDE_EFFECTS__*/
+export const rgbToHSL = (color: RGBColor): HSLColor => {
+  const [r, g, b] = [color.r, color.g, color.b];
+
+  let max = r, min = r;
+
+  if (g > max) max = g;
+  if (b > max) max = b;
+  if (g < min) min = g;
+  if (b < min) min = b;
+  const l = (max + min) * 0.5;
+  let h = 0,
+    s = 0;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h *= 60;
+    if (h >= 360) h -= 360;
+  }
+
+  return {
+    space: 'hsl',
+    h: h,
+    s: s,
+    l: l,
+    alpha: color.alpha
+  };
+};
+
+/*@__NO_SIDE_EFFECTS__*/
+export const rgbToHSV = (color: RGBColor): HSVColor => {
+  const [r, g, b] = [color.r, color.g, color.b];
+
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const v = max;
+  const d = max - min;
+  const s = max === 0 ? 0 : d / max;
+
+  let h = 0;
+  if (d !== 0) {
+    if (max === r) {
+      h = ((g - b) / d) % 6;
+    } else if (max === g) {
+      h = (b - r) / d + 2;
+    } else {
+      h = (r - g) / d + 4;
+    }
+    h *= 60;
+    if (h < 0) h += 360;
+  }
+
+  return {
+    space: 'hsv',
+    h: h,
+    s: s * 100,
+    v: v * 100,
+    alpha: color.alpha
+  };
 }
 
 /**
