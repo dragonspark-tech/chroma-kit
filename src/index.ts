@@ -6,3 +6,4 @@ export * from './models/lab/lab';
 export * from './models/lch/lch';
 export * from './models/jzazbz/jzazbz';
 export * from './models/jzczhz/jzczhz';
+export * from './models/index';

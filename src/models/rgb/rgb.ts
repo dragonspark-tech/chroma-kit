@@ -1,6 +1,6 @@
 ﻿import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz/xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { RGB_XYZ_MATRIX } from './constants';
+import { RGB_INVERSE, RGB_XYZ_MATRIX } from './constants';
 import { denormalizeRGBColor, linearizeRGBColor, normalizeRGBColor } from './transform';
 import { getAdaptationMatrix } from '../../adaptation/chromatic-adaptation';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
@@ -33,75 +33,76 @@ export type RGBColor = {
 };
 
 /**
- * Converts a hexadecimal color string to an RGB color object.
+ * Converts a given number into its hexadecimal digit representation.
  *
- * This function supports various hex formats:
- * - 3 digits: #RGB (shorthand, each digit is repeated)
- * - 4 digits: #RGBA (shorthand with alpha)
- * - 6 digits: #RRGGBB (full hex)
- * - 8 digits: #RRGGBBAA (full hex with alpha)
+ * This function extracts the lower 4 bits of the given number and
+ * computes a hexadecimal digit by applying an adjustment based
+ * on the upper bits of the input. The result is a single hexadecimal
+ * digit value.
  *
- * The leading '#' character is optional. The function uses character code
- * comparisons for performance and returns a normalized RGB color (values in 0-1 range).
+ * @param {number} c - The input number from which the hexadecimal digit is derived.
+ * @returns {number} The calculated hexadecimal digit.
+ */
+const hexDigit = (c: number) => (c & 0xF) + ((c >> 6) * 9);
+
+/**
+ * Converts a hex color string representation into an RGBColor object.
  *
- * @param {string} hex - The hexadecimal color string to convert
- * @returns {RGBColor} The RGB color object with normalized values (0-1)
- * @throws {Error} If the hex string format is invalid
+ * The input can be in the formats:
+ * - `#RGB` or `#RGBA` where the single hex digit is expanded (e.g., `#F0A` becomes `#FF00AA`).
+ * - `#RRGGBB` or `#RRGGBBAA` where each two-digit pair represents a color channel.
+ *
+ * The output object contains the red, green, blue color channels and optionally the alpha channel
+ * (transparency) in normalized format.
+ *
+ * @param {string} hex - The hexadecimal color code string. This can optionally start with a `#` and
+ *   must be in one of the valid formats (`#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`).
+ * @returns {RGBColor} An object representing the RGB color with properties for red, green, blue,
+ *   and optionally alpha transparency (normalized between 0 and 1).
+ * @throws {Error} If the provided `hex` string has an invalid format or length.
  */
 export const hexToRGB = (hex: string): RGBColor => {
-  // Avoid allocating a new string when possible.
-  let offset = 0;
-  if (hex.charCodeAt(0) === 35) {
-    // 35 === '#'
-    offset = 1;
-  }
-  const len = hex.length - offset;
+  let i = hex.charCodeAt(0) === 35 ? 1 : 0;
+  const n = hex.length - i;
+
   let r: number, g: number, b: number, a: number | undefined;
 
-  // For shorthand hex (3 or 4 digits) multiply each digit by 17.
-  if (len === 3 || len === 4) {
-    const c0 = hex.charCodeAt(offset),
-      c1 = hex.charCodeAt(offset + 1),
-      c2 = hex.charCodeAt(offset + 2);
-    const v0 = c0 < 58 ? c0 - 48 : (c0 & 0xdf) - 55;
-    const v1 = c1 < 58 ? c1 - 48 : (c1 & 0xdf) - 55;
-    const v2 = c2 < 58 ? c2 - 48 : (c2 & 0xdf) - 55;
-    r = v0 * 17;
-    g = v1 * 17;
-    b = v2 * 17;
-    if (len === 4) {
-      const c3 = hex.charCodeAt(offset + 3);
-      const v3 = c3 < 58 ? c3 - 48 : (c3 & 0xdf) - 55;
-      a = (v3 * 17) / 255;
+  if (n === 3 || n === 4) {
+    const c0 = hex.charCodeAt(i);
+    const c1 = hex.charCodeAt(i + 1);
+    const c2 = hex.charCodeAt(i + 2);
+
+    r = hexDigit(c0) * 17;
+    g = hexDigit(c1) * 17;
+    b = hexDigit(c2) * 17;
+
+    if (n === 4) {
+      const c3 = hex.charCodeAt(i + 3);
+      a = hexDigit(c3) * 17 * RGB_INVERSE;
     }
   }
-  // For full hex (6 or 8 digits) convert each pair manually.
-  else if (len === 6 || len === 8) {
-    const c0 = hex.charCodeAt(offset),
-      c1 = hex.charCodeAt(offset + 1),
-      c2 = hex.charCodeAt(offset + 2),
-      c3 = hex.charCodeAt(offset + 3),
-      c4 = hex.charCodeAt(offset + 4),
-      c5 = hex.charCodeAt(offset + 5);
-    const v0 = c0 < 58 ? c0 - 48 : (c0 & 0xdf) - 55;
-    const v1 = c1 < 58 ? c1 - 48 : (c1 & 0xdf) - 55;
-    const v2 = c2 < 58 ? c2 - 48 : (c2 & 0xdf) - 55;
-    const v3 = c3 < 58 ? c3 - 48 : (c3 & 0xdf) - 55;
-    const v4 = c4 < 58 ? c4 - 48 : (c4 & 0xdf) - 55;
-    const v5 = c5 < 58 ? c5 - 48 : (c5 & 0xdf) - 55;
-    r = (v0 << 4) | v1;
-    g = (v2 << 4) | v3;
-    b = (v4 << 4) | v5;
-    if (len === 8) {
-      const c6 = hex.charCodeAt(offset + 6),
-        c7 = hex.charCodeAt(offset + 7);
-      const v6 = c6 < 58 ? c6 - 48 : (c6 & 0xdf) - 55;
-      const v7 = c7 < 58 ? c7 - 48 : (c7 & 0xdf) - 55;
-      a = ((v6 << 4) | v7) / 255;
+  else if (n === 6 || n === 8) {
+    const c0 = hex.charCodeAt(i);
+    const c1 = hex.charCodeAt(i + 1);
+    const c2 = hex.charCodeAt(i + 2);
+    const c3 = hex.charCodeAt(i + 3);
+    const c4 = hex.charCodeAt(i + 4);
+    const c5 = hex.charCodeAt(i + 5);
+
+    r = (hexDigit(c0) << 4) | hexDigit(c1);
+    g = (hexDigit(c2) << 4) | hexDigit(c3);
+    b = (hexDigit(c4) << 4) | hexDigit(c5);
+
+    if (n === 8) {
+      const c6 = hex.charCodeAt(i + 6);
+      const c7 = hex.charCodeAt(i + 7);
+      a = ((hexDigit(c6) << 4) | hexDigit(c7)) * RGB_INVERSE;
     }
-  } else {
+  }
+  else {
     throw new Error('Invalid hex color format');
   }
+
   return normalizeRGBColor({ space: 'rgb', r, g, b, alpha: a });
 };
 

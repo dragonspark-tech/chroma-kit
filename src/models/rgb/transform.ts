@@ -1,6 +1,5 @@
 ﻿import type { RGBColor } from './rgb';
-
-const RGB_INVERSE = 1 / 255;
+import { RGB_INVERSE } from './constants';
 
 /**
  * Normalizes the RGB color values to ensure they fall within the range of 0 to 1.
@@ -9,6 +8,8 @@ const RGB_INVERSE = 1 / 255;
  * @returns {RGBColor} A new RGBColor object with each color channel normalized.
  */
 export const normalizeRGBColor = (color: RGBColor): RGBColor => ({
+  space: 'rgb',
+
   r: color.r * RGB_INVERSE,
   g: color.g * RGB_INVERSE,
   b: color.b * RGB_INVERSE,
@@ -22,6 +23,8 @@ export const normalizeRGBColor = (color: RGBColor): RGBColor => ({
  * @returns {RGBColor} A new RGBColor object with each color channel denormalized.
  */
 export const denormalizeRGBColor = (color: RGBColor): RGBColor => ({
+  space: 'rgb',
+
   r: color.r / RGB_INVERSE,
   g: color.g / RGB_INVERSE,
   b: color.b / RGB_INVERSE,
@@ -50,6 +53,8 @@ export const applyRGBGammaTransfer = (channel: number): number =>
  */
 export const linearizeRGBColor = (color: RGBColor): RGBColor => {
   return {
+    space: 'rgb',
+
     r: applyRGBGammaTransfer(color.r),
     g: applyRGBGammaTransfer(color.g),
     b: applyRGBGammaTransfer(color.b),
@@ -77,6 +82,8 @@ export const applyRGBInverseGammaTransfer = (channel: number): number =>
  */
 export const delinearizeRGBColor = (color: RGBColor): RGBColor => {
   return {
+    space: 'rgb',
+
     r: applyRGBInverseGammaTransfer(color.r),
     g: applyRGBInverseGammaTransfer(color.g),
     b: applyRGBInverseGammaTransfer(color.b),

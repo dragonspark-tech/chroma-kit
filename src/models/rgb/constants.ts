@@ -1,5 +1,7 @@
 ﻿import { type Matrix3x3 } from '../../utils/linear';
 
+export const RGB_INVERSE = 1 / 255;
+
 /**
  * Transformation matrix for converting linear RGB values to CIE XYZ color space.
  *
