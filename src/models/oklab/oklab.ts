@@ -21,6 +21,8 @@ import { OKLChColor } from '../oklch/oklch';
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
 export type OKLabColor = {
+  space: 'oklab';
+
   l: number;
   a: number;
   b: number;
@@ -54,7 +56,7 @@ export const oklabToXYZ = (color: OKLabColor): XYZColor => {
 
   const xyz = multiplyMatrixByVector(OKLCH_THROUGH_LMS_XYZ_MATRIX, linear);
 
-  return { x: xyz[0], y: xyz[1], z: xyz[2], alpha: color.alpha };
+  return { space: 'xyz', x: xyz[0], y: xyz[1], z: xyz[2], alpha: color.alpha };
 }
 
 /**
@@ -91,7 +93,7 @@ export const oklabToOKLCh = (color: OKLabColor): OKLChColor => {
   const C = Math.hypot(color.a, color.b);
   const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
 
-  return { l: color.l, c: C, h, alpha: color.alpha };
+  return { space: 'oklch', l: color.l, c: C, h, alpha: color.alpha };
 };
 
 /**

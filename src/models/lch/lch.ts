@@ -19,6 +19,8 @@ import { JzCzHzColor } from '../jzczhz/jzczhz';
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
 export type LChColor = {
+  space: 'lch';
+
   l: number;
   c: number;
   h: number;
@@ -60,6 +62,8 @@ export const lchToXYZ = (color: LChColor): XYZColor =>
 export const lchToLab = (color: LChColor): LabColor => {
   const hRad = (color.h * Math.PI) / 180; // deg → rad
   return {
+    space: 'lab',
+
     l: color.l,
     a: color.c * Math.cos(hRad),
     b: color.c * Math.sin(hRad),

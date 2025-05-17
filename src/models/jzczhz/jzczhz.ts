@@ -19,6 +19,8 @@ import { OKLChColor } from '../oklch/oklch';
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
 export type JzCzHzColor = {
+  space: 'jzczhz';
+
   jz: number;
   cz: number;
   hz: number;
@@ -110,6 +112,8 @@ export const jzczhzToOKLCh = (color: JzCzHzColor, peakLuminance: number = 10000)
 export const jzczhzToJzAzBz = (color: JzCzHzColor): JzAzBzColor => {
   const hzRad = (color.hz * Math.PI) / 180; // deg → rad
   return {
+    space: 'jzazbz',
+
     jz: color.jz,
     az: color.cz * Math.cos(hzRad),
     bz: color.cz * Math.sin(hzRad),

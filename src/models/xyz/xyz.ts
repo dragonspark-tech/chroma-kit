@@ -28,6 +28,8 @@ import { b, d, d0, g } from '../jzazbz/constants';
  * @property {Illuminant} [illuminant] - The reference white point used for this color
  */
 export type XYZColor = {
+  space: 'xyz';
+
   x: number;
   y: number;
   z: number;
@@ -46,7 +48,7 @@ export type XYZColor = {
  */
 export const xyzToRGB = (color: XYZColor): RGBColor => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
-  return delinearizeRGBColor({ r: lRGB[0], g: lRGB[1], b: lRGB[2], a: color.alpha });
+  return delinearizeRGBColor({ space: 'rgb', r: lRGB[0], g: lRGB[1], b: lRGB[2], alpha: color.alpha });
 };
 
 /**
@@ -76,6 +78,8 @@ export const xyzToLab = (color: XYZColor): LabColor => {
   const fz = zn > ϵ ? Math.cbrt(zn) : (κ * zn + 16) / 116;
 
   return {
+    space: 'lab',
+
     l: 116 * fy - 16,
     a: 500 * (fx - fy),
     b: 200 * (fy - fz),
@@ -115,7 +119,7 @@ export const xyzToOKLab = (color: XYZColor): OKLabColor => {
   const nonLinear = [Math.cbrt(l), Math.cbrt(m), Math.cbrt(s)];
 
   const oklab = multiplyMatrixByVector(LMS_OKLAB_MATRIX, nonLinear);
-  return { l: oklab[0], a: oklab[1], b: oklab[2], alpha: color.alpha };
+  return { space: 'oklab', l: oklab[0], a: oklab[1], b: oklab[2], alpha: color.alpha };
 };
 
 /**
@@ -163,7 +167,7 @@ export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzA
 
   const jz = ((1 + d) * Iz) / (1 + d * Iz) - d0;
 
-  return { jz, az, bz, alpha: color.alpha };
+  return { space: 'jzazbz', jz, az, bz, alpha: color.alpha };
 }
 
 /**

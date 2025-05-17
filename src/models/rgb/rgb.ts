@@ -24,10 +24,12 @@ import { JzCzHzColor } from '../jzczhz/jzczhz';
  * @property {number} [a] - The alpha (opacity) component (0-1), optional
  */
 export type RGBColor = {
+  space: 'rgb';
+
   r: number;
   g: number;
   b: number;
-  a?: number;
+  alpha?: number;
 };
 
 /**
@@ -100,7 +102,7 @@ export const hexToRGB = (hex: string): RGBColor => {
   } else {
     throw new Error('Invalid hex color format');
   }
-  return normalizeRGBColor({ r, g, b, a });
+  return normalizeRGBColor({ space: 'rgb', r, g, b, alpha: a });
 };
 
 /**
@@ -122,7 +124,7 @@ export function rgbToHex(color: RGBColor): string {
   let r = Math.round(nC.r),
     g = Math.round(nC.g),
     b = Math.round(nC.b);
-  let a = nC.a;
+  let a = nC.alpha;
   let alpha: number | undefined = undefined;
   if (a !== undefined) {
     alpha = Math.round(a * 255);
@@ -170,19 +172,21 @@ export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = fals
     const adaptedXYZ = multiplyMatrixByVector(adaptationMatrix, xyz);
 
     return {
+      space: 'xyz',
       x: adaptedXYZ[0],
       y: adaptedXYZ[1],
       z: adaptedXYZ[2],
-      alpha: color.a,
+      alpha: color.alpha,
       illuminant: IlluminantD50
     };
   }
 
   return {
+    space: 'xyz',
     x: xyz[0],
     y: xyz[1],
     z: xyz[2],
-    alpha: color.a,
+    alpha: color.alpha,
     illuminant: IlluminantD65
   };
 };

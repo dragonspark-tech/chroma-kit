@@ -12,7 +12,7 @@ export const normalizeRGBColor = (color: RGBColor): RGBColor => ({
   r: color.r * RGB_INVERSE,
   g: color.g * RGB_INVERSE,
   b: color.b * RGB_INVERSE,
-  a: color.a
+  alpha: color.alpha
 });
 
 /**
@@ -25,7 +25,7 @@ export const denormalizeRGBColor = (color: RGBColor): RGBColor => ({
   r: color.r / RGB_INVERSE,
   g: color.g / RGB_INVERSE,
   b: color.b / RGB_INVERSE,
-  a: color.a
+  alpha: color.alpha
 });
 
 /**
@@ -53,7 +53,7 @@ export const linearizeRGBColor = (color: RGBColor): RGBColor => {
     r: applyRGBGammaTransfer(color.r),
     g: applyRGBGammaTransfer(color.g),
     b: applyRGBGammaTransfer(color.b),
-    a: color.a
+    alpha: color.alpha
   };
 };
 
@@ -80,6 +80,6 @@ export const delinearizeRGBColor = (color: RGBColor): RGBColor => {
     r: applyRGBInverseGammaTransfer(color.r),
     g: applyRGBInverseGammaTransfer(color.g),
     b: applyRGBInverseGammaTransfer(color.b),
-    a: color.a
+    alpha: color.alpha
   };
 };

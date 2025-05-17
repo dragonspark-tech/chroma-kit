@@ -18,6 +18,7 @@ import { LChColor } from '../lch/lch';
 import { OKLabColor } from '../oklab/oklab';
 import { OKLChColor } from '../oklch/oklch';
 import { JzCzHzColor } from '../jzczhz/jzczhz';
+import { IlluminantD65 } from '../../standards/illuminants';
 
 /**
  * Represents a color in the JzAzBz color space.
@@ -33,6 +34,8 @@ import { JzCzHzColor } from '../jzczhz/jzczhz';
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
 export type JzAzBzColor = {
+  space: 'jzazbz';
+
   jz: number;
   az: number;
   bz: number;
@@ -81,7 +84,7 @@ export const jzazbzToXYZ = (color: JzAzBzColor, peakLuminance: number = 10000): 
   const X = (Xp + (b - 1) * Z) / b;
   const Y = (Yp + (g - 1) * X) / g;
 
-  return { x: X, y: Y, z: Z, alpha: color.alpha };
+  return { space: 'xyz', x: X, y: Y, z: Z, alpha: color.alpha, illuminant: IlluminantD65 };
 };
 
 /**
@@ -145,7 +148,7 @@ export const jzazbzToOKLCh = (color: JzAzBzColor, peakLuminance: number = 10000)
 export const jzazbzToJzCzHz = (color: JzAzBzColor): JzCzHzColor => {
   const cz = Math.hypot(color.az, color.bz);
   const hz = ((Math.atan2(color.bz, color.az) * 180) / Math.PI + 360) % 360;
-  return { jz: color.jz, cz, hz, alpha: color.alpha };
+  return { space: 'jzczhz', jz: color.jz, cz, hz, alpha: color.alpha };
 };
 
 /**

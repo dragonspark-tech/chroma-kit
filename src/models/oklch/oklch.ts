@@ -20,6 +20,8 @@ import { JzCzHzColor } from '../jzczhz/jzczhz';
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
 export type OKLChColor = {
+  space: 'oklch';
+
   l: number;
   c: number;
   h: number;
@@ -87,7 +89,7 @@ export const oklchToOKLab = (color: OKLChColor): OKLabColor => {
   const a = color.c * Math.cos(hRad);
   const b = color.c * Math.sin(hRad);
 
-  return { l: color.l, a, b, alpha: color.alpha };
+  return { space: 'oklab', l: color.l, a, b, alpha: color.alpha };
 };
 
 /**

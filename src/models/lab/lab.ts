@@ -21,6 +21,8 @@ import { JzCzHzColor } from '../jzczhz/jzczhz';
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
 export type LabColor = {
+  space: 'lab';
+
   l: number;
   a: number;
   b: number;
@@ -65,6 +67,8 @@ export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => 
   const zn = fz3 > ϵ ? fz3 : (116 * fz - 16) / κ;
 
   return {
+    space: 'xyz',
+
     x: xn * i.xR,
     y: yn * i.yR,
     z: zn * i.zR,
@@ -86,7 +90,7 @@ export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => 
 export const labToLCH = (color: LabColor): LChColor => {
   const c = Math.hypot(color.a, color.b);
   const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
-  return { l: color.l, c, h };
+  return { space: 'lch', l: color.l, c, h };
 };
 
 /**
