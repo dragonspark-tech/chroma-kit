@@ -52,3 +52,20 @@ export const floor = (num: number, digits: number = 0): number => {
 export const normalize = (value: number, min: number, max: number): number => {
   return (value - min) / (max - min);
 };
+
+/**
+ * Calculates the seventh power of a given number.
+ *
+ * This function computes the input number raised to the power of 7
+ * by optimizing the operation using intermediate results. It avoids
+ * directly calling repeated multiplication or using built-in power
+ * functions, instead performing step-by-step multiplication to achieve
+ * higher performance for this specific case.
+ *
+ * @param {number} x - The base number to be raised to the power of 7.
+ * @returns {number} - The result of x raised to the power of 7.
+ */
+export const pow7 = (x: number): number => {
+  const x2 = x * x;
+  return x2 * x2 * x2 * x;
+};

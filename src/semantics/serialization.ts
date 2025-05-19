@@ -1,51 +1,14 @@
-import { LChColor } from '../models/lch';
-import { OKLabColor } from '../models/oklab';
-import { OKLChColor } from '../models/oklch';
-import { JzAzBzColor } from '../models/jzazbz';
-import { JzCzHzColor } from '../models/jzczhz';
-import { LabColor } from '../models/lab';
-import { RGBColor } from '../models/rgb';
-import { XYZColor } from '../models/xyz';
-import { HSLColor } from '../models/hsl';
-import { HSVColor } from '../models/hsv';
-
-type Color =
-  | RGBColor
-  | HSLColor
-  | HSVColor
-  | XYZColor
-  | LabColor
-  | LChColor
-  | OKLabColor
-  | OKLChColor
-  | JzAzBzColor
-  | JzCzHzColor;
-type ColorSpace = Color['space'];
-
-/**
- * A mapping of color spaces to their respective channel identifiers.
- *
- * The `colorMappings` object defines a collection of color spaces and their corresponding
- * array of string identifiers representing the channels in that particular color space.
- *
- * Each color space is represented as a key in the object, and its value is an array of
- * strings that denote the individual channel names used for that color space.
- *
- * It uses the `Record` utility type to ensure that each key corresponds to a predefined
- * `ColorSpace` and the associated values are readonly arrays of strings.
- */
-const colorMappings: Record<ColorSpace, readonly string[]> = {
-  rgb: ['r', 'g', 'b'],
-  xyz: ['x', 'y', 'z'],
-  hsl: ['h', 's', 'l'],
-  hsv: ['h', 's', 'v'],
-  lab: ['l', 'a', 'b'],
-  lch: ['l', 'c', 'h'],
-  oklab: ['l', 'a', 'b'],
-  oklch: ['l', 'c', 'h'],
-  jzazbz: ['jz', 'az', 'bz'],
-  jzczhz: ['jz', 'cz', 'hz']
-} as const;
+import { type Color, colorVectorMappings, type ColorSpace } from '../foundation';
+import { rgbFromVector } from '../models/rgb';
+import { xyzFromVector } from '../models/xyz';
+import { hslFromVector } from '../models/hsl';
+import { hsvFromVector } from '../models/hsv';
+import { labFromVector } from '../models/lab';
+import { oklabFromVector } from '../models/oklab';
+import { lchFromVector } from '../models/lch';
+import { oklchFromVector } from '../models/oklch';
+import { jzazbzFromVector } from '../models/jzazbz';
+import { jzczhzFromVector } from '../models/jzczhz';
 
 const assertNever = (x: never): never => {
   throw new Error(`Unhandled colorspace: ${x as string}`);
@@ -78,40 +41,26 @@ export function parseV1(src: string): Color {
   const nums = tokens.map(Number);
 
   switch (space) {
-    case 'rgb': {
-      const [r, g, b] = nums;
-      return { space, r, g, b, alpha };
-    }
-    case 'hsl': {
-      const [h, s, l] = nums;
-      return { space, h, s, l, alpha };
-    }
-    case 'hsv': {
-      const [h, s, v] = nums;
-      return { space, h, s, v, alpha };
-    }
-    case 'xyz': {
-      const [x, y, z] = nums;
-      return { space, x, y, z, alpha };
-    }
+    case 'rgb':
+      return rgbFromVector(nums, alpha);
+    case 'hsl':
+      return hslFromVector(nums, alpha);
+    case 'hsv':
+      return hsvFromVector(nums, alpha);
+    case 'xyz':
+      return xyzFromVector(nums, alpha);
     case 'lab':
-    case 'oklab': {
-      const [l, a, b] = nums;
-      return { space, l, a, b, alpha };
-    }
+      return labFromVector(nums, alpha);
+    case 'oklab':
+      return oklabFromVector(nums, alpha);
     case 'lch':
-    case 'oklch': {
-      const [l, c, h] = nums;
-      return { space, l, c, h, alpha };
-    }
-    case 'jzazbz': {
-      const [jz, az, bz] = nums;
-      return { space, jz, az, bz, alpha };
-    }
-    case 'jzczhz': {
-      const [jz, cz, hz] = nums;
-      return { space, jz, cz, hz, alpha };
-    }
+      return lchFromVector(nums, alpha);
+    case 'oklch':
+      return oklchFromVector(nums, alpha);
+    case 'jzazbz':
+      return jzazbzFromVector(nums, alpha);
+    case 'jzczhz':
+      return jzczhzFromVector(nums, alpha);
     default:
       return assertNever(space);
   }
@@ -126,7 +75,7 @@ export function parseV1(src: string): Color {
 export function serializeV1(color: Color): string {
   const { space, alpha } = color;
 
-  const keys = colorMappings[space] as readonly (keyof typeof color)[];
+  const keys = colorVectorMappings[space] as readonly (keyof typeof color)[];
   const numbers = keys.map((k) => color[k]);
 
   return `ChromaKit|v1 ${space} ${numbers.join(' ')}` + (alpha !== undefined ? ` / ${alpha}` : '');
