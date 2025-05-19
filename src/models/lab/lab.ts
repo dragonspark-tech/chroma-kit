@@ -1,8 +1,8 @@
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { XYZColor } from '../xyz';
+import { xyz, XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
 import { ϵ, κ } from './constants';
-import { RGBColor } from '../rgb';
-import { LChColor } from '../lch';
+import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
+import { lch, LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { JzAzBzColor } from '../jzazbz';
@@ -10,6 +10,8 @@ import { JzCzHzColor } from '../jzczhz';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
 import { convertColor } from '../../conversion/conversion';
+import { Color, ColorBase } from '../../foundation';
+import { serializeV1 } from '../../semantics/serialization';
 
 /**
  * Represents a color in the CIE Lab color space.
@@ -23,13 +25,49 @@ import { convertColor } from '../../conversion/conversion';
  * @property {number} b - The blue-yellow component (negative values are blue, positive values are yellow)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
-export type LabColor = {
+export interface LabColor extends ColorBase {
   space: 'lab';
 
   l: number;
   a: number;
   b: number;
-  alpha?: number;
+}
+
+export const labToCSSString = (color: LabColor): string => {
+  const { l, a, b, alpha } = color;
+
+  const lFormatted = (l * 100).toFixed(4);
+  const aFormatted = (a * 100).toFixed(4);
+  const bFormatted = (b * 100).toFixed(4);
+
+  return `lab(${lFormatted}% ${aFormatted} ${bFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
+};
+
+export const lab = (l: number, a: number, b: number, alpha?: number): LabColor => ({
+  space: 'lab',
+  l,
+  a,
+  b,
+  alpha,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return labToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: string) {
+    return convertColor<LabColor, T>(this, colorSpace);
+  }
+});
+
+export const labFromVector = (v: number[], alpha?: number): LabColor => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return lab(v[0], v[1], v[2], alpha);
 };
 
 /**
@@ -41,13 +79,7 @@ export type LabColor = {
  * @param {LabColor} color - The Lab color to convert
  * @returns {RGBColor} The color in RGB space
  */
-export const labToRGB = (color: LabColor): RGBColor => {
-  const result = convertColor<LabColor, RGBColor>(color, 'rgb');
-  if (!result) {
-    throw new Error('Could not convert from Lab to RGB');
-  }
-  return result;
-};
+export const labToRGB = (color: LabColor): RGBColor => xyzToRGB(labToXYZ(color));
 
 /**
  * Converts a color from CIE Lab to HSL color space.
@@ -58,13 +90,7 @@ export const labToRGB = (color: LabColor): RGBColor => {
  * @param {LabColor} color - The Lab color to convert
  * @returns {HSLColor} The color in HSL space
  */
-export const labToHSL = (color: LabColor): HSLColor => {
-  const result = convertColor<LabColor, HSLColor>(color, 'hsl');
-  if (!result) {
-    throw new Error('Could not convert from Lab to HSL');
-  }
-  return result;
-};
+export const labToHSL = (color: LabColor): HSLColor => rgbToHSL(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to HSV color space.
@@ -75,13 +101,7 @@ export const labToHSL = (color: LabColor): HSLColor => {
  * @param {LabColor} color - The Lab color to convert
  * @returns {HSVColor} The color in HSV space
  */
-export const labToHSV = (color: LabColor): HSVColor => {
-  const result = convertColor<LabColor, HSVColor>(color, 'hsv');
-  if (!result) {
-    throw new Error('Could not convert from Lab to HSV');
-  }
-  return result;
-};
+export const labToHSV = (color: LabColor): HSVColor => rgbToHSV(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to CIE XYZ color space.
@@ -110,15 +130,7 @@ export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => 
   const yn = color.l > κ * ϵ ? fy3 : color.l / κ;
   const zn = fz3 > ϵ ? fz3 : (116 * fz - 16) / κ;
 
-  return {
-    space: 'xyz',
-
-    x: xn * i.xR,
-    y: yn * i.yR,
-    z: zn * i.zR,
-    alpha: color.alpha,
-    illuminant: i
-  };
+  return xyz(xn * i.xR, yn * i.yR, zn * i.zR, color.alpha, i);
 };
 
 /**
@@ -134,7 +146,8 @@ export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => 
 export const labToLCH = (color: LabColor): LChColor => {
   const c = Math.hypot(color.a, color.b);
   const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
-  return { space: 'lch', l: color.l, c, h, alpha: color.alpha };
+
+  return lch(color.l, c, h, color.alpha);
 };
 
 /**
@@ -146,13 +159,7 @@ export const labToLCH = (color: LabColor): LChColor => {
  * @param {LabColor} color - The Lab color to convert
  * @returns {OKLabColor} The color in OKLab space
  */
-export const labToOKLab = (color: LabColor): OKLabColor => {
-  const result = convertColor<LabColor, OKLabColor>(color, 'oklab');
-  if (!result) {
-    throw new Error('Could not convert from Lab to OKLab');
-  }
-  return result;
-};
+export const labToOKLab = (color: LabColor): OKLabColor => xyzToOKLab(labToXYZ(color));
 
 /**
  * Converts a color from CIE Lab to OKLCh color space.
@@ -163,13 +170,7 @@ export const labToOKLab = (color: LabColor): OKLabColor => {
  * @param {LabColor} color - The Lab color to convert
  * @returns {OKLChColor} The color in OKLCh space
  */
-export const labToOKLCh = (color: LabColor): OKLChColor => {
-  const result = convertColor<LabColor, OKLChColor>(color, 'oklch');
-  if (!result) {
-    throw new Error('Could not convert from Lab to OKLCh');
-  }
-  return result;
-};
+export const labToOKLCh = (color: LabColor): OKLChColor => xyzToOKLCh(labToXYZ(color));
 
 /**
  * Converts a color from CIE Lab to the JzAzBz color space.
@@ -181,17 +182,8 @@ export const labToOKLCh = (color: LabColor): OKLChColor => {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzAzBzColor => {
-  // First convert to XYZ
-  const xyz = labToXYZ(color);
-
-  // Then use the automatic conversion system with the peak luminance parameter
-  const result = convertColor<XYZColor, JzAzBzColor>(xyz, 'jzazbz', peakLuminance);
-  if (!result) {
-    throw new Error('Could not convert from XYZ to JzAzBz');
-  }
-  return result;
-};
+export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzAzBzColor =>
+  xyzToJzAzBz(labToXYZ(color), peakLuminance);
 
 /**
  * Converts a color from CIE Lab to the JzCzHz color space.
@@ -203,14 +195,5 @@ export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const labToJzCzHz = (color: LabColor, peakLuminance: number = 10000): JzCzHzColor => {
-  // First convert to XYZ
-  const xyz = labToXYZ(color);
-
-  // Then use the automatic conversion system with the peak luminance parameter
-  const result = convertColor<XYZColor, JzCzHzColor>(xyz, 'jzczhz', peakLuminance);
-  if (!result) {
-    throw new Error('Could not convert from XYZ to JzCzHz');
-  }
-  return result;
-};
+export const labToJzCzHz = (color: LabColor, peakLuminance: number = 10000): JzCzHzColor =>
+  xyzToJzCzHz(labToXYZ(color), peakLuminance);

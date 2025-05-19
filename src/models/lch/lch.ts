@@ -1,4 +1,4 @@
-import { LabColor, labToXYZ } from '../lab';
+import { lab, LabColor, labToXYZ } from '../lab';
 import { OKLabColor, oklabToOKLCh } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
@@ -7,6 +7,9 @@ import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
+import { Color, ColorBase } from '../../foundation';
+import { serializeV1 } from '../../semantics/serialization';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the CIE LCh color space.
@@ -20,13 +23,49 @@ import { HSVColor } from '../hsv';
  * @property {number} h - The hue angle in degrees (0-360)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
-export type LChColor = {
+export interface LChColor extends ColorBase {
   space: 'lch';
 
   l: number;
   c: number;
   h: number;
-  alpha?: number;
+}
+
+export const lchToCSSString = (color: LChColor): string => {
+  const { l, c, h, alpha } = color;
+
+  const lFormatted = (l * 100).toFixed(4);
+  const cFormatted = (c * 100).toFixed(2);
+  const hFormatted = (h * 100).toFixed(2);
+
+  return `lch(${lFormatted}% ${cFormatted}% ${hFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
+};
+
+export const lch = (l: number, c: number, h: number, alpha?: number): LChColor => ({
+  space: 'lch',
+  l,
+  c,
+  h,
+  alpha,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return lchToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: string) {
+    return convertColor<LChColor, T>(this, colorSpace);
+  }
+});
+
+export const lchFromVector = (v: number[], alpha?: number): LChColor => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return lch(v[0], v[1], v[2], alpha);
 };
 
 /**
@@ -84,15 +123,8 @@ export const lchToXYZ = (color: LChColor): XYZColor => labToXYZ(lchToLab(color))
  * @returns {LabColor} The color in Lab space
  */
 export const lchToLab = (color: LChColor): LabColor => {
-  const hRad = (color.h * Math.PI) / 180; // deg → rad
-  return {
-    space: 'lab',
-
-    l: color.l,
-    a: color.c * Math.cos(hRad),
-    b: color.c * Math.sin(hRad),
-    alpha: color.alpha
-  };
+  const hRad = (color.h * Math.PI) / 180;
+  return lab(color.l, color.c * Math.cos(hRad), color.c * Math.sin(hRad), color.alpha);
 };
 
 /**

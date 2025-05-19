@@ -1,14 +1,18 @@
 import { OKLAB_LMS_MATRIX, OKLCH_THROUGH_LMS_XYZ_MATRIX } from './constants';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz';
+import { XYZColor, xyzFromVector, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz';
 import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
-import { OKLChColor } from '../oklch';
+import { oklch, OKLChColor } from '../oklch';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
+import { IlluminantD65 } from '../../standards/illuminants';
+import { Color, ColorBase } from '../../foundation';
+import { serializeV1 } from '../../semantics/serialization';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the OKLab color space.
@@ -22,13 +26,49 @@ import { HSVColor } from '../hsv';
  * @property {number} b - The blue-yellow component (negative values are blue, positive values are yellow)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
-export type OKLabColor = {
+export interface OKLabColor extends ColorBase {
   space: 'oklab';
 
   l: number;
   a: number;
   b: number;
-  alpha?: number;
+}
+
+export const oklabToCSSString = (color: OKLabColor): string => {
+  const { l, a, b, alpha } = color;
+
+  const lFormatted = (l * 100).toFixed(2);
+  const aFormatted = a.toFixed(4);
+  const bFormatted = b.toFixed(4);
+
+  return `oklab(${lFormatted}% ${aFormatted} ${bFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
+};
+
+export const oklab = (l: number, a: number, b: number, alpha?: number): OKLabColor => ({
+  space: 'oklab',
+  l,
+  a,
+  b,
+  alpha,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return oklabToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: string) {
+    return convertColor<OKLabColor, T>(this, colorSpace);
+  }
+});
+
+export const oklabFromVector = (v: number[], alpha?: number): OKLabColor => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return oklab(v[0], v[1], v[2], alpha);
 };
 
 /**
@@ -82,7 +122,7 @@ export const oklabToXYZ = (color: OKLabColor): XYZColor => {
 
   const xyz = multiplyMatrixByVector(OKLCH_THROUGH_LMS_XYZ_MATRIX, linear);
 
-  return { space: 'xyz', x: xyz[0], y: xyz[1], z: xyz[2], alpha: color.alpha };
+  return xyzFromVector(xyz, color.alpha, IlluminantD65);
 };
 
 /**
@@ -119,7 +159,7 @@ export const oklabToOKLCh = (color: OKLabColor): OKLChColor => {
   const C = Math.hypot(color.a, color.b);
   const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
 
-  return { space: 'oklch', l: color.l, c: C, h, alpha: color.alpha };
+  return oklch(color.l, C, h, color.alpha);
 };
 
 /**

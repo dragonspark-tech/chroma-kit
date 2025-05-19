@@ -1,15 +1,21 @@
-﻿import { LabColor, labToLCH, ϵ, κ } from '../lab';
+﻿import { lab, LabColor, labToLCH } from '../lab';
+import { ϵ, κ } from '../lab/constants';
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { delinearizeRGBColor, RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
+import { delinearizeRGBColor, RGBColor, rgbFromVector, rgbToHSL, rgbToHSV } from '../rgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
-import { LMS_OKLAB_MATRIX, OKLabColor, oklabToOKLCh } from '../oklab';
+import { OKLabColor, oklabFromVector, oklabToOKLCh } from '../oklab';
+import { LMS_OKLAB_MATRIX } from '../oklab/constants';
 import { LChColor } from '../lch';
 import { OKLChColor } from '../oklch';
-import { b, d, d0, g, JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
+import { jzazbz, JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
+import { b, d, d0, g } from '../jzazbz/constants';
 import { JzCzHzColor } from '../jzczhz';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
+import { Color, ColorBase, ColorSpace } from '../../foundation';
+import { serializeV1 } from '../../semantics/serialization';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -25,14 +31,53 @@ import { HSVColor } from '../hsv';
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  * @property {Illuminant} [illuminant] - The reference white point used for this color
  */
-export type XYZColor = {
+export interface XYZColor extends ColorBase {
   space: 'xyz';
 
   x: number;
   y: number;
   z: number;
-  alpha?: number;
   illuminant?: Illuminant;
+}
+
+export const xyzToCSSString = (color: XYZColor): string => {
+  const { x, y, z, alpha, illuminant } = color;
+  return `color(xyz-${illuminant?.name?.toLowerCase()} ${x} ${y} ${z}${alpha ? ` / ${alpha}` : ''})`;
+};
+
+export const xyz = (
+  x: number,
+  y: number,
+  z: number,
+  alpha?: number,
+  illuminant?: Illuminant
+): XYZColor => ({
+  space: 'xyz',
+
+  x,
+  y,
+  z,
+  alpha,
+  illuminant: illuminant ?? IlluminantD65,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return xyzToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: ColorSpace) {
+    return convertColor<XYZColor, T>(this, colorSpace);
+  }
+});
+
+export const xyzFromVector = (v: number[], alpha?: number, illuminant?: Illuminant): XYZColor => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return xyz(v[0], v[1], v[2], alpha, illuminant);
 };
 
 /**
@@ -46,13 +91,7 @@ export type XYZColor = {
  */
 export const xyzToRGB = (color: XYZColor): RGBColor => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
-  return delinearizeRGBColor({
-    space: 'rgb',
-    r: lRGB[0],
-    g: lRGB[1],
-    b: lRGB[2],
-    alpha: color.alpha
-  });
+  return delinearizeRGBColor(rgbFromVector(lRGB, color.alpha));
 };
 
 /**
@@ -105,14 +144,7 @@ export const xyzToLab = (color: XYZColor): LabColor => {
   const fy = yn > ϵ ? Math.cbrt(yn) : (κ * yn + 16) / 116;
   const fz = zn > ϵ ? Math.cbrt(zn) : (κ * zn + 16) / 116;
 
-  return {
-    space: 'lab',
-
-    l: 116 * fy - 16,
-    a: 500 * (fx - fy),
-    b: 200 * (fy - fz),
-    alpha: color.alpha
-  };
+  return lab(116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz), color.alpha);
 };
 
 /**
@@ -147,10 +179,11 @@ export const xyzToOKLab = (color: XYZColor): OKLabColor => {
     color.y,
     color.z
   ]);
+
   const nonLinear = [Math.cbrt(l), Math.cbrt(m), Math.cbrt(s)];
 
   const oklab = multiplyMatrixByVector(LMS_OKLAB_MATRIX, nonLinear);
-  return { space: 'oklab', l: oklab[0], a: oklab[1], b: oklab[2], alpha: color.alpha };
+  return oklabFromVector(oklab, color.alpha);
 };
 
 /**
@@ -197,7 +230,7 @@ export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzA
 
   const jz = ((1 + d) * Iz) / (1 + d * Iz) - d0;
 
-  return { space: 'jzazbz', jz, az, bz, alpha: color.alpha };
+  return jzazbz(jz, az, bz, color.alpha);
 };
 
 /**

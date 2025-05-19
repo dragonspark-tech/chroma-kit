@@ -1,4 +1,4 @@
-﻿import type { RGBColor } from './rgb';
+﻿import { rgb, RGBColor } from './rgb';
 import { RGB_INVERSE } from './constants';
 
 /**
@@ -7,14 +7,8 @@ import { RGB_INVERSE } from './constants';
  * @param {RGBColor} color - An object representing an RGB color with properties `r`, `g`, and `b`.
  * @returns {RGBColor} A new RGBColor object with each color channel normalized.
  */
-export const normalizeRGBColor = (color: RGBColor): RGBColor => ({
-  space: 'rgb',
-
-  r: color.r * RGB_INVERSE,
-  g: color.g * RGB_INVERSE,
-  b: color.b * RGB_INVERSE,
-  alpha: color.alpha
-});
+export const normalizeRGBColor = (color: RGBColor): RGBColor =>
+  rgb(color.r * RGB_INVERSE, color.g * RGB_INVERSE, color.b * RGB_INVERSE, color.alpha);
 
 /**
  * Denormalizes the RGB color values to ensure they fall within the range of 0 to 255.
@@ -22,14 +16,8 @@ export const normalizeRGBColor = (color: RGBColor): RGBColor => ({
  * @param {RGBColor} color - An object representing an RGB color with properties `r`, `g`, and `b`.
  * @returns {RGBColor} A new RGBColor object with each color channel denormalized.
  */
-export const denormalizeRGBColor = (color: RGBColor): RGBColor => ({
-  space: 'rgb',
-
-  r: color.r / RGB_INVERSE,
-  g: color.g / RGB_INVERSE,
-  b: color.b / RGB_INVERSE,
-  alpha: color.alpha
-});
+export const denormalizeRGBColor = (color: RGBColor): RGBColor =>
+  rgb(color.r * 255, color.g * 255, color.b * 255, color.alpha);
 
 /**
  * Applies gamma correction to a given color channel value.
@@ -51,16 +39,13 @@ export const applyRGBGammaTransfer = (channel: number): number =>
  *                           Each property represents a color channel value in the range [0, 1].
  * @returns {RGBColor} A new RGBColor object with each color channel linearized using the gamma transfer function.
  */
-export const linearizeRGBColor = (color: RGBColor): RGBColor => {
-  return {
-    space: 'rgb',
-
-    r: applyRGBGammaTransfer(color.r),
-    g: applyRGBGammaTransfer(color.g),
-    b: applyRGBGammaTransfer(color.b),
-    alpha: color.alpha
-  };
-};
+export const linearizeRGBColor = (color: RGBColor): RGBColor =>
+  rgb(
+    applyRGBGammaTransfer(color.r),
+    applyRGBGammaTransfer(color.g),
+    applyRGBGammaTransfer(color.b),
+    color.alpha
+  );
 
 /**
  * Applies the inverse gamma correction to a given linear color channel value.
@@ -80,13 +65,10 @@ export const applyRGBInverseGammaTransfer = (channel: number): number =>
  *                           Each property represents a linear color channel value in the range [0, 1].
  * @returns {RGBColor} A new RGBColor object with each color channel converted back to gamma-corrected form.
  */
-export const delinearizeRGBColor = (color: RGBColor): RGBColor => {
-  return {
-    space: 'rgb',
-
-    r: applyRGBInverseGammaTransfer(color.r),
-    g: applyRGBInverseGammaTransfer(color.g),
-    b: applyRGBInverseGammaTransfer(color.b),
-    alpha: color.alpha
-  };
-};
+export const delinearizeRGBColor = (color: RGBColor): RGBColor =>
+  rgb(
+    applyRGBInverseGammaTransfer(color.r),
+    applyRGBInverseGammaTransfer(color.g),
+    applyRGBInverseGammaTransfer(color.b),
+    color.alpha
+  );

@@ -1,2 +1,2 @@
-export * from './constants';
 export * from './lab';
+export * from './parser';

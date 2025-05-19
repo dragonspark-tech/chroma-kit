@@ -1,5 +1,5 @@
-import { RGBColor, rgbToJzAzBz, rgbToJzCzHz, rgbToLab, rgbToLCH, rgbToOKLab, rgbToOKLCh, rgbToXYZ } from '../rgb';
-import { HSLColor } from '../hsl';
+import { rgb, RGBColor, rgbToJzAzBz, rgbToJzCzHz, rgbToLab, rgbToLCH, rgbToOKLab, rgbToOKLCh, rgbToXYZ } from '../rgb';
+import { hsl, HSLColor } from '../hsl';
 import { XYZColor } from '../xyz';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
@@ -7,6 +7,9 @@ import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
+import { Color, ColorBase, ColorSpace } from '../../foundation';
+import { serializeV1 } from '../../semantics/serialization';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the HSV color space.
@@ -19,14 +22,42 @@ import { JzCzHzColor } from '../jzczhz';
  * @property {number} v - The value component (0-1)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
-export type HSVColor = {
+export interface HSVColor extends ColorBase {
   space: 'hsv';
 
   h: number;
   s: number;
   v: number;
-  alpha?: number;
 }
+
+export const hsvToCSSString = (color: HSVColor): string => hsvToHSL(color).toCSSString();
+
+export const hsv = (h: number, s: number, v: number, alpha?: number): HSVColor => ({
+  space: 'hsv',
+  h,
+  s,
+  v,
+  alpha,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return hsvToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: ColorSpace) {
+    return convertColor<HSVColor, T>(this, colorSpace);
+  }
+});
+
+export const hsvFromVector = (v: number[], alpha?: number) => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return hsv(v[0], v[1], v[2], alpha);
+};
 
 /**
  * Converts an HSV color to the RGB color space.
@@ -40,27 +71,35 @@ export const hsvToRGB = (color: HSVColor): RGBColor => {
   let [h, s, v] = [color.h, color.s, color.v];
 
   const c = v * s;
-  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = v - c;
 
-  let r = 0, g = 0, b = 0;
+  let r = 0,
+    g = 0,
+    b = 0;
 
-  if (h < 60)      { r = c; g = x; }
-  else if (h < 120){ r = x; g = c; }
-  else if (h < 180){ g = c; b = x; }
-  else if (h < 240){ g = x; b = c; }
-  else if (h < 300){ r = x; b = c; }
-  else             { r = c; b = x; }
+  if (h < 60) {
+    r = c;
+    g = x;
+  } else if (h < 120) {
+    r = x;
+    g = c;
+  } else if (h < 180) {
+    g = c;
+    b = x;
+  } else if (h < 240) {
+    g = x;
+    b = c;
+  } else if (h < 300) {
+    r = x;
+    b = c;
+  } else {
+    r = c;
+    b = x;
+  }
 
-  return {
-    space: 'rgb',
-
-    r: r + m,
-    g: g + m,
-    b: b + m,
-    alpha: color.alpha
-  };
-}
+  return rgb(r + m, g + m, b + m, color.alpha);
+};
 
 /**
  * Converts an HSV color to the HSL color space.
@@ -75,17 +114,10 @@ export const hsvToHSL = (color: HSVColor): HSLColor => {
   let [h, s, v] = [color.h, color.s, color.v];
 
   const l = v * (1 - s / 2);
-  const sl = (l === 0 || l === 1) ? 0 : (v - l) / Math.min(l, 1 - l);
+  const sl = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l);
 
-  return {
-    space: 'hsl',
-
-    h,
-    s: sl,
-    l: l,
-    alpha: color.alpha
-  };
-}
+  return hsl(h, sl, l, color.alpha);
+};
 
 /**
  * Converts an HSV color to the CIE XYZ color space.
@@ -95,8 +127,7 @@ export const hsvToHSL = (color: HSVColor): HSLColor => {
  * @param {HSVColor} color - The HSV color to convert
  * @returns {XYZColor} The color in XYZ space
  */
-export const hsvToXYZ = (color: HSVColor): XYZColor =>
-  rgbToXYZ(hsvToRGB(color));
+export const hsvToXYZ = (color: HSVColor): XYZColor => rgbToXYZ(hsvToRGB(color));
 
 /**
  * Converts an HSV color to the CIE Lab color space.
@@ -107,8 +138,7 @@ export const hsvToXYZ = (color: HSVColor): XYZColor =>
  * @param {HSVColor} color - The HSV color to convert
  * @returns {LabColor} The color in Lab space
  */
-export const hsvToLab = (color: HSVColor): LabColor =>
-  rgbToLab(hsvToRGB(color));
+export const hsvToLab = (color: HSVColor): LabColor => rgbToLab(hsvToRGB(color));
 
 /**
  * Converts an HSV color to the CIE LCh color space.
@@ -120,8 +150,7 @@ export const hsvToLab = (color: HSVColor): LabColor =>
  * @param {HSVColor} color - The HSV color to convert
  * @returns {LChColor} The color in LCh space
  */
-export const hsvToLCh = (color: HSVColor): LChColor =>
-  rgbToLCH(hsvToRGB(color));
+export const hsvToLCh = (color: HSVColor): LChColor => rgbToLCH(hsvToRGB(color));
 
 /**
  * Converts an HSV color to the OKLab color space.

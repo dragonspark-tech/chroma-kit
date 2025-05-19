@@ -1,4 +1,4 @@
-﻿import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz';
+﻿import { XYZColor, xyzFromVector, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { RGB_INVERSE, RGB_XYZ_MATRIX } from './constants';
 import { denormalizeRGBColor, linearizeRGBColor, normalizeRGBColor } from './transform';
@@ -11,8 +11,11 @@ import { OKLChColor } from '../oklch';
 import { LChColor } from '../lch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
-import { HSLColor } from '../hsl';
-import { HSVColor } from '../hsv';
+import { hsl, HSLColor } from '../hsl';
+import { hsv, HSVColor } from '../hsv';
+import { serializeV1 } from '../../semantics/serialization';
+import { Color, ColorBase, ColorSpace } from '../../foundation';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the RGB color space.
@@ -25,13 +28,56 @@ import { HSVColor } from '../hsv';
  * @property {number} b - The blue component (0-1 for normalized values, 0-255 for denormalized)
  * @property {number} [a] - The alpha (opacity) component (0-1), optional
  */
-export type RGBColor = {
+export interface RGBColor extends ColorBase {
   space: 'rgb';
 
   r: number;
   g: number;
   b: number;
-  alpha?: number;
+}
+
+export const rgbToCSSString = (color: RGBColor, forceFullString: boolean = false): string => {
+  const { r, g, b, alpha } = color;
+
+  // Convert to 0-255 range for CSS
+  const rInt = Math.round(r * 255);
+  const gInt = Math.round(g * 255);
+  const bInt = Math.round(b * 255);
+
+  if (alpha !== undefined && (alpha < 1 || forceFullString)) {
+    return `rgba(${rInt}, ${gInt}, ${bInt}, ${alpha.toFixed(3)})`;
+  }
+
+  // For fully opaque colors, use hex format as it's more compact
+  return rgbToHex(color);
+};
+
+export const rgb = (r: number, g: number, b: number, alpha?: number): RGBColor => ({
+  space: 'rgb',
+
+  r,
+  g,
+  b,
+  alpha,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return rgbToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: ColorSpace) {
+    return convertColor<RGBColor, T>(this, colorSpace);
+  }
+});
+
+export const rgbFromVector = (v: number[], alpha?: number): RGBColor => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return rgb(v[0], v[1], v[2], alpha);
 };
 
 /**
@@ -103,7 +149,7 @@ export const hexToRGB = (hex: string): RGBColor => {
     throw new Error('Invalid hex color format');
   }
 
-  return normalizeRGBColor({ space: 'rgb', r, g, b, alpha: a });
+  return normalizeRGBColor(rgb(r, g, b, a));
 };
 
 /**
@@ -122,13 +168,14 @@ export const hexToRGB = (hex: string): RGBColor => {
 export const rgbToHex = (color: RGBColor): string => {
   const nC = denormalizeRGBColor(color);
 
-  let r = Math.round(nC.r),
-    g = Math.round(nC.g),
-    b = Math.round(nC.b);
+  // Clamp values to valid range (0-255) and round
+  let r = Math.max(0, Math.min(255, Math.round(nC.r))),
+    g = Math.max(0, Math.min(255, Math.round(nC.g))),
+    b = Math.max(0, Math.min(255, Math.round(nC.b)));
   let a = nC.alpha;
   let alpha: number | undefined = undefined;
   if (a !== undefined) {
-    alpha = Math.round(a * 255);
+    alpha = Math.max(0, Math.min(255, Math.round(a * 255)));
   }
 
   // Check for shorthand possibility (e.g., #abc or #abcd)
@@ -155,7 +202,8 @@ export const rgbToHex = (color: RGBColor): string => {
 export const rgbToHSL = (color: RGBColor): HSLColor => {
   const [r, g, b] = [color.r, color.g, color.b];
 
-  let max = r, min = r;
+  let max = r,
+    min = r;
 
   if (g > max) max = g;
   if (b > max) max = b;
@@ -174,19 +222,14 @@ export const rgbToHSL = (color: RGBColor): HSLColor => {
     if (h >= 360) h -= 360;
   }
 
-  return {
-    space: 'hsl',
-    h: h,
-    s: s,
-    l: l,
-    alpha: color.alpha
-  };
+  return hsl(h, s, l, color.alpha);
 };
 
 export const rgbToHSV = (color: RGBColor): HSVColor => {
   const [r, g, b] = [color.r, color.g, color.b];
 
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
   const v = max;
   const d = max - min;
   const s = max === 0 ? 0 : d / max;
@@ -204,14 +247,8 @@ export const rgbToHSV = (color: RGBColor): HSVColor => {
     if (h < 0) h += 360;
   }
 
-  return {
-    space: 'hsv',
-    h: h,
-    s: s * 100,
-    v: v * 100,
-    alpha: color.alpha
-  };
-}
+  return hsv(h, s, v, color.alpha);
+};
 
 /**
  * Converts an RGB color to the CIE XYZ color space.
@@ -233,24 +270,10 @@ export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = fals
     const adaptationMatrix = getAdaptationMatrix(IlluminantD65, IlluminantD50, BradfordConeModel);
     const adaptedXYZ = multiplyMatrixByVector(adaptationMatrix, xyz);
 
-    return {
-      space: 'xyz',
-      x: adaptedXYZ[0],
-      y: adaptedXYZ[1],
-      z: adaptedXYZ[2],
-      alpha: color.alpha,
-      illuminant: IlluminantD50
-    };
+    return xyzFromVector(adaptedXYZ, color.alpha, IlluminantD50);
   }
 
-  return {
-    space: 'xyz',
-    x: xyz[0],
-    y: xyz[1],
-    z: xyz[2],
-    alpha: color.alpha,
-    illuminant: IlluminantD65
-  };
+  return xyzFromVector(xyz, color.alpha, IlluminantD65);
 };
 
 /**

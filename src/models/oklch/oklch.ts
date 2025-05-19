@@ -1,12 +1,15 @@
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
-import { OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab';
+import { oklab, OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab';
 import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
 import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToRGB } from '../xyz';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
+import { Color, ColorBase, ColorSpace } from '../../foundation';
+import { serializeV1 } from '../../semantics/serialization';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the OKLCh color space.
@@ -21,13 +24,49 @@ import { HSVColor } from '../hsv';
  * @property {number} h - The hue angle in degrees (0-360)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
-export type OKLChColor = {
+export interface OKLChColor extends ColorBase {
   space: 'oklch';
 
   l: number;
   c: number;
   h: number;
-  alpha?: number;
+}
+
+export const oklchToCSSString = (color: OKLChColor): string => {
+  const { l, c, h, alpha } = color;
+
+  const lFormatted = (l * 100).toFixed(2);
+  const cFormatted = c.toFixed(3);
+  const hFormatted = h.toFixed(2);
+
+  return `oklch(${lFormatted}% ${cFormatted} ${hFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
+};
+
+export const oklch = (l: number, c: number, h: number, alpha?: number): OKLChColor => ({
+  space: 'oklch',
+  l,
+  c,
+  h,
+  alpha,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return oklchToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: ColorSpace) {
+    return convertColor<OKLChColor, T>(this, colorSpace);
+  }
+});
+
+export const oklchFromVector = (v: number[], alpha?: number): OKLChColor => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return oklch(v[0], v[1], v[2], alpha);
 };
 
 /**
@@ -112,10 +151,7 @@ export const oklchToLCh = (color: OKLChColor): LChColor => oklabToLCh(oklchToOKL
  */
 export const oklchToOKLab = (color: OKLChColor): OKLabColor => {
   const hRad = (color.h * Math.PI) / 180;
-  const a = color.c * Math.cos(hRad);
-  const b = color.c * Math.sin(hRad);
-
-  return { space: 'oklab', l: color.l, a, b, alpha: color.alpha };
+  return oklab(color.l, color.c * Math.cos(hRad), color.c * Math.sin(hRad), color.alpha);
 };
 
 /**

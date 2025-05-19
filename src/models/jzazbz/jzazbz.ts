@@ -1,15 +1,17 @@
 import { b, c1, c2, c3, d, d0, g, JZAZBZ_XYZ_LMS_IABZ, JZAZBZ_XYZ_LMS_MATRIX, m1, m2p } from './constants';
-import { XYZColor, xyzToLab, xyzToLCh, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
+import { xyz, XYZColor, xyzToLab, xyzToLCh, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
-import { JzCzHzColor } from '../jzczhz';
+import { jzczhz, JzCzHzColor } from '../jzczhz';
 import { IlluminantD65 } from '../../standards/illuminants';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
+import { Color, ColorBase } from '../../foundation';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the JzAzBz color space.
@@ -24,13 +26,41 @@ import { HSVColor } from '../hsv';
  * @property {number} bz - The blue-yellow component (negative values are blue, positive values are yellow)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
-export type JzAzBzColor = {
+export interface JzAzBzColor extends ColorBase {
   space: 'jzazbz';
 
   jz: number;
   az: number;
   bz: number;
-  alpha?: number;
+}
+
+export const toCSSString = (color: JzAzBzColor): string => jzazbzToXYZ(color).toCSSString();
+
+export const jzazbz = (jz: number, az: number, bz: number, alpha?: number): JzAzBzColor => ({
+  space: 'jzazbz',
+  jz,
+  az,
+  bz,
+  alpha,
+
+  toString() {
+    return toCSSString(this);
+  },
+
+  toCSSString() {
+    return toCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: string) {
+    return convertColor<JzAzBzColor, T>(this, colorSpace);
+  }
+});
+
+export const jzazbzFromVector = (v: number[], alpha?: number): JzAzBzColor => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return jzazbz(v[0], v[1], v[2], alpha);
 };
 
 /**
@@ -103,7 +133,7 @@ export const jzazbzToXYZ = (color: JzAzBzColor, peakLuminance: number = 10000): 
   const X = (Xp + (b - 1) * Z) / b;
   const Y = (Yp + (g - 1) * X) / g;
 
-  return { space: 'xyz', x: X, y: Y, z: Z, alpha: color.alpha, illuminant: IlluminantD65 };
+  return xyz(X, Y, Z, color.alpha, IlluminantD65);
 };
 
 /**
@@ -167,7 +197,8 @@ export const jzazbzToOKLCh = (color: JzAzBzColor, peakLuminance: number = 10000)
 export const jzazbzToJzCzHz = (color: JzAzBzColor): JzCzHzColor => {
   const cz = Math.hypot(color.az, color.bz);
   const hz = ((Math.atan2(color.bz, color.az) * 180) / Math.PI + 360) % 360;
-  return { space: 'jzczhz', jz: color.jz, cz, hz, alpha: color.alpha };
+
+  return jzczhz(color.jz, cz, hz, color.alpha);
 };
 
 /**

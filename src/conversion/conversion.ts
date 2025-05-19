@@ -1,12 +1,17 @@
+import { ColorBase, ColorSpace } from '../foundation';
+
 /**
  * Type for a color conversion function that converts from one color space to another.
  */
-export type ColorConversionFn<TFrom, TTo> = (color: TFrom, ...args: any[]) => TTo;
+export type ColorConversionFn<TFrom extends ColorBase, TTo extends ColorBase> = (
+  color: TFrom,
+  ...args: any[]
+) => TTo;
 
 /**
  * Interface for a color conversion registry entry.
  */
-interface ConversionRegistryEntry<TFrom, TTo> {
+interface ConversionRegistryEntry<TFrom extends ColorBase, TTo extends ColorBase> {
   from: string;
   to: string;
   convert: ColorConversionFn<TFrom, TTo>;
@@ -25,7 +30,7 @@ const conversionRegistry: ConversionRegistryEntry<any, any>[] = [];
  * @param to The target color space
  * @param convert The conversion function
  */
-export function registerConversion<TFrom, TTo>(
+export function registerConversion<TFrom extends ColorBase, TTo extends ColorBase>(
   from: string,
   to: string,
   convert: ColorConversionFn<TFrom, TTo>
@@ -98,10 +103,10 @@ function findConversionPath(from: string, to: string): string[] | null {
  * @param to The target color space
  * @returns A function that converts from the source color space to the target color space, or null if no conversion path exists
  */
-export function getConversionFunction<TFrom, TTo>(
+export function getConversionFunction<TFrom extends ColorBase, TTo extends ColorBase>(
   from: string,
   to: string
-): ColorConversionFn<TFrom, TTo> | null {
+): ColorConversionFn<TFrom, TTo> {
   // Check for direct conversion
   const directConversion = conversionRegistry.find(
     (entry) => entry.from === from && entry.to === to
@@ -113,7 +118,9 @@ export function getConversionFunction<TFrom, TTo>(
   // Find a path between the color spaces
   const path = findConversionPath(from, to);
   if (!path || path.length < 2) {
-    return null;
+    throw new Error(
+      `No conversion found from ${from} to ${to}.\nPlease open an issue at https://github.com/dragonspark-tech/chroma-kit/issues`
+    );
   }
 
   // Create a chain of conversions
@@ -127,8 +134,11 @@ export function getConversionFunction<TFrom, TTo>(
       const conversion = conversionRegistry.find(
         (entry) => entry.from === fromSpace && entry.to === toSpace
       );
+
       if (!conversion) {
-        throw new Error(`No conversion found from ${fromSpace} to ${toSpace}`);
+        throw new Error(
+          `No conversion found from ${fromSpace} to ${toSpace}.\nPlease open an issue at https://github.com/dragonspark-tech/chroma-kit/issues`
+        );
       }
 
       result = conversion.convert(result, ...args);
@@ -146,11 +156,11 @@ export function getConversionFunction<TFrom, TTo>(
  * @param args Additional arguments to pass to the conversion function
  * @returns The converted color, or null if no conversion path exists
  */
-export function convertColor<TFrom, TTo>(
-  color: TFrom & { space: string },
+export function convertColor<TFrom extends ColorBase, TTo extends ColorBase>(
+  color: TFrom,
   to: string,
   ...args: any[]
-): TTo | null {
+): TTo {
   // Ensure the conversion graph is built
   if (Object.keys(conversionGraph).length === 0) {
     buildConversionGraph();
@@ -163,9 +173,5 @@ export function convertColor<TFrom, TTo>(
   }
 
   const conversionFn = getConversionFunction<TFrom, TTo>(from, to);
-  if (!conversionFn) {
-    return null;
-  }
-
   return conversionFn(color, ...args);
 }

@@ -1,13 +1,14 @@
 import {
+  jzazbz,
   JzAzBzColor,
+  jzazbzToHSL,
+  jzazbzToHSV,
   jzazbzToLab,
   jzazbzToLCh,
   jzazbzToOKLab,
   jzazbzToOKLCh,
   jzazbzToRGB,
-  jzazbzToXYZ,
-  jzazbzToHSL,
-  jzazbzToHSV
+  jzazbzToXYZ
 } from '../jzazbz';
 import { XYZColor } from '../xyz';
 import { RGBColor } from '../rgb';
@@ -17,6 +18,9 @@ import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
+import { Color, ColorBase } from '../../foundation';
+import { convertColor } from '../../conversion/conversion';
+import { serializeV1 } from '../../semantics/serialization';
 
 /**
  * Represents a color in the JzCzHz color space.
@@ -30,13 +34,41 @@ import { HSVColor } from '../hsv';
  * @property {number} hz - The hue angle in degrees (0-360)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
-export type JzCzHzColor = {
+export interface JzCzHzColor extends ColorBase {
   space: 'jzczhz';
 
   jz: number;
   cz: number;
   hz: number;
-  alpha?: number;
+}
+
+export const jzczhzToCSSString = (color: JzCzHzColor): string => jzczhzToXYZ(color).toCSSString();
+
+export const jzczhz = (jz: number, cz: number, hz: number, alpha?: number): JzCzHzColor => ({
+  space: 'jzczhz',
+  jz,
+  cz,
+  hz,
+  alpha,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return jzczhzToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: string) {
+    return convertColor<JzCzHzColor, T>(this, colorSpace);
+  }
+});
+
+export const jzczhzFromVector = (v: number[], alpha?: number): JzCzHzColor => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return jzczhz(v[0], v[1], v[2], alpha);
 };
 
 /**
@@ -150,13 +182,6 @@ export const jzczhzToOKLCh = (color: JzCzHzColor, peakLuminance: number = 10000)
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
 export const jzczhzToJzAzBz = (color: JzCzHzColor): JzAzBzColor => {
-  const hzRad = (color.hz * Math.PI) / 180; // deg → rad
-  return {
-    space: 'jzazbz',
-
-    jz: color.jz,
-    az: color.cz * Math.cos(hzRad),
-    bz: color.cz * Math.sin(hzRad),
-    alpha: color.alpha
-  };
+  const hzRad = (color.hz * Math.PI) / 180;
+  return jzazbz(color.jz, color.cz * Math.cos(hzRad), color.cz * Math.sin(hzRad), color.alpha);
 };

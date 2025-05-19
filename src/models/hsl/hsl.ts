@@ -1,5 +1,5 @@
-import { RGBColor, rgbToJzAzBz, rgbToJzCzHz, rgbToLab, rgbToLCH, rgbToOKLab, rgbToOKLCh, rgbToXYZ } from '../rgb';
-import { HSVColor } from '../hsv';
+import { rgb, RGBColor, rgbToJzAzBz, rgbToJzCzHz, rgbToLab, rgbToLCH, rgbToOKLab, rgbToOKLCh, rgbToXYZ } from '../rgb';
+import { hsv, HSVColor } from '../hsv';
 import { XYZColor } from '../xyz';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
@@ -7,6 +7,9 @@ import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
+import { Color, ColorBase, ColorSpace } from '../../foundation';
+import { serializeV1 } from '../../semantics/serialization';
+import { convertColor } from '../../conversion/conversion';
 
 /**
  * Represents a color in the HSL color space.
@@ -19,14 +22,50 @@ import { JzCzHzColor } from '../jzczhz';
  * @property {number} l - The lightness component (0-1)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
  */
-export type HSLColor = {
+export interface HSLColor extends ColorBase {
   space: 'hsl';
 
   h: number;
   s: number;
   l: number;
-  alpha?: number;
 }
+
+export const hslToCSSString = (color: HSLColor): string => {
+  const { h, s, l, alpha } = color;
+
+  const hFormatted = h.toFixed(2);
+  const sFormatted = (s * 100).toFixed(2);
+  const lFormatted = (l * 100).toFixed(2);
+
+  return `hsl(${hFormatted}, ${sFormatted}%, ${lFormatted}%${alpha ? ` / ${alpha.toFixed(3)}` : ''})`;
+};
+
+export const hsl = (h: number, s: number, l: number, alpha?: number): HSLColor => ({
+  space: 'hsl',
+  h,
+  s,
+  l,
+  alpha,
+
+  toString() {
+    return serializeV1(this);
+  },
+
+  toCSSString() {
+    return hslToCSSString(this);
+  },
+
+  to<T extends ColorBase>(colorSpace: ColorSpace) {
+    return convertColor<HSLColor, T>(this, colorSpace);
+  }
+});
+
+export const hslFromVector = (v: number[], alpha?: number) => {
+  if (v.length !== 3) {
+    throw new Error('Invalid vector length');
+  }
+  return hsl(v[0], v[1], v[2], alpha);
+};
 
 /**
  * Converts an HSL color to the RGB color space.
@@ -41,17 +80,10 @@ export const hslToRGB = (color: HSLColor): RGBColor => {
 
   const k = (n: number) => (n + h / 30) % 12;
   const a = s * Math.min(l, 1 - l);
-  const f = (n: number) =>
-    l - a * Math.max(-1, Math.min(Math.min(k(n) - 3, 9 - k(n)), 1));
+  const f = (n: number) => l - a * Math.max(-1, Math.min(Math.min(k(n) - 3, 9 - k(n)), 1));
 
-  return {
-    space: 'rgb',
-    r: f(0),
-    g: f(8),
-    b: f(4),
-    alpha: color.alpha
-  }
-}
+  return rgb(f(0), f(8), f(4), color.alpha);
+};
 
 /**
  * Converts an HSL color to the HSV color space.
@@ -68,14 +100,8 @@ export const hslToHSV = (color: HSLColor): HSVColor => {
   const v = l + s * Math.min(l, 1 - l);
   const hsvS = v === 0 ? 0 : 2 * (1 - l / v);
 
-  return {
-    space: 'hsv',
-    h,
-    s: hsvS,
-    v: v,
-    alpha: color.alpha
-  }
-}
+  return hsv(h, hsvS, v, color.alpha);
+};
 
 /**
  * Converts an HSL color to the CIE XYZ color space.
@@ -85,8 +111,7 @@ export const hslToHSV = (color: HSLColor): HSVColor => {
  * @param {HSLColor} color - The HSL color to convert
  * @returns {XYZColor} The color in XYZ space
  */
-export const hslToXYZ = (color: HSLColor): XYZColor =>
-  rgbToXYZ(hslToRGB(color));
+export const hslToXYZ = (color: HSLColor): XYZColor => rgbToXYZ(hslToRGB(color));
 
 /**
  * Converts an HSL color to the CIE Lab color space.
@@ -97,8 +122,7 @@ export const hslToXYZ = (color: HSLColor): XYZColor =>
  * @param {HSLColor} color - The HSL color to convert
  * @returns {LabColor} The color in Lab space
  */
-export const hslToLab = (color: HSLColor): LabColor =>
-  rgbToLab(hslToRGB(color));
+export const hslToLab = (color: HSLColor): LabColor => rgbToLab(hslToRGB(color));
 
 /**
  * Converts an HSL color to the CIE LCh color space.
@@ -110,8 +134,7 @@ export const hslToLab = (color: HSLColor): LabColor =>
  * @param {HSLColor} color - The HSL color to convert
  * @returns {LChColor} The color in LCh space
  */
-export const hslToLCh = (color: HSLColor): LChColor =>
-  rgbToLCH(hslToRGB(color));
+export const hslToLCh = (color: HSLColor): LChColor => rgbToLCH(hslToRGB(color));
 
 /**
  * Converts an HSL color to the OKLab color space.
