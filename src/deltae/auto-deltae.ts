@@ -51,7 +51,7 @@ export const deltaE = (
 ): number => {
   switch (algorithm) {
     case 'Euclidean':
-      return deltaE76(parse(color, 'xyz'), parse(sample, 'xyz'));
+      return deltaE76(parse(color, 'lab'), parse(sample, 'lab'));
 
     case 'CMC':
       return deltaECMC(parse(color, 'lch'), parse(sample, 'lch'));

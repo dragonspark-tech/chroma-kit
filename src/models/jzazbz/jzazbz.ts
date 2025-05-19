@@ -1,7 +1,7 @@
 import { b, c1, c2, c3, d, d0, g, JZAZBZ_XYZ_LMS_IABZ, JZAZBZ_XYZ_LMS_MATRIX, m1, m2p } from './constants';
 import { xyz, XYZColor, xyzToLab, xyzToLCh, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
+import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
@@ -12,6 +12,8 @@ import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
 import { ColorBase } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
+import { serializeV1 } from '../../semantics/serialization';
+import { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the JzAzBz color space.
@@ -34,8 +36,38 @@ export interface JzAzBzColor extends ColorBase {
   bz: number;
 }
 
-export const toCSSString = (color: JzAzBzColor): string => jzazbzToXYZ(color).toCSSString();
+/**
+ * Converts a JzAzBz color object to a CSS-compatible string representation.
+ *
+ * This function creates a string in the format "jzazbz(jz az bz / alpha)" which
+ * can be parsed back using jzazbzFromCSSString. While this format is not standard CSS,
+ * it follows the pattern of other modern CSS color functions.
+ *
+ * @param {JzAzBzColor} color - The JzAzBz color object to convert
+ * @returns {string} The CSS-compatible string representation
+ */
+export const toCSSString = (color: JzAzBzColor): string => {
+  const { jz, az, bz, alpha } = color;
 
+  const jzFormatted = jz.toFixed(6);
+  const azFormatted = az.toFixed(6);
+  const bzFormatted = bz.toFixed(6);
+
+  return `jzazbz(${jzFormatted} ${azFormatted} ${bzFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
+};
+
+/**
+ * Creates a new JzAzBz color object with the specified components.
+ *
+ * This is the primary factory function for creating JzAzBz colors in the library.
+ * The created object includes methods for conversion to other color spaces and string representations.
+ *
+ * @param {number} jz - The lightness component
+ * @param {number} az - The green-red component (negative values are green, positive values are red)
+ * @param {number} bz - The blue-yellow component (negative values are blue, positive values are yellow)
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {JzAzBzColor} A new JzAzBz color object
+ */
 export const jzazbz = (jz: number, az: number, bz: number, alpha?: number): JzAzBzColor => ({
   space: 'jzazbz',
   jz,
@@ -44,7 +76,7 @@ export const jzazbz = (jz: number, az: number, bz: number, alpha?: number): JzAz
   alpha,
 
   toString() {
-    return toCSSString(this);
+    return serializeV1(this);
   },
 
   toCSSString() {
@@ -56,6 +88,17 @@ export const jzazbz = (jz: number, az: number, bz: number, alpha?: number): JzAz
   }
 });
 
+/**
+ * Creates a new JzAzBz color object from a vector of JzAzBz components.
+ *
+ * This utility function is useful when working with color calculations that produce
+ * arrays of values rather than individual components.
+ *
+ * @param {number[]} v - A vector containing the JzAzBz components [jz, az, bz]
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {JzAzBzColor} A new JzAzBz color object
+ * @throws {Error} If the vector does not have exactly 3 components
+ */
 export const jzazbzFromVector = (v: number[], alpha?: number): JzAzBzColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
@@ -102,6 +145,20 @@ export const jzazbzToHSL = (color: JzAzBzColor, peakLuminance: number = 10000): 
  */
 export const jzazbzToHSV = (color: JzAzBzColor, peakLuminance: number = 10000): HSVColor =>
   rgbToHSV(jzazbzToRGB(color, peakLuminance));
+
+/**
+ * Converts a color from JzAzBz to HWB color space.
+ *
+ * This function first converts the JzAzBz color to RGB, then from RGB to HWB.
+ * The HWB color space is a cylindrical representation of RGB, using hue,
+ * whiteness, and blackness components.
+ *
+ * @param {JzAzBzColor} color - The JzAzBz color to convert
+ * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @returns {HSVColor} The color in HWB space
+ */
+export const jzazbzToHWB = (color: JzAzBzColor, peakLuminance: number = 10000): HWBColor =>
+  rgbToHWB(jzazbzToRGB(color, peakLuminance));
 
 /**
  * Converts a color from JzAzBz to CIE XYZ color space.

@@ -1,7 +1,7 @@
 import { lab, LabColor, labToXYZ } from '../lab';
 import { OKLabColor, oklabToOKLCh } from '../oklab';
 import { OKLChColor } from '../oklch';
-import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
+import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
@@ -10,6 +10,7 @@ import { HSVColor } from '../hsv';
 import { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
+import { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the CIE LCh color space.
@@ -31,16 +32,37 @@ export interface LChColor extends ColorBase {
   h: number;
 }
 
+/**
+ * Converts an LCh color object to a CSS-compatible string representation.
+ *
+ * This function formats the LCh color as a CSS lch() function string according to the CSS Color Module Level 4.
+ * The lightness component is formatted as a percentage, the chroma as a number, and the hue as degrees.
+ *
+ * @param {LChColor} color - The LCh color object to convert
+ * @returns {string} The CSS-compatible string representation
+ */
 export const lchToCSSString = (color: LChColor): string => {
   const { l, c, h, alpha } = color;
 
-  const lFormatted = (l * 100).toFixed(4);
-  const cFormatted = (c * 100).toFixed(2);
-  const hFormatted = (h * 100).toFixed(2);
+  const lFormatted = l.toFixed(2);
+  const cFormatted = c.toFixed(2);
+  const hFormatted = h.toFixed(2);
 
-  return `lch(${lFormatted}% ${cFormatted}% ${hFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
+  return `lch(${lFormatted}% ${cFormatted} ${hFormatted}deg${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
 };
 
+/**
+ * Creates a new LCh color object with the specified components.
+ *
+ * This is the primary factory function for creating LCh colors in the library.
+ * The created object includes methods for conversion to other color spaces and string representations.
+ *
+ * @param {number} l - The lightness component (0-100)
+ * @param {number} c - The chroma (saturation/colorfulness) component
+ * @param {number} h - The hue angle in degrees (0-360)
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {LChColor} A new LCh color object
+ */
 export const lch = (l: number, c: number, h: number, alpha?: number): LChColor => ({
   space: 'lch',
   l,
@@ -61,6 +83,17 @@ export const lch = (l: number, c: number, h: number, alpha?: number): LChColor =
   }
 });
 
+/**
+ * Creates a new LCh color object from a vector of LCh components.
+ *
+ * This utility function is useful when working with color calculations that produce
+ * arrays of values rather than individual components.
+ *
+ * @param {number[]} v - A vector containing the LCh components [l, c, h]
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {LChColor} A new LCh color object
+ * @throws {Error} If the vector does not have exactly 3 components
+ */
 export const lchFromVector = (v: number[], alpha?: number): LChColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
@@ -101,6 +134,18 @@ export const lchToHSL = (color: LChColor): HSLColor => rgbToHSL(lchToRGB(color))
  * @returns {HSVColor} The color in HSV space
  */
 export const lchToHSV = (color: LChColor): HSVColor => rgbToHSV(lchToRGB(color));
+
+/**
+ * Converts a color from CIE LCh to HWB color space.
+ *
+ * This function first converts the LCh color to RGB, then from RGB to HWB.
+ * The HWB color space is a cylindrical representation of RGB, using hue,
+ * whiteness, and blackness components.
+ *
+ * @param {LChColor} color - The LCh color to convert
+ * @returns {HWBColor} The color in HWB space
+ */
+export const lchToHWB = (color: LChColor): HWBColor => rgbToHWB(lchToRGB(color));
 
 /**
  * Converts a color from CIE LCh to CIE XYZ color space.

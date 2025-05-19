@@ -1,7 +1,26 @@
+/**
+ * Conversion factor from degrees to radians.
+ *
+ * This constant equals π/180 and is used to convert angle measurements
+ * from degrees to radians for trigonometric calculations in color difference formulas.
+ */
 export const DEG_TO_RAD = 0.017453292519943295;
 
+/**
+ * Conversion factor from radians to degrees.
+ *
+ * This constant equals 180/π and is used to convert angle measurements
+ * from radians to degrees in color difference calculations.
+ */
 export const RAD_TO_DEG = 57.29577951308232;
 
+/**
+ * A constant used in the CIEDE2000 color difference formula.
+ *
+ * This value (25^7) is used in the calculation of the parametric weighting
+ * functions that adjust the contributions of lightness, chroma, and hue
+ * differences to the overall color difference.
+ */
 export const E2000_GFACTOR = 6103515625;
 
 /**

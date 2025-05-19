@@ -4,45 +4,46 @@ import { ColorStringParser } from '../../semantics/colorParser';
 /**
  * Parses a CSS Lab color string into a LabColor object.
  *
- * Supports both comma and space syntax:
+ * Supports both comma and space syntax, as well as optional alpha:
  * - lab(50%, 43.5, -47.3)
  * - lab(50% 43.5 -47.3)
  * - lab(50%, 43.5, -47.3, 0.5)
  * - lab(50% 43.5 -47.3 / 0.5)
  *
- * @param src The CSS Lab color string to parse
- * @returns A LabColor object
+ * The function handles:
+ * - Lightness as a percentage (0-100%)
+ * - A and B components as numbers (can be negative)
+ * - Optional alpha value (0-1 or 0-100%)
+ * - Both comma-separated and space-separated formats
+ * - Whitespace flexibility according to CSS specifications
+ *
+ * @param {string} src - The CSS Lab color string to parse
+ * @returns {LabColor} The parsed Lab color object, with lightness normalized to 0-1 range
+ * @throws {SyntaxError} If the string format is invalid
  */
 export function labFromCSSString(src: string): LabColor {
-  /* we already know src starts with "lab(" (the dispatcher guaranteed it) */
   const parser = new ColorStringParser(src, 4);
 
-  // Parse lightness (0-100%)
   parser.skipWS();
   const l = parser.readComponent({
     isPercentageOnly: true,
     min: 0,
     max: 100,
-    scale: 1 // Already in the correct range
+    scale: 0.01
   });
 
-  // Determine delimiter style
   parser.determineDelimiterStyle();
 
-  // Parse a component (green-red)
   parser.skipWS();
   const a = parser.readComponent();
   parser.consumeCommaIfNeeded();
 
-  // Parse b component (blue-yellow)
   parser.skipWS();
   const b = parser.readComponent();
   parser.skipWS();
 
-  // Parse optional alpha
   const alpha = parser.parseOptionalAlpha();
 
-  // Check for proper closing
   parser.checkEnd();
 
   return lab(l, a, b, alpha);

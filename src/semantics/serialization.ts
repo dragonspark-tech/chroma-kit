@@ -1,3 +1,17 @@
+/**
+ * Color serialization and deserialization module.
+ *
+ * This module provides functionality for converting between Color objects and
+ * string representations using ChromaKit's v1 serialization format.
+ *
+ * The v1 format follows the pattern:
+ * "ChromaKit|v1 {colorspace} {component1} {component2} ... [/ {alpha}]"
+ *
+ * For example:
+ * "ChromaKit|v1 rgb 255 0 0" (red in RGB)
+ * "ChromaKit|v1 hsl 0 100 50 / 0.5" (semi-transparent red in HSL)
+ */
+
 import { type Color, type ColorSpace, colorVectorMappings } from '../foundation';
 import { rgbFromVector } from '../models/rgb';
 import { xyzFromVector } from '../models/xyz';
@@ -10,6 +24,12 @@ import { oklchFromVector } from '../models/oklch';
 import { jzazbzFromVector } from '../models/jzazbz';
 import { jzczhzFromVector } from '../models/jzczhz';
 
+/**
+ * Type guard utility to ensure all color spaces are handled.
+ *
+ * @param x A value that should never occur if all cases are handled
+ * @throws {Error} Always throws with information about the unhandled color space
+ */
 const assertNever = (x: never): never => {
   throw new Error(`Unhandled colorspace: ${x as string}`);
 };

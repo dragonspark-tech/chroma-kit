@@ -1,7 +1,7 @@
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
 import { xyz, XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
 import { ϵ, κ } from './constants';
-import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
+import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { lch, LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
@@ -12,6 +12,7 @@ import { HSVColor } from '../hsv';
 import { convertColor } from '../../conversion/conversion';
 import { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
+import { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the CIE Lab color space.
@@ -33,16 +34,37 @@ export interface LabColor extends ColorBase {
   b: number;
 }
 
+/**
+ * Converts a Lab color object to a CSS-compatible string representation.
+ *
+ * This function formats the Lab color components according to the CSS Color Module Level 4
+ * specification, which uses the format: lab(L% a b / alpha).
+ *
+ * @param {LabColor} color - The Lab color object to convert
+ * @returns {string} The CSS-compatible string representation
+ */
 export const labToCSSString = (color: LabColor): string => {
   const { l, a, b, alpha } = color;
 
-  const lFormatted = (l * 100).toFixed(4);
-  const aFormatted = (a * 100).toFixed(4);
-  const bFormatted = (b * 100).toFixed(4);
+  const lFormatted = (l * 100).toFixed(2);
+  const aFormatted = a.toFixed(4);
+  const bFormatted = b.toFixed(4);
 
   return `lab(${lFormatted}% ${aFormatted} ${bFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
 };
 
+/**
+ * Creates a new Lab color object with the specified components.
+ *
+ * This is the primary factory function for creating Lab colors in the library.
+ * The created object includes methods for conversion to other color spaces and string representations.
+ *
+ * @param {number} l - The lightness component (0-1, will be scaled to 0-100 in CSS output)
+ * @param {number} a - The green-red component (negative values are green, positive values are red)
+ * @param {number} b - The blue-yellow component (negative values are blue, positive values are yellow)
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {LabColor} A new Lab color object
+ */
 export const lab = (l: number, a: number, b: number, alpha?: number): LabColor => ({
   space: 'lab',
   l,
@@ -63,6 +85,17 @@ export const lab = (l: number, a: number, b: number, alpha?: number): LabColor =
   }
 });
 
+/**
+ * Creates a new Lab color object from a vector of Lab components.
+ *
+ * This utility function is useful when working with color calculations that produce
+ * arrays of values rather than individual components.
+ *
+ * @param {number[]} v - A vector containing the Lab components [l, a, b]
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {LabColor} A new Lab color object
+ * @throws {Error} If the vector does not have exactly 3 components
+ */
 export const labFromVector = (v: number[], alpha?: number): LabColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
@@ -102,6 +135,18 @@ export const labToHSL = (color: LabColor): HSLColor => rgbToHSL(labToRGB(color))
  * @returns {HSVColor} The color in HSV space
  */
 export const labToHSV = (color: LabColor): HSVColor => rgbToHSV(labToRGB(color));
+
+/**
+ * Converts a color from CIE Lab to HWB color space.
+ *
+ * This function uses the automatic conversion system to find the optimal path
+ * from Lab to HWB, which typically goes through XYZ and RGB.
+ *
+ * @param {LabColor} color = The Lab color to convert
+ * @returns {HWBColor} The color in HWB space
+ *
+ */
+export const labToHWB = (color: LabColor): HWBColor => rgbToHWB(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to CIE XYZ color space.

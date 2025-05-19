@@ -1,7 +1,7 @@
 ﻿import { lab, LabColor, labToLCH } from '../lab';
 import { ϵ, κ } from '../lab/constants';
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { delinearizeRGBColor, RGBColor, rgbFromVector, rgbToHSL, rgbToHSV } from '../rgb';
+import { delinearizeRGBColor, RGBColor, rgbFromVector, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
 import { OKLabColor, oklabFromVector, oklabToOKLCh } from '../oklab';
@@ -16,6 +16,7 @@ import { HSVColor } from '../hsv';
 import { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
+import { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -40,11 +41,34 @@ export interface XYZColor extends ColorBase {
   illuminant?: Illuminant;
 }
 
+/**
+ * Converts an XYZ color object to a CSS-compatible string representation.
+ *
+ * This function formats the XYZ color as a CSS Color Module Level 4 color function,
+ * including the illuminant name in the format: color(xyz-d65 X Y Z / A).
+ *
+ * @param {XYZColor} color - The XYZ color object to convert
+ * @returns {string} The CSS-compatible string representation
+ */
 export const xyzToCSSString = (color: XYZColor): string => {
   const { x, y, z, alpha, illuminant } = color;
   return `color(xyz-${illuminant?.name?.toLowerCase()} ${x} ${y} ${z}${alpha ? ` / ${alpha}` : ''})`;
 };
 
+/**
+ * Creates a new XYZ color object with the specified components.
+ *
+ * This is the primary factory function for creating XYZ colors in the library.
+ * The created object includes methods for conversion to other color spaces and string representations.
+ * If no illuminant is specified, the standard D65 illuminant is used as the default.
+ *
+ * @param {number} x - The X component, related to a mix of the cone response curves
+ * @param {number} y - The Y component, representing luminance
+ * @param {number} z - The Z component, roughly equal to blue stimulation
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @param {Illuminant} [illuminant] - The reference white point to use, defaults to D65
+ * @returns {XYZColor} A new XYZ color object
+ */
 export const xyz = (
   x: number,
   y: number,
@@ -73,6 +97,18 @@ export const xyz = (
   }
 });
 
+/**
+ * Creates a new XYZ color object from a vector of XYZ components.
+ *
+ * This utility function is useful when working with color calculations that produce
+ * arrays of values rather than individual components.
+ *
+ * @param {number[]} v - A vector containing the XYZ components [x, y, z]
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @param {Illuminant} [illuminant] - The reference white point to use, defaults to D65
+ * @returns {XYZColor} A new XYZ color object
+ * @throws {Error} If the vector does not have exactly 3 components
+ */
 export const xyzFromVector = (v: number[], alpha?: number, illuminant?: Illuminant): XYZColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
@@ -117,6 +153,18 @@ export const xyzToHSL = (color: XYZColor): HSLColor => rgbToHSL(xyzToRGB(color))
  * @returns {HSVColor} The color in HSV space
  */
 export const xyzToHSV = (color: XYZColor): HSVColor => rgbToHSV(xyzToRGB(color));
+
+/**
+ * Converts a color from CIE XYZ to HWB color space.
+ *
+ * This function first converts the XYZ color to RGB, then from RGB to HWB.
+ * The HWB color space is a cylindrical representation of RGB, using hue,
+ * whiteness, and blackness components.
+ *
+ * @param {XYZColor} color - The XYZ color to convert
+ * @returns {HWBColor} The color in HWB space
+ */
+export const xyzToHWB = (color: XYZColor): HWBColor => rgbToHWB(xyzToRGB(color));
 
 /**
  * Converts a color from CIE XYZ to CIE Lab color space.

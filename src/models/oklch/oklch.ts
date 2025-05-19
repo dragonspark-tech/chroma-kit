@@ -1,7 +1,7 @@
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { oklab, OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab';
-import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
+import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToRGB } from '../xyz';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
@@ -10,6 +10,7 @@ import { HSVColor } from '../hsv';
 import { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
+import { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the OKLCh color space.
@@ -32,6 +33,17 @@ export interface OKLChColor extends ColorBase {
   h: number;
 }
 
+/**
+ * Converts an OKLCh color object to a CSS-compatible string representation.
+ *
+ * This function formats the OKLCh color as a CSS oklch() function string,
+ * with the lightness component expressed as a percentage, and appropriate
+ * formatting for the chroma and hue components. Alpha values are included
+ * when defined, using the slash syntax.
+ *
+ * @param {OKLChColor} color - The OKLCh color object to convert
+ * @returns {string} The CSS-compatible string representation
+ */
 export const oklchToCSSString = (color: OKLChColor): string => {
   const { l, c, h, alpha } = color;
 
@@ -42,6 +54,18 @@ export const oklchToCSSString = (color: OKLChColor): string => {
   return `oklch(${lFormatted}% ${cFormatted} ${hFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
 };
 
+/**
+ * Creates a new OKLCh color object with the specified components.
+ *
+ * This is the primary factory function for creating OKLCh colors in the library.
+ * The created object includes methods for conversion to other color spaces and string representations.
+ *
+ * @param {number} l - The lightness component (0-1)
+ * @param {number} c - The chroma (saturation/colorfulness) component
+ * @param {number} h - The hue angle in degrees (0-360)
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {OKLChColor} A new OKLCh color object
+ */
 export const oklch = (l: number, c: number, h: number, alpha?: number): OKLChColor => ({
   space: 'oklch',
   l,
@@ -62,6 +86,17 @@ export const oklch = (l: number, c: number, h: number, alpha?: number): OKLChCol
   }
 });
 
+/**
+ * Creates a new OKLCh color object from a vector of OKLCh components.
+ *
+ * This utility function is useful when working with color calculations that produce
+ * arrays of values rather than individual components.
+ *
+ * @param {number[]} v - A vector containing the OKLCh components [l, c, h]
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {OKLChColor} A new OKLCh color object
+ * @throws {Error} If the vector does not have exactly 3 components
+ */
 export const oklchFromVector = (v: number[], alpha?: number): OKLChColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
@@ -105,6 +140,18 @@ export const oklchToHSL = (color: OKLChColor): HSLColor => rgbToHSL(oklchToRGB(c
  * @returns {HSVColor} The color in HSV space
  */
 export const oklchToHSV = (color: OKLChColor): HSVColor => rgbToHSV(oklchToRGB(color));
+
+/**
+ * Converts a color from OKLCh to HWB color space.
+ *
+ * This function first converts the OKLCh color to RGB, then from RGB to HWB.
+ * The HWB color space is a cylindrical representation of RGB, using hue,
+ * whiteness, and blackness components.
+ *
+ * @param {OKLChColor} color - The OKLCh color to convert
+ * @returns {HWBColor} The color in HWB space
+ */
+export const oklchToHWB = (color: OKLChColor): HWBColor => rgbToHWB(oklchToRGB(color));
 
 /**
  * Converts a color from OKLCh to CIE XYZ color space.

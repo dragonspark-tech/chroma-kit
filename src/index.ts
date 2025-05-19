@@ -7,6 +7,8 @@ export {
   hslFromVector,
   hsv,
   hsvFromVector,
+  hwb,
+  hwbFromVector,
   jzazbz,
   jzazbzFromVector,
   jzczhz,
@@ -21,7 +23,8 @@ export {
   oklchFromVector
 } from './fn';
 
-export * from './deltae/auto-deltae';
+export {deltaE, type DeltaEAlgorithm} from './deltae/auto-deltae';
+export * from './deltae/index';
 
 export * from './semantics/parsing';
 export * from './semantics/serialization';

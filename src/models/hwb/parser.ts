@@ -1,28 +1,26 @@
-import { rgb, RGBColor } from './rgb';
-import { normalizeRGBColor } from './transform';
+import { hwb, HWBColor } from './hwb';
 
 /**
- * Parses a CSS RGB color string into an RGBColor object.
+ * Parses a CSS HWB color string into an HWBColor object.
  *
- * Supports both comma and space syntax, as well as both rgb() and rgba() formats:
- * - rgb(255, 128, 0)
- * - rgba(255, 128, 0, 0.5)
- * - rgb(255 128 0)
- * - rgb(255 128 0 / 0.5)
- * - rgb(100%, 50%, 0%)
- * - rgb(100% 50% 0% / 0.5)
+ * Supports both comma and space syntax:
+ * - hwb(120, 30%, 40%)
+ * - hwb(120 30% 40%)
+ * - hwb(120, 30%, 40%, 0.5)
+ * - hwb(120 30% 40% / 0.5)
  *
  * The function handles:
- * - RGB values as either integers (0-255) or percentages (0-100%)
+ * - Hue values in degrees (0-360, normalized if outside this range)
+ * - Whiteness and blackness as percentages (0-100%)
  * - Optional alpha value (0-1 or 0-100%)
  * - Both comma-separated and space-separated formats
  * - Whitespace flexibility according to CSS specifications
  *
- * @param {string} src - The CSS RGB color string to parse
- * @returns {RGBColor} The parsed RGB color object, with values normalized to 0-1 range
+ * @param {string} src - The CSS HWB color string to parse
+ * @returns {HWBColor} The parsed HWB color object
  * @throws {SyntaxError} If the string format is invalid
  */
-export function rgbFromCSSString(src: string): RGBColor {
+export function hwbFromCSSString(src: string): HWBColor {
   let i = 4;
   const N = src.length;
 
@@ -31,13 +29,18 @@ export function rgbFromCSSString(src: string): RGBColor {
     while (i < N && isWS(src.charCodeAt(i))) ++i;
   };
 
-  const readComp = (isAlpha: boolean): number => {
+  const readComp = (isHue: boolean, isAlpha: boolean): number => {
     let v = 0,
       dot = false,
       frac = 0.1;
+    let negative = false;
 
-    if (src[i] === '-') throw new SyntaxError('negative value');
-    if (src[i] === '+') ++i;
+    if (src[i] === '-') {
+      negative = true;
+      ++i;
+    } else if (src[i] === '+') {
+      ++i;
+    }
 
     for (; i < N; ++i) {
       const d = src.charCodeAt(i) - 48;
@@ -52,22 +55,30 @@ export function rgbFromCSSString(src: string): RGBColor {
       } else break;
     }
 
+    if (negative) v = -v;
+
     const pct = src[i] === '%';
     if (pct) ++i;
 
-    if (isAlpha) {
+    if (isHue) {
+      if (pct) throw new SyntaxError('hue cannot be a percentage');
+      while (v < 0) v += 360;
+      while (v >= 360) v -= 360;
+      return v;
+    } else if (isAlpha) {
       if (pct) v *= 0.01;
       if (v < 0 || v > 1) throw new SyntaxError('alpha 0–1');
       return v;
     } else {
-      if (pct) v *= 2.55;
-      if (v > 255) throw new SyntaxError('rgb() out of range');
+      if (!pct) throw new SyntaxError('whiteness and blackness must be percentages');
+      v *= 0.01;
+      if (v < 0 || v > 1) throw new SyntaxError('whiteness/blackness 0–100%');
       return v;
     }
   };
 
   skipWS();
-  const r = readComp(false);
+  const h = readComp(true, false);
   let sawWS = false;
   let commaSyntax = false;
 
@@ -87,7 +98,7 @@ export function rgbFromCSSString(src: string): RGBColor {
     throw new SyntaxError("expected ',' or <whitespace> after first value");
   skipWS();
 
-  const g = readComp(false);
+  const w = readComp(false, false);
   if (commaSyntax) {
     skipWS();
     if (src[i] !== ',') throw new SyntaxError("expected ','");
@@ -95,24 +106,24 @@ export function rgbFromCSSString(src: string): RGBColor {
   }
   skipWS();
 
-  const b = readComp(false);
+  const b = readComp(false, false);
   skipWS();
 
-  let a: number | undefined;
+  let alpha: number | undefined;
   if (commaSyntax && src[i] === ',') {
     ++i;
     skipWS();
-    a = readComp(true);
+    alpha = readComp(false, true);
     skipWS();
   } else if (src[i] === '/') {
     ++i;
     skipWS();
-    a = readComp(true);
+    alpha = readComp(false, true);
     skipWS();
   }
 
   if (src[i] !== ')') throw new SyntaxError('missing ")"');
   if (++i !== N) throw new SyntaxError('unexpected text after ")"');
 
-  return normalizeRGBColor(rgb(r, g, b, a));
+  return hwb(h, w, b, alpha);
 }

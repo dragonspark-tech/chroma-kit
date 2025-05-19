@@ -8,11 +8,13 @@ import type { RGBColor } from './models/rgb';
 import type { XYZColor } from './models/xyz';
 import type { HSLColor } from './models/hsl';
 import type { HSVColor } from './models/hsv';
+import { HWBColor } from './models/hwb';
 
 export type Color =
   | RGBColor
   | HSLColor
   | HSVColor
+  | HWBColor
   | XYZColor
   | LabColor
   | LChColor
@@ -40,19 +42,21 @@ export type CreatedColor<T extends ColorSpace> = T extends 'rgb'
       ? HSLColor
       : T extends 'hsv'
         ? HSVColor
-        : T extends 'lab'
-          ? LabColor
-          : T extends 'lch'
-            ? LChColor
-            : T extends 'oklab'
-              ? OKLabColor
-              : T extends 'oklch'
-                ? OKLChColor
-                : T extends 'jzazbz'
-                  ? JzAzBzColor
-                  : T extends 'jzczhz'
-                    ? JzCzHzColor
-                    : never;
+        : T extends 'hwb'
+          ? HWBColor
+          : T extends 'lab'
+            ? LabColor
+            : T extends 'lch'
+              ? LChColor
+              : T extends 'oklab'
+                ? OKLabColor
+                : T extends 'oklch'
+                  ? OKLChColor
+                  : T extends 'jzazbz'
+                    ? JzAzBzColor
+                    : T extends 'jzczhz'
+                      ? JzCzHzColor
+                      : never;
 
 /**
  * A mapping of color spaces to their respective channel identifiers.
@@ -71,6 +75,7 @@ export const colorVectorMappings: Record<ColorSpace, readonly string[]> = {
   xyz: ['x', 'y', 'z'],
   hsl: ['h', 's', 'l'],
   hsv: ['h', 's', 'v'],
+  hwb: ['h', 'w', 'b'],
   lab: ['l', 'a', 'b'],
   lch: ['l', 'c', 'h'],
   oklab: ['l', 'a', 'b'],

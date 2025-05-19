@@ -16,6 +16,7 @@ import { hsv, HSVColor } from '../hsv';
 import { serializeV1 } from '../../semantics/serialization';
 import { ColorBase, ColorSpace } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
+import { hwb, HWBColor } from '../hwb';
 
 /**
  * Represents a color in the RGB color space.
@@ -36,10 +37,19 @@ export interface RGBColor extends ColorBase {
   b: number;
 }
 
+/**
+ * Converts an RGB color object to a CSS-compatible string representation.
+ *
+ * For fully opaque colors, this function returns a hex format by default as it's more compact.
+ * For colors with alpha < 1 or when forceFullString is true, it returns the rgba() format.
+ *
+ * @param {RGBColor} color - The RGB color object to convert
+ * @param {boolean} [forceFullString=false] - Whether to force the rgba() format even for fully opaque colors
+ * @returns {string} The CSS-compatible string representation
+ */
 export const rgbToCSSString = (color: RGBColor, forceFullString: boolean = false): string => {
   const { r, g, b, alpha } = color;
 
-  // Convert to 0-255 range for CSS
   const rInt = Math.round(r * 255);
   const gInt = Math.round(g * 255);
   const bInt = Math.round(b * 255);
@@ -48,10 +58,21 @@ export const rgbToCSSString = (color: RGBColor, forceFullString: boolean = false
     return `rgba(${rInt}, ${gInt}, ${bInt}, ${alpha.toFixed(3)})`;
   }
 
-  // For fully opaque colors, use hex format as it's more compact
   return rgbToHex(color);
 };
 
+/**
+ * Creates a new RGB color object with the specified components.
+ *
+ * This is the primary factory function for creating RGB colors in the library.
+ * The created object includes methods for conversion to other color spaces and string representations.
+ *
+ * @param {number} r - The red component (0-1)
+ * @param {number} g - The green component (0-1)
+ * @param {number} b - The blue component (0-1)
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {RGBColor} A new RGB color object
+ */
 export const rgb = (r: number, g: number, b: number, alpha?: number): RGBColor => ({
   space: 'rgb',
 
@@ -73,6 +94,17 @@ export const rgb = (r: number, g: number, b: number, alpha?: number): RGBColor =
   }
 });
 
+/**
+ * Creates a new RGB color object from a vector of RGB components.
+ *
+ * This utility function is useful when working with color calculations that produce
+ * arrays of values rather than individual components.
+ *
+ * @param {number[]} v - A vector containing the RGB components [r, g, b] in the 0-1 range
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {RGBColor} A new RGB color object
+ * @throws {Error} If the vector does not have exactly 3 components
+ */
 export const rgbFromVector = (v: number[], alpha?: number): RGBColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
@@ -160,7 +192,7 @@ export const hexToRGB = (hex: string): RGBColor => {
  * and will include them in the hex string only if they're defined and not 255 (fully opaque).
  *
  * The function first denormalizes the RGB values (converts from 0-1 to 0-255 range),
- * then formats them as a hex string.
+ * then formats them as a hex string. Values are clamped to the valid range and rounded.
  *
  * @param {RGBColor} color - The RGB color object to convert
  * @returns {string} The hexadecimal color string (with leading '#')
@@ -168,7 +200,6 @@ export const hexToRGB = (hex: string): RGBColor => {
 export const rgbToHex = (color: RGBColor): string => {
   const nC = denormalizeRGBColor(color);
 
-  // Clamp values to valid range (0-255) and round
   let r = Math.max(0, Math.min(255, Math.round(nC.r))),
     g = Math.max(0, Math.min(255, Math.round(nC.g))),
     b = Math.max(0, Math.min(255, Math.round(nC.b)));
@@ -178,7 +209,6 @@ export const rgbToHex = (color: RGBColor): string => {
     alpha = Math.max(0, Math.min(255, Math.round(a * 255)));
   }
 
-  // Check for shorthand possibility (e.g., #abc or #abcd)
   const isShort = (n: number) => (n & 0xf0) >> 4 === (n & 0x0f);
   const canShort =
     isShort(r) && isShort(g) && isShort(b) && (alpha === undefined || isShort(alpha));
@@ -191,7 +221,6 @@ export const rgbToHex = (color: RGBColor): string => {
     return hex;
   }
 
-  // Full hex
   let hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   if (alpha !== undefined && alpha !== 255) {
     hex += alpha.toString(16).padStart(2, '0');
@@ -199,55 +228,106 @@ export const rgbToHex = (color: RGBColor): string => {
   return hex;
 };
 
+/**
+ * Calculates the hue component of a color in HSL space based on its RGB representation.
+ *
+ * @param {RGBColor} color - An object representing the RGB color with `r`, `g`, and `b` properties.
+ * @param {number} max - The maximum value among the R, G, and B components of the color.
+ * @param {number} min - The minimum value among the R, G, and B components of the color.
+ * @returns {number} The hue of the color in degrees, ranging from 0 to 360.
+ */
+const calculateHSpaceHue = (color: RGBColor, max: number, min: number): number => {
+  const { r, g, b } = color;
+  const Δ = max - min;
+  let h = 0;
+
+  if (Δ !== 0) {
+    h = max === r ? (g - b) / Δ + (g < b ? 6 : 0) :
+      max === g ? (b - r) / Δ + 2 :
+        (r - g) / Δ + 4;
+
+    h *= 60;
+
+    if (h < 0) h += 360;
+  }
+
+  return h;
+}
+
+/**
+ * Converts an RGB color to the HSL color space.
+ *
+ * This function transforms the color from RGB (Red, Green, Blue)
+ * to HSL (Hue, Saturation, Lightness). The algorithm finds the minimum and maximum
+ * RGB components to determine lightness, then calculates saturation and hue based on
+ * the range and relative positions of the RGB components.
+ *
+ * @param {RGBColor} color - The RGB color to convert
+ * @returns {HSLColor} The color in HSL space
+ */
 export const rgbToHSL = (color: RGBColor): HSLColor => {
   const [r, g, b] = [color.r, color.g, color.b];
 
-  let max = r,
-    min = r;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const Δ = max - min;
 
-  if (g > max) max = g;
-  if (b > max) max = b;
-  if (g < min) min = g;
-  if (b < min) min = b;
+  const h = calculateHSpaceHue(color, max, min);
+  let s = 0;
   const l = (max + min) * 0.5;
-  let h = 0,
-    s = 0;
+
   if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
-    else if (max === g) h = (b - r) / d + 2;
-    else h = (r - g) / d + 4;
-    h *= 60;
-    if (h >= 360) h -= 360;
+    s = l > 0.5 ? Δ / (2 - max - min) :
+      Δ / (max + min);
   }
 
   return hsl(h, s, l, color.alpha);
 };
 
+/**
+ * Converts an RGB color to the HSV color space.
+ *
+ * This function transforms the color from RGB (Red, Green, Blue)
+ * to HSV (Hue, Saturation, Value). The algorithm determines the value (brightness)
+ * as the maximum RGB component, calculates saturation based on the range of RGB values,
+ * and computes hue based on the relative positions of the RGB components.
+ *
+ * @param {RGBColor} color - The RGB color to convert
+ * @returns {HSVColor} The color in HSV space
+ */
 export const rgbToHSV = (color: RGBColor): HSVColor => {
   const [r, g, b] = [color.r, color.g, color.b];
 
-  const max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  const v = max;
-  const d = max - min;
-  const s = max === 0 ? 0 : d / max;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const Δ = max - min;
 
-  let h = 0;
-  if (d !== 0) {
-    if (max === r) {
-      h = ((g - b) / d) % 6;
-    } else if (max === g) {
-      h = (b - r) / d + 2;
-    } else {
-      h = (r - g) / d + 4;
-    }
-    h *= 60;
-    if (h < 0) h += 360;
-  }
+  const h = calculateHSpaceHue(color, max, min);
+  const s = max === 0 ? 0 : Δ / max;
 
-  return hsv(h, s, v, color.alpha);
+  return hsv(h, s, max, color.alpha);
+};
+
+/**
+ * Converts an RGB color to the HWB color space.
+ *
+ * This function transforms the color from RGB (Red, Green, Blue)
+ * to HWB (Hue, Whiteness, Blackness). The algorithm determines the hue
+ * in the same way as HSV/HSL, while whiteness is determined by the minimum
+ * RGB component and blackness by the maximum RGB component.
+ *
+ * @param {RGBColor} color - The RGB color to convert
+ * @returns {HWBColor} The color in HWB space
+ */
+export const rgbToHWB = (color: RGBColor): HWBColor => {
+  const [r, g, b] = [color.r, color.g, color.b];
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+
+  const h = calculateHSpaceHue(color, max, min);
+
+  return hwb(h, min, max, color.alpha);
 };
 
 /**

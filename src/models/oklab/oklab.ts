@@ -1,7 +1,7 @@
 import { OKLAB_LMS_MATRIX, OKLCH_THROUGH_LMS_XYZ_MATRIX } from './constants';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { XYZColor, xyzFromVector, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz';
-import { RGBColor, rgbToHSL, rgbToHSV } from '../rgb';
+import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { JzAzBzColor } from '../jzazbz';
@@ -13,6 +13,7 @@ import { IlluminantD65 } from '../../standards/illuminants';
 import { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
+import { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the OKLab color space.
@@ -34,6 +35,15 @@ export interface OKLabColor extends ColorBase {
   b: number;
 }
 
+/**
+ * Converts an OKLab color object to a CSS-compatible string representation.
+ *
+ * This function formats the OKLab color as a CSS string using the modern space-separated
+ * syntax with the lightness component expressed as a percentage.
+ *
+ * @param {OKLabColor} color - The OKLab color object to convert
+ * @returns {string} The CSS-compatible string representation
+ */
 export const oklabToCSSString = (color: OKLabColor): string => {
   const { l, a, b, alpha } = color;
 
@@ -44,6 +54,18 @@ export const oklabToCSSString = (color: OKLabColor): string => {
   return `oklab(${lFormatted}% ${aFormatted} ${bFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
 };
 
+/**
+ * Creates a new OKLab color object with the specified components.
+ *
+ * This is the primary factory function for creating OKLab colors in the library.
+ * The created object includes methods for conversion to other color spaces and string representations.
+ *
+ * @param {number} l - The lightness component (0-1)
+ * @param {number} a - The green-red component (negative values are green, positive values are red)
+ * @param {number} b - The blue-yellow component (negative values are blue, positive values are yellow)
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {OKLabColor} A new OKLab color object
+ */
 export const oklab = (l: number, a: number, b: number, alpha?: number): OKLabColor => ({
   space: 'oklab',
   l,
@@ -64,6 +86,17 @@ export const oklab = (l: number, a: number, b: number, alpha?: number): OKLabCol
   }
 });
 
+/**
+ * Creates a new OKLab color object from a vector of OKLab components.
+ *
+ * This utility function is useful when working with color calculations that produce
+ * arrays of values rather than individual components.
+ *
+ * @param {number[]} v - A vector containing the OKLab components [l, a, b]
+ * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @returns {OKLabColor} A new OKLab color object
+ * @throws {Error} If the vector does not have exactly 3 components
+ */
 export const oklabFromVector = (v: number[], alpha?: number): OKLabColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
@@ -104,6 +137,18 @@ export const oklabToHSL = (color: OKLabColor): HSLColor => rgbToHSL(oklabToRGB(c
  * @returns {HSVColor} The color in HSV space
  */
 export const oklabToHSV = (color: OKLabColor): HSVColor => rgbToHSV(oklabToRGB(color));
+
+/**
+ * Converts a color from OKLab to HWB color space.
+ *
+ * This function first converts the OKLab color to RGB, then from RGB to HWB.
+ * The HWB color space is a cylindrical representation of RGB, using hue,
+ * whiteness, and blackness components.
+ *
+ * @param {OKLabColor} color - The OKLab color to convert
+ * @returns {HWBColor} The color in HWB space
+ */
+export const oklabToHWB = (color: OKLabColor): HWBColor => rgbToHWB(oklabToRGB(color));
 
 /**
  * Converts a color from OKLab to CIE XYZ color space.
@@ -172,7 +217,7 @@ export const oklabToOKLCh = (color: OKLabColor): OKLChColor => {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const okLabToJzAzBz = (color: OKLabColor, peakLuminance: number = 10000): JzAzBzColor =>
+export const oklabToJzAzBz = (color: OKLabColor, peakLuminance: number = 10000): JzAzBzColor =>
   xyzToJzAzBz(oklabToXYZ(color), peakLuminance);
 
 /**
@@ -187,5 +232,5 @@ export const okLabToJzAzBz = (color: OKLabColor, peakLuminance: number = 10000):
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const okLabToJzCzHz = (color: OKLabColor, peakLuminance: number = 10000): JzCzHzColor =>
+export const oklabToJzCzHz = (color: OKLabColor, peakLuminance: number = 10000): JzCzHzColor =>
   xyzToJzCzHz(oklabToXYZ(color), peakLuminance);

@@ -1,29 +1,29 @@
-import { rgb, RGBColor } from './rgb';
-import { normalizeRGBColor } from './transform';
+import { jzazbz, JzAzBzColor } from './jzazbz';
 
 /**
- * Parses a CSS RGB color string into an RGBColor object.
+ * Parses a CSS JzAzBz color string into a JzAzBzColor object.
  *
- * Supports both comma and space syntax, as well as both rgb() and rgba() formats:
- * - rgb(255, 128, 0)
- * - rgba(255, 128, 0, 0.5)
- * - rgb(255 128 0)
- * - rgb(255 128 0 / 0.5)
- * - rgb(100%, 50%, 0%)
- * - rgb(100% 50% 0% / 0.5)
+ * Supports the format:
+ * - jzazbz(jz az bz [/ alpha])
+ * - jzazbz(jz, az, bz[, alpha])
  *
  * The function handles:
- * - RGB values as either integers (0-255) or percentages (0-100%)
- * - Optional alpha value (0-1 or 0-100%)
+ * - JzAzBz values as floating-point numbers
+ * - Optional alpha value (0-1)
  * - Both comma-separated and space-separated formats
  * - Whitespace flexibility according to CSS specifications
  *
- * @param {string} src - The CSS RGB color string to parse
- * @returns {RGBColor} The parsed RGB color object, with values normalized to 0-1 range
+ * @param {string} src - The CSS JzAzBz color string to parse
+ * @returns {JzAzBzColor} The parsed JzAzBz color object
  * @throws {SyntaxError} If the string format is invalid
  */
-export function rgbFromCSSString(src: string): RGBColor {
-  let i = 4;
+export function jzazbzFromCSSString(src: string): JzAzBzColor {
+  // Check if the string starts with "jzazbz("
+  if (!src.startsWith('jzazbz(')) {
+    throw new SyntaxError('Invalid JzAzBz color string format');
+  }
+
+  let i = 7; // Start after "jzazbz("
   const N = src.length;
 
   const isWS = (cc: number) => cc <= 32;
@@ -34,10 +34,15 @@ export function rgbFromCSSString(src: string): RGBColor {
   const readComp = (isAlpha: boolean): number => {
     let v = 0,
       dot = false,
-      frac = 0.1;
+      frac = 0.1,
+      neg = false;
 
-    if (src[i] === '-') throw new SyntaxError('negative value');
-    if (src[i] === '+') ++i;
+    if (src[i] === '-') {
+      neg = true;
+      ++i;
+    } else if (src[i] === '+') {
+      ++i;
+    }
 
     for (; i < N; ++i) {
       const d = src.charCodeAt(i) - 48;
@@ -52,22 +57,17 @@ export function rgbFromCSSString(src: string): RGBColor {
       } else break;
     }
 
-    const pct = src[i] === '%';
-    if (pct) ++i;
+    if (neg) v = -v;
 
-    if (isAlpha) {
-      if (pct) v *= 0.01;
-      if (v < 0 || v > 1) throw new SyntaxError('alpha 0–1');
-      return v;
-    } else {
-      if (pct) v *= 2.55;
-      if (v > 255) throw new SyntaxError('rgb() out of range');
-      return v;
+    if (isAlpha && (v < 0 || v > 1)) {
+      throw new SyntaxError('alpha must be between 0 and 1');
     }
+
+    return v;
   };
 
   skipWS();
-  const r = readComp(false);
+  const jz = readComp(false);
   let sawWS = false;
   let commaSyntax = false;
 
@@ -87,7 +87,7 @@ export function rgbFromCSSString(src: string): RGBColor {
     throw new SyntaxError("expected ',' or <whitespace> after first value");
   skipWS();
 
-  const g = readComp(false);
+  const az = readComp(false);
   if (commaSyntax) {
     skipWS();
     if (src[i] !== ',') throw new SyntaxError("expected ','");
@@ -95,24 +95,24 @@ export function rgbFromCSSString(src: string): RGBColor {
   }
   skipWS();
 
-  const b = readComp(false);
+  const bz = readComp(false);
   skipWS();
 
-  let a: number | undefined;
+  let alpha: number | undefined;
   if (commaSyntax && src[i] === ',') {
     ++i;
     skipWS();
-    a = readComp(true);
+    alpha = readComp(true);
     skipWS();
   } else if (src[i] === '/') {
     ++i;
     skipWS();
-    a = readComp(true);
+    alpha = readComp(true);
     skipWS();
   }
 
   if (src[i] !== ')') throw new SyntaxError('missing ")"');
   if (++i !== N) throw new SyntaxError('unexpected text after ")"');
 
-  return normalizeRGBColor(rgb(r, g, b, a));
+  return jzazbz(jz, az, bz, alpha);
 }
