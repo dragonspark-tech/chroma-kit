@@ -5,12 +5,12 @@ import { normalizesRGBColor } from './transform';
  * Parses a CSS RGB color string into an RGBColor object.
  *
  * Supports both comma and space syntax, as well as both srgb() and rgba() formats:
- * - srgb(255, 128, 0)
+ * - rgb(255, 128, 0)
  * - rgba(255, 128, 0, 0.5)
- * - srgb(255 128 0)
- * - srgb(255 128 0 / 0.5)
- * - srgb(100%, 50%, 0%)
- * - srgb(100% 50% 0% / 0.5)
+ * - rgb(255 128 0)
+ * - rgb(255 128 0 / 0.5)
+ * - rgb(100%, 50%, 0%)
+ * - rgb(100% 50% 0% / 0.5)
  *
  * The function handles:
  * - RGB values as either integers (0-255) or percentages (0-100%)

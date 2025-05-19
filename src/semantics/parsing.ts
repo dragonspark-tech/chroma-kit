@@ -76,7 +76,8 @@ export function parseColor<T extends ColorSpace>(
     ((input.charCodeAt(2) | 32) << 8) |
     (input.charCodeAt(3) | 32);
   switch (prefix) {
-    case 0x72676200: // 'srgb('
+    case 0x72676200: // 'rgb('
+    case 0x72676261: // 'rgba'
       return srgbFromCSSString(input).to(targetSpace);
     case 0x68736c00: // 'hsl('
       return hslFromCSSString(input).to(targetSpace);

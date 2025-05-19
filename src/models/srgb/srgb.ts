@@ -57,7 +57,7 @@ export const srgbToCSSString = (color: sRGBColor, forceFullString: boolean = fal
   const a = alpha ?? 1;
 
   if (a < 1 || forceFullString) {
-    return `rgba(${rInt}, ${gInt}, ${bInt}${a < 1 ? (', ' + a.toFixed(3)) : ''})`;
+    return `rgba(${rInt}, ${gInt}, ${bInt}${a < 1 ? ', ' + a.toFixed(3) : ''})`;
   }
 
   return srgbToHex(color);

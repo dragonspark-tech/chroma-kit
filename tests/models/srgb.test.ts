@@ -1,0 +1,573 @@
+import '../../src/conversion/register-conversions';
+
+import { describe, expect, it } from 'vitest';
+import {
+  srgb,
+  sRGBColor,
+  srgbToCSSString,
+  srgbFromVector,
+  hexTosRGB,
+  srgbToHex,
+  srgbToHSL,
+  srgbToHSV,
+  srgbToHWB,
+  srgbToXYZ,
+  srgbToLab,
+  srgbToLCH,
+  srgbToOKLab,
+  srgbToOKLCh,
+  srgbToJzAzBz,
+  srgbToJzCzHz
+} from '../../src/models/srgb/srgb';
+import {
+  normalizesRGBColor,
+  denormalizesRGBColor,
+  applysRGBGammaTransfer,
+  linearizesRGBColor,
+  applysRGBInverseGammaTransfer,
+  delinearizesRGBColor,
+  alphaBlendsRGBColor, srgbFromCSSString
+} from '../../src/models/srgb';
+
+describe('sRGB Color Model', () => {
+  // Test srgb factory function
+  describe('srgb', () => {
+    it('should create an sRGB color with the correct properties', () => {
+      const color = srgb(0.5, 0.6, 0.7);
+      expect(color.space).toBe('srgb');
+      expect(color.r).toBe(0.5);
+      expect(color.g).toBe(0.6);
+      expect(color.b).toBe(0.7);
+      expect(color.alpha).toBeUndefined();
+    });
+
+    it('should create an sRGB color with alpha', () => {
+      const color = srgb(0.5, 0.6, 0.7, 0.8);
+      expect(color.space).toBe('srgb');
+      expect(color.r).toBe(0.5);
+      expect(color.g).toBe(0.6);
+      expect(color.b).toBe(0.7);
+      expect(color.alpha).toBe(0.8);
+    });
+
+    it('should have a toString method', () => {
+      const color = srgb(0.5, 0.6, 0.7, 0.8);
+      expect(typeof color.toString).toBe('function');
+      expect(color.toString()).toContain('srgb');
+    });
+
+    it('should have a toCSSString method', () => {
+      const color = srgb(0.5, 0.6, 0.7, 0.8);
+      expect(typeof color.toCSSString).toBe('function');
+      expect(color.toCSSString()).toContain('rgba');
+    });
+
+    it('should have a to method for color space conversion', () => {
+      const color = srgb(0.5, 0.6, 0.7);
+      expect(typeof color.to).toBe('function');
+    });
+  });
+
+  // Test srgbFromVector function
+  describe('srgbFromVector', () => {
+    it('should create an sRGB color from a vector', () => {
+      const color = srgbFromVector([0.5, 0.6, 0.7]);
+      expect(color.space).toBe('srgb');
+      expect(color.r).toBe(0.5);
+      expect(color.g).toBe(0.6);
+      expect(color.b).toBe(0.7);
+      expect(color.alpha).toBeUndefined();
+    });
+
+    it('should create an sRGB color from a vector with alpha', () => {
+      const color = srgbFromVector([0.5, 0.6, 0.7], 0.8);
+      expect(color.space).toBe('srgb');
+      expect(color.r).toBe(0.5);
+      expect(color.g).toBe(0.6);
+      expect(color.b).toBe(0.7);
+      expect(color.alpha).toBe(0.8);
+    });
+
+    it('should throw an error for invalid vector length', () => {
+      expect(() => srgbFromVector([0.5, 0.6])).toThrow('Invalid vector length');
+      expect(() => srgbFromVector([0.5, 0.6, 0.7, 0.8])).toThrow('Invalid vector length');
+    });
+  });
+
+  // Test srgbToCSSString function
+  describe('srgbToCSSString', () => {
+    it('should convert an sRGB color to a CSS hex string when alpha is 1', () => {
+      const color = srgb(1, 0, 0);
+      expect(srgbToCSSString(color)).toBe('#f00');
+    });
+
+    it('should convert an sRGB color to a CSS rgba string when alpha is less than 1', () => {
+      const color = srgb(1, 0, 0, 0.5);
+      expect(srgbToCSSString(color)).toBe('rgba(255, 0, 0, 0.500)');
+    });
+
+    it('should convert an sRGB color to a CSS rgba string when forceFullString is true', () => {
+      const color = srgb(1, 0, 0);
+      expect(srgbToCSSString(color, true)).toBe('rgba(255, 0, 0)');
+    });
+  });
+
+  // Test hexTosRGB function
+  describe('hexTosRGB', () => {
+    it('should convert a 3-digit hex string to an sRGB color', () => {
+      const color = hexTosRGB('#f00');
+      expect(color.r).toBeCloseTo(1, 5);
+      expect(color.g).toBeCloseTo(0, 5);
+      expect(color.b).toBeCloseTo(0, 5);
+      expect(color.alpha).toBeUndefined();
+    });
+
+    it('should convert a 4-digit hex string to an sRGB color with alpha', () => {
+      const color = hexTosRGB('#f008');
+      expect(color.r).toBeCloseTo(1, 5);
+      expect(color.g).toBeCloseTo(0, 5);
+      expect(color.b).toBeCloseTo(0, 5);
+      expect(color.alpha).toBeCloseTo(0.53, 2); // 8/15 ≈ 0.53
+    });
+
+    it('should convert a 6-digit hex string to an sRGB color', () => {
+      const color = hexTosRGB('#ff0000');
+      expect(color.r).toBeCloseTo(1, 5);
+      expect(color.g).toBeCloseTo(0, 5);
+      expect(color.b).toBeCloseTo(0, 5);
+      expect(color.alpha).toBeUndefined();
+    });
+
+    it('should convert an 8-digit hex string to an sRGB color with alpha', () => {
+      const color = hexTosRGB('#ff000080');
+      expect(color.r).toBeCloseTo(1, 5);
+      expect(color.g).toBeCloseTo(0, 5);
+      expect(color.b).toBeCloseTo(0, 5);
+      expect(color.alpha).toBeCloseTo(0.5, 2);
+    });
+
+    it('should handle hex strings without the # prefix', () => {
+      const color = hexTosRGB('ff0000');
+      expect(color.r).toBeCloseTo(1, 5);
+      expect(color.g).toBeCloseTo(0, 5);
+      expect(color.b).toBeCloseTo(0, 5);
+    });
+
+    it('should throw an error for invalid hex formats', () => {
+      expect(() => hexTosRGB('#f0')).toThrow('Invalid hex color format');
+      expect(() => hexTosRGB('#f0000')).toThrow('Invalid hex color format');
+      expect(() => hexTosRGB('#f000000')).toThrow('Invalid hex color format');
+      expect(() => hexTosRGB('#f00000000')).toThrow('Invalid hex color format');
+    });
+  });
+
+  // Test srgbToHex function
+  describe('srgbToHex', () => {
+    it('should convert an sRGB color to a hex string', () => {
+      const color = srgb(1, 0, 0);
+      expect(srgbToHex(color)).toBe('#f00');
+    });
+
+    it('should use shorthand notation when possible', () => {
+      const color = srgb(1, 0, 0);
+      expect(srgbToHex(color)).toBe('#f00');
+    });
+
+    it('should use shorthand notation with alpha when possible', () => {
+      const color = srgb(1, 0, 0, 0xAA / 255);
+      expect(srgbToHex(color)).toBe('#f00a');
+    })
+
+    it('should include alpha in the hex string when alpha is less than 1', () => {
+      const color = srgb(1, 0, 0, 0.5);
+      expect(srgbToHex(color)).toBe('#ff000080');
+    });
+
+    it('should not include alpha in the hex string when alpha is 1', () => {
+      const color = srgb(1, 0, 0, 1);
+      expect(srgbToHex(color)).toBe('#f00');
+    });
+
+    it('should handle non-shorthand colors correctly', () => {
+      const color = srgb(0.2, 0.4, 0.6);
+      expect(srgbToHex(color)).toBe('#369');
+    });
+  });
+
+  // Test normalizesRGBColor function
+  describe('normalizesRGBColor', () => {
+    it('should normalize RGB values from 0-255 to 0-1 range', () => {
+      const color = srgb(255, 128, 64);
+      const normalized = normalizesRGBColor(color);
+      expect(normalized.r).toBeCloseTo(1, 5);
+      expect(normalized.g).toBeCloseTo(0.5019, 3);
+      expect(normalized.b).toBeCloseTo(0.251, 3);
+    });
+
+    it('should preserve the alpha value', () => {
+      const color = srgb(255, 128, 64, 0.5);
+      const normalized = normalizesRGBColor(color);
+      expect(normalized.alpha).toBe(0.5);
+    });
+  });
+
+  // Test denormalizesRGBColor function
+  describe('denormalizesRGBColor', () => {
+    it('should denormalize RGB values from 0-1 to 0-255 range', () => {
+      const color = srgb(1, 0.5, 0.25);
+      const denormalized = denormalizesRGBColor(color);
+      expect(denormalized.r).toBe(255);
+      expect(denormalized.g).toBe(127.5);
+      expect(denormalized.b).toBe(63.75);
+    });
+
+    it('should preserve the alpha value', () => {
+      const color = srgb(1, 0.5, 0.25, 0.5);
+      const denormalized = denormalizesRGBColor(color);
+      expect(denormalized.alpha).toBe(0.5);
+    });
+  });
+
+  // Test gamma transfer functions
+  describe('Gamma Transfer Functions', () => {
+    describe('applysRGBGammaTransfer', () => {
+      it('should apply gamma correction for values <= 0.04045', () => {
+        expect(applysRGBGammaTransfer(0)).toBe(0);
+        expect(applysRGBGammaTransfer(0.04045)).toBeCloseTo(0.04045 / 12.92, 5);
+      });
+
+      it('should apply gamma correction for values > 0.04045', () => {
+        expect(applysRGBGammaTransfer(0.5)).toBeCloseTo(0.2140, 4);
+        expect(applysRGBGammaTransfer(1)).toBeCloseTo(1, 5);
+      });
+    });
+
+    describe('applysRGBInverseGammaTransfer', () => {
+      it('should apply inverse gamma correction for values <= 0.0031308', () => {
+        expect(applysRGBInverseGammaTransfer(0)).toBe(0);
+        expect(applysRGBInverseGammaTransfer(0.0031308)).toBeCloseTo(0.0031308 * 12.92, 5);
+      });
+
+      it('should apply inverse gamma correction for values > 0.0031308', () => {
+        expect(applysRGBInverseGammaTransfer(0.5)).toBeCloseTo(0.7350, 3);
+        expect(applysRGBInverseGammaTransfer(1)).toBeCloseTo(1, 5);
+      });
+    });
+
+    describe('linearizesRGBColor', () => {
+      it('should linearize an sRGB color', () => {
+        const color = srgb(1, 0.5, 0);
+        const linearized = linearizesRGBColor(color);
+        expect(linearized.r).toBeCloseTo(1, 5);
+        expect(linearized.g).toBeCloseTo(0.2140, 4);
+        expect(linearized.b).toBeCloseTo(0, 5);
+      });
+
+      it('should preserve the alpha value', () => {
+        const color = srgb(1, 0.5, 0, 0.5);
+        const linearized = linearizesRGBColor(color);
+        expect(linearized.alpha).toBe(0.5);
+      });
+    });
+
+    describe('delinearizesRGBColor', () => {
+      it('should delinearize an sRGB color', () => {
+        const color = srgb(1, 0.2140, 0);
+        const delinearized = delinearizesRGBColor(color);
+        expect(delinearized.r).toBeCloseTo(1, 5);
+        expect(delinearized.g).toBeCloseTo(0.5, 1);
+        expect(delinearized.b).toBeCloseTo(0, 5);
+      });
+
+      it('should preserve the alpha value', () => {
+        const color = srgb(1, 0.2140, 0, 0.5);
+        const delinearized = delinearizesRGBColor(color);
+        expect(delinearized.alpha).toBe(0.5);
+      });
+    });
+  });
+
+  // Test alphaBlendsRGBColor function
+  describe('alphaBlendsRGBColor', () => {
+    it('should blend two colors with alpha', () => {
+      const foreground = srgb(1, 0, 0, 0.5);
+      const background = srgb(0, 0, 1);
+      const blended = alphaBlendsRGBColor(foreground, background);
+      expect(blended.r).toBeCloseTo(0.5, 5);
+      expect(blended.g).toBeCloseTo(0, 5);
+      expect(blended.b).toBeCloseTo(0.5, 5);
+      expect(blended.alpha).toBe(1); // Result is always fully opaque
+    });
+
+    it('should handle fully transparent foreground', () => {
+      const foreground = srgb(1, 0, 0, 0);
+      const background = srgb(0, 0, 1);
+      const blended = alphaBlendsRGBColor(foreground, background);
+      expect(blended.r).toBeCloseTo(0, 5);
+      expect(blended.g).toBeCloseTo(0, 5);
+      expect(blended.b).toBeCloseTo(1, 5);
+    });
+
+    it('should handle fully opaque foreground', () => {
+      const foreground = srgb(1, 0, 0, 1);
+      const background = srgb(0, 0, 1);
+      const blended = alphaBlendsRGBColor(foreground, background);
+      expect(blended.r).toBeCloseTo(1, 5);
+      expect(blended.g).toBeCloseTo(0, 5);
+      expect(blended.b).toBeCloseTo(0, 5);
+    });
+
+    it('should clamp values to the valid range', () => {
+      const foreground = srgb(1.2, -0.2, 0.5, 0.5);
+      const background = srgb(0.5, 0.5, 0.5);
+      const blended = alphaBlendsRGBColor(foreground, background);
+      expect(blended.r).toBeCloseTo(0.85, 5); // Clamped to 1.0 for foreground
+      expect(blended.g).toBeCloseTo(0.15, 5); // Clamped to 0.0 for foreground
+      expect(blended.b).toBeCloseTo(0.5, 5);
+    });
+  });
+
+  // Test color space conversion functions
+  describe('Color Space Conversions', () => {
+    const testColor = srgb(0.5, 0.4, 0.3);
+
+    describe('fluent conversion', () => {
+      it ('should convert dynamically into the target color space', () => {
+        const hsl = testColor.to('hsl');
+
+        expect(hsl.space).toBe('hsl');
+        expect(hsl.h).toBeCloseTo(30, 0);
+        expect(hsl.s).toBeCloseTo(0.25, 2);
+        expect(hsl.l).toBeCloseTo(0.4, 2);
+      })
+    })
+
+    describe('srgbToHSL', () => {
+      it('should convert sRGB to HSL', () => {
+        const hsl = srgbToHSL(testColor);
+        expect(hsl.space).toBe('hsl');
+        expect(hsl.h).toBeCloseTo(30, 0);
+        expect(hsl.s).toBeCloseTo(0.25, 2);
+        expect(hsl.l).toBeCloseTo(0.4, 2);
+      });
+
+      it('should handle grayscale colors (min = max)', () => {
+        const gray = srgb(0.5, 0.5, 0.5);
+        const hsl = srgbToHSL(gray);
+        expect(hsl.h).toBe(0);
+        expect(hsl.s).toBe(0);
+        expect(hsl.l).toBe(0.5);
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const hsl = srgbToHSL(colorWithAlpha);
+        expect(hsl.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToHSV', () => {
+      it('should convert sRGB to HSV', () => {
+        const hsv = srgbToHSV(testColor);
+        expect(hsv.space).toBe('hsv');
+        expect(hsv.h).toBeCloseTo(30, 0);
+        expect(hsv.s).toBeCloseTo(0.4, 2);
+        expect(hsv.v).toBeCloseTo(0.5, 2);
+      });
+
+      it('should handle grayscale colors (min = max)', () => {
+        const gray = srgb(0.5, 0.5, 0.5);
+        const hsv = srgbToHSV(gray);
+        expect(hsv.h).toBe(0);
+        expect(hsv.s).toBe(0);
+        expect(hsv.v).toBe(0.5);
+      });
+
+      it('should handle black color (max = 0)', () => {
+        const black = srgb(0, 0, 0);
+        const hsv = srgbToHSV(black);
+        expect(hsv.h).toBe(0);
+        expect(hsv.s).toBe(0);
+        expect(hsv.v).toBe(0);
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const hsv = srgbToHSV(colorWithAlpha);
+        expect(hsv.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToHWB', () => {
+      it('should convert sRGB to HWB', () => {
+        const hwb = srgbToHWB(testColor);
+        expect(hwb.space).toBe('hwb');
+        expect(hwb.h).toBeCloseTo(30, 0);
+        expect(hwb.w).toBeCloseTo(0.3, 2);
+        expect(hwb.b).toBeCloseTo(0.5, 2);
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const hwb = srgbToHWB(colorWithAlpha);
+        expect(hwb.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToXYZ', () => {
+      it('should convert sRGB to XYZ with D65 illuminant by default', () => {
+        const xyz = srgbToXYZ(testColor);
+        expect(xyz.space).toBe('xyz');
+        expect(xyz.x).toBeGreaterThan(0);
+        expect(xyz.y).toBeGreaterThan(0);
+        expect(xyz.z).toBeGreaterThan(0);
+        expect(xyz.illuminant?.name).toBe('D65');
+      });
+
+      it('should convert sRGB to XYZ with D50 illuminant when chromatic adaptation is used', () => {
+        const xyz = srgbToXYZ(testColor, true);
+        expect(xyz.illuminant?.name).toBe('D50');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const xyz = srgbToXYZ(colorWithAlpha);
+        expect(xyz.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToLab', () => {
+      it('should convert sRGB to Lab', () => {
+        const lab = srgbToLab(testColor);
+        expect(lab.space).toBe('lab');
+        expect(lab.l).toBeGreaterThan(0);
+        expect(typeof lab.a).toBe('number');
+        expect(typeof lab.b).toBe('number');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const lab = srgbToLab(colorWithAlpha);
+        expect(lab.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToLCH', () => {
+      it('should convert sRGB to LCh', () => {
+        const lch = srgbToLCH(testColor);
+        expect(lch.space).toBe('lch');
+        expect(lch.l).toBeGreaterThan(0);
+        expect(lch.c).toBeGreaterThan(0);
+        expect(typeof lch.h).toBe('number');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const lch = srgbToLCH(colorWithAlpha);
+        expect(lch.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToOKLab', () => {
+      it('should convert sRGB to OKLab with D65 illuminant by default', () => {
+        const oklab = srgbToOKLab(testColor);
+        expect(oklab.space).toBe('oklab');
+        expect(oklab.l).toBeGreaterThan(0);
+        expect(typeof oklab.a).toBe('number');
+        expect(typeof oklab.b).toBe('number');
+      });
+
+      it('should convert sRGB to OKLab with chromatic adaptation', () => {
+        const oklab = srgbToOKLab(testColor, true);
+        expect(oklab.space).toBe('oklab');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const oklab = srgbToOKLab(colorWithAlpha);
+        expect(oklab.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToOKLCh', () => {
+      it('should convert sRGB to OKLCh', () => {
+        const oklch = srgbToOKLCh(testColor);
+        expect(oklch.space).toBe('oklch');
+        expect(oklch.l).toBeGreaterThan(0);
+        expect(oklch.c).toBeGreaterThan(0);
+        expect(typeof oklch.h).toBe('number');
+      });
+
+      it('should convert sRGB to OKLCh with chromatic adaptation', () => {
+        const oklch = srgbToOKLCh(testColor, true);
+        expect(oklch.space).toBe('oklch');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const oklch = srgbToOKLCh(colorWithAlpha);
+        expect(oklch.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToJzAzBz', () => {
+      it('should convert sRGB to JzAzBz with default peak luminance', () => {
+        const jzazbz = srgbToJzAzBz(testColor);
+        expect(jzazbz.space).toBe('jzazbz');
+        expect(jzazbz.jz).toBeGreaterThan(0);
+        expect(typeof jzazbz.az).toBe('number');
+        expect(typeof jzazbz.bz).toBe('number');
+      });
+
+      it('should convert sRGB to JzAzBz with custom peak luminance', () => {
+        const jzazbz = srgbToJzAzBz(testColor, 1000);
+        expect(jzazbz.space).toBe('jzazbz');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const jzazbz = srgbToJzAzBz(colorWithAlpha);
+        expect(jzazbz.alpha).toBe(0.7);
+      });
+    });
+
+    describe('srgbToJzCzHz', () => {
+      it('should convert sRGB to JzCzHz with default peak luminance', () => {
+        const jzczhz = srgbToJzCzHz(testColor);
+        expect(jzczhz.space).toBe('jzczhz');
+        expect(jzczhz.jz).toBeGreaterThan(0);
+        expect(jzczhz.cz).toBeGreaterThan(0);
+        expect(typeof jzczhz.hz).toBe('number');
+      });
+
+      it('should convert sRGB to JzCzHz with custom peak luminance', () => {
+        const jzczhz = srgbToJzCzHz(testColor, 1000);
+        expect(jzczhz.space).toBe('jzczhz');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
+        const jzczhz = srgbToJzCzHz(colorWithAlpha);
+        expect(jzczhz.alpha).toBe(0.7);
+      });
+    });
+  });
+
+  // Test parser
+  describe('Parser', () => {
+    it('should parse a color string', () => {
+      const color = srgbFromCSSString('rgb(0 255 255)');
+      expect(color.r).toBe(0);
+      expect(color.g).toBe(1);
+      expect(color.b).toBe(1);
+    })
+
+    it('should parse a color string with alpha', () => {
+      const color = srgbFromCSSString('rgb(255 0 255 / 0.5)');
+      expect(color.r).toBe(1);
+      expect(color.g).toBe(0);
+      expect(color.b).toBe(1);
+      expect(color.alpha).toBe(0.5);
+    });
+  })
+});
