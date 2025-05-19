@@ -107,46 +107,57 @@ export const labFromVector = (v: number[], alpha?: number): LabColor => {
  * Converts a color from CIE Lab to RGB color space.
  *
  * This function uses the automatic conversion system to find the optimal path
- * from Lab to RGB, which typically goes through XYZ.
+ * from Lab to RGB, which typically goes through XYZ. Gamut mapping is performed
+ * during the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {LabColor} color - The Lab color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {sRGBColor} The color in RGB space
  */
-export const labToRGB = (color: LabColor): sRGBColor => xyzToRGB(labToXYZ(color));
+export const labToRGB = (color: LabColor, performGamutMapping: boolean = true): sRGBColor =>
+  xyzToRGB(labToXYZ(color), performGamutMapping);
 
 /**
  * Converts a color from CIE Lab to HSL color space.
  *
  * This function uses the automatic conversion system to find the optimal path
- * from Lab to HSL, which typically goes through XYZ and RGB.
+ * from Lab to HSL, which typically goes through XYZ and RGB. Gamut mapping is performed
+ * during the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {LabColor} color - The Lab color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const labToHSL = (color: LabColor): HSLColor => srgbToHSL(labToRGB(color));
+export const labToHSL = (color: LabColor, performGamutMapping: boolean = true): HSLColor =>
+  srgbToHSL(labToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE Lab to HSV color space.
  *
  * This function uses the automatic conversion system to find the optimal path
- * from Lab to HSV, which typically goes through XYZ and RGB.
+ * from Lab to HSV, which typically goes through XYZ and RGB. Gamut mapping is performed
+ * during the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {LabColor} color - The Lab color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const labToHSV = (color: LabColor): HSVColor => srgbToHSV(labToRGB(color));
+export const labToHSV = (color: LabColor, performGamutMapping: boolean = true): HSVColor =>
+  srgbToHSV(labToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE Lab to HWB color space.
  *
  * This function uses the automatic conversion system to find the optimal path
- * from Lab to HWB, which typically goes through XYZ and RGB.
+ * from Lab to HWB, which typically goes through XYZ and RGB. Gamut mapping is performed
+ * during the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
- * @param {LabColor} color = The Lab color to convert
+ * @param {LabColor} color - The Lab color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
- *
  */
-export const labToHWB = (color: LabColor): HWBColor => srgbToHWB(labToRGB(color));
+export const labToHWB = (color: LabColor, performGamutMapping: boolean = true): HWBColor =>
+  srgbToHWB(labToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE Lab to CIE XYZ color space.

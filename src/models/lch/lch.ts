@@ -105,47 +105,60 @@ export const lchFromVector = (v: number[], alpha?: number): LChColor => {
  * Converts a color from CIE LCh to RGB color space.
  *
  * This function first converts the LCh color to XYZ, then from XYZ to RGB.
+ * Gamut mapping is performed during the conversion to ensure the resulting
+ * color is within the valid sRGB gamut.
  *
  * @param {LChColor} color - The LCh color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {sRGBColor} The color in RGB space
  */
-export const lchToRGB = (color: LChColor): sRGBColor => xyzToRGB(lchToXYZ(color));
+export const lchToRGB = (color: LChColor, performGamutMapping: boolean = true): sRGBColor =>
+  xyzToRGB(lchToXYZ(color), performGamutMapping);
 
 /**
  * Converts a color from CIE LCh to HSL color space.
  *
  * This function first converts the LCh color to RGB, then from RGB to HSL.
  * The HSL color space is a cylindrical representation of RGB, using hue,
- * saturation, and lightness components.
+ * saturation, and lightness components. Gamut mapping is performed during
+ * the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {LChColor} color - The LCh color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const lchToHSL = (color: LChColor): HSLColor => srgbToHSL(lchToRGB(color));
+export const lchToHSL = (color: LChColor, performGamutMapping: boolean = true): HSLColor =>
+  srgbToHSL(lchToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE LCh to HSV color space.
  *
  * This function first converts the LCh color to RGB, then from RGB to HSV.
  * The HSV color space is a cylindrical representation of RGB, using hue,
- * saturation, and value components.
+ * saturation, and value components. Gamut mapping is performed during
+ * the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {LChColor} color - The LCh color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const lchToHSV = (color: LChColor): HSVColor => srgbToHSV(lchToRGB(color));
+export const lchToHSV = (color: LChColor, performGamutMapping: boolean = true): HSVColor =>
+  srgbToHSV(lchToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE LCh to HWB color space.
  *
  * This function first converts the LCh color to RGB, then from RGB to HWB.
  * The HWB color space is a cylindrical representation of RGB, using hue,
- * whiteness, and blackness components.
+ * whiteness, and blackness components. Gamut mapping is performed during
+ * the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {LChColor} color - The LCh color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const lchToHWB = (color: LChColor): HWBColor => srgbToHWB(lchToRGB(color));
+export const lchToHWB = (color: LChColor, performGamutMapping: boolean = true): HWBColor =>
+  srgbToHWB(lchToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE LCh to CIE XYZ color space.

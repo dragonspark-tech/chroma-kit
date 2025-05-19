@@ -31,7 +31,7 @@ export interface ColorBase {
   alpha?: number;
   toString: () => string;
   toCSSString: () => string;
-  to: <T extends ColorBase>(colorSpace: ColorSpace) => T;
+  to: <T extends ColorSpace>(colorSpace: T) => CreatedColor<T>;
 }
 
 export type CreatedColor<T extends ColorSpace> = T extends 'srgb'

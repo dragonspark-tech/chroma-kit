@@ -108,13 +108,18 @@ export const oklchFromVector = (v: number[], alpha?: number): OKLChColor => {
  * Converts a color from OKLCh to RGB color space.
  *
  * This function first converts the OKLCh color to XYZ, then from XYZ to RGB.
+ * Gamut mapping is performed during the XYZ to RGB conversion to ensure the
+ * resulting color is within the valid sRGB gamut. This prevents unexpected
+ * results when working with colors that have high chroma values or are
+ * otherwise outside the sRGB gamut.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {sRGBColor} The color in RGB space
  */
-export const oklchToRGB = (color: OKLChColor): sRGBColor => {
+export const oklchToRGB = (color: OKLChColor, performGamutMapping: boolean = true): sRGBColor => {
   const xyz = oklchToXYZ(color);
-  return xyzToRGB(xyz);
+  return xyzToRGB(xyz, performGamutMapping);
 };
 
 /**
@@ -122,36 +127,45 @@ export const oklchToRGB = (color: OKLChColor): sRGBColor => {
  *
  * This function first converts the OKLCh color to RGB, then from RGB to HSL.
  * The HSL color space is a cylindrical representation of RGB, using hue,
- * saturation, and lightness components.
+ * saturation, and lightness components. Gamut mapping is performed during
+ * the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const oklchToHSL = (color: OKLChColor): HSLColor => srgbToHSL(oklchToRGB(color));
+export const oklchToHSL = (color: OKLChColor, performGamutMapping: boolean = true): HSLColor =>
+  srgbToHSL(oklchToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from OKLCh to HSV color space.
  *
  * This function first converts the OKLCh color to RGB, then from RGB to HSV.
  * The HSV color space is a cylindrical representation of RGB, using hue,
- * saturation, and value components.
+ * saturation, and value components. Gamut mapping is performed during
+ * the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const oklchToHSV = (color: OKLChColor): HSVColor => srgbToHSV(oklchToRGB(color));
+export const oklchToHSV = (color: OKLChColor, performGamutMapping: boolean = true): HSVColor =>
+  srgbToHSV(oklchToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from OKLCh to HWB color space.
  *
  * This function first converts the OKLCh color to RGB, then from RGB to HWB.
  * The HWB color space is a cylindrical representation of RGB, using hue,
- * whiteness, and blackness components.
+ * whiteness, and blackness components. Gamut mapping is performed during
+ * the conversion to ensure the resulting color is within the valid sRGB gamut.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const oklchToHWB = (color: OKLChColor): HWBColor => srgbToHWB(oklchToRGB(color));
+export const oklchToHWB = (color: OKLChColor, performGamutMapping: boolean = true): HWBColor =>
+  srgbToHWB(oklchToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from OKLCh to CIE XYZ color space.

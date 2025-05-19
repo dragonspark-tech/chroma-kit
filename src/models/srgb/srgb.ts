@@ -54,8 +54,10 @@ export const srgbToCSSString = (color: sRGBColor, forceFullString: boolean = fal
   const gInt = Math.round(g * 255);
   const bInt = Math.round(b * 255);
 
-  if (alpha !== undefined && (alpha < 1 || forceFullString)) {
-    return `rgba(${rInt}, ${gInt}, ${bInt}, ${alpha.toFixed(3)})`;
+  const a = alpha ?? 1;
+
+  if (a < 1 || forceFullString) {
+    return `rgba(${rInt}, ${gInt}, ${bInt}${a < 1 ? (', ' + a.toFixed(3)) : ''})`;
   }
 
   return srgbToHex(color);
@@ -76,9 +78,9 @@ export const srgbToCSSString = (color: sRGBColor, forceFullString: boolean = fal
 export const srgb = (r: number, g: number, b: number, alpha?: number): sRGBColor => ({
   space: 'srgb',
 
-  r: r > 1 ? r / 255 : r,
-  g: g > 1 ? g / 255 : g,
-  b: b > 1 ? b / 255 : b,
+  r,
+  g,
+  b,
   alpha,
 
   toString() {
@@ -181,8 +183,7 @@ export const hexTosRGB = (hex: string): sRGBColor => {
     throw new Error('Invalid hex color format');
   }
 
-  if (a)
-    a = Math.round(a * 100) / 100;
+  if (a) a = Math.round(a * 100) / 100;
 
   return normalizesRGBColor(srgb(r, g, b, a));
 };
@@ -212,18 +213,22 @@ export const srgbToHex = (color: sRGBColor): string => {
     alpha = Math.max(0, Math.min(255, Math.round(a * 255)));
   }
 
+  // Check if each component has the same value for both nibbles (e.g., 0xAA, 0xBB)
+  // This means the hex representation can be shortened (e.g., #aabbcc -> #abc)
   const isShort = (n: number) => (n & 0xf0) >> 4 === (n & 0x0f);
   const canShort =
     isShort(r) && isShort(g) && isShort(b) && (alpha === undefined || isShort(alpha));
 
   if (canShort) {
-    let hex = `#${((r & 0xf0) >> 4).toString(16)}${((g & 0xf0) >> 4).toString(16)}${((b & 0xf0) >> 4).toString(16)}`;
+    // For shorthand, we use the high nibble (or low nibble, they're the same)
+    let hex = `#${(r >> 4).toString(16)}${(g >> 4).toString(16)}${(b >> 4).toString(16)}`;
     if (alpha !== undefined && alpha !== 255) {
-      hex += ((alpha & 0xf0) >> 4).toString(16);
+      hex += (alpha >> 4).toString(16);
     }
     return hex;
   }
 
+  // Full hex format
   let hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   if (alpha !== undefined && alpha !== 255) {
     hex += alpha.toString(16).padStart(2, '0');
@@ -245,9 +250,7 @@ const calculateHSpaceHue = (color: sRGBColor, max: number, min: number): number 
   let h = 0;
 
   if (Δ !== 0) {
-    h = max === r ? (g - b) / Δ + (g < b ? 6 : 0) :
-      max === g ? (b - r) / Δ + 2 :
-        (r - g) / Δ + 4;
+    h = max === r ? (g - b) / Δ + (g < b ? 6 : 0) : max === g ? (b - r) / Δ + 2 : (r - g) / Δ + 4;
 
     h *= 60;
 
@@ -255,7 +258,7 @@ const calculateHSpaceHue = (color: sRGBColor, max: number, min: number): number 
   }
 
   return h;
-}
+};
 
 /**
  * Converts an RGB color to the HSL color space.
@@ -280,8 +283,7 @@ export const srgbToHSL = (color: sRGBColor): HSLColor => {
   const l = (max + min) * 0.5;
 
   if (max !== min) {
-    s = l > 0.5 ? Δ / (2 - max - min) :
-      Δ / (max + min);
+    s = l > 0.5 ? Δ / (2 - max - min) : Δ / (max + min);
   }
 
   return hsl(h, s, l, color.alpha);
@@ -393,8 +395,10 @@ export const srgbToLCH = (color: sRGBColor): LChColor => xyzToLCh(srgbToXYZ(colo
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLabColor} The color in OKLab space
  */
-export const srgbToOKLab = (color: sRGBColor, useChromaticAdaptation: boolean = false): OKLabColor =>
-  xyzToOKLab(srgbToXYZ(color, useChromaticAdaptation));
+export const srgbToOKLab = (
+  color: sRGBColor,
+  useChromaticAdaptation: boolean = false
+): OKLabColor => xyzToOKLab(srgbToXYZ(color, useChromaticAdaptation));
 
 /**
  * Converts an RGB color to the OKLCh color space.
@@ -407,8 +411,10 @@ export const srgbToOKLab = (color: sRGBColor, useChromaticAdaptation: boolean = 
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLChColor} The color in OKLCh space
  */
-export const srgbToOKLCh = (color: sRGBColor, useChromaticAdaptation: boolean = false): OKLChColor =>
-  oklabToOKLCh(srgbToOKLab(color, useChromaticAdaptation));
+export const srgbToOKLCh = (
+  color: sRGBColor,
+  useChromaticAdaptation: boolean = false
+): OKLChColor => oklabToOKLCh(srgbToOKLab(color, useChromaticAdaptation));
 
 /**
  * Converts an RGB color to the JzAzBz color space.

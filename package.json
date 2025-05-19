@@ -60,8 +60,7 @@
   ],
   "scripts": {
     "build-precomputed": "jiti ./toolchain/build.ts",
-    "build": "pnpm build-precomputed && rimraf ./dist && tsup src/index.ts src/fn.ts src/fluent.ts src/deltae.ts --experimental-dts --format esm",
-    "playground": "jiti ./playground.ts"
+    "build": "pnpm build-precomputed && rimraf ./dist && tsup src/index.ts src/fn.ts src/fluent.ts src/deltae.ts --experimental-dts --format esm"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.52.8",
