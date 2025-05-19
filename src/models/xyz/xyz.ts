@@ -1,7 +1,7 @@
 ﻿import { lab, LabColor, labToLCH } from '../lab';
 import { ϵ, κ } from '../lab/constants';
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { delinearizeRGBColor, RGBColor, rgbFromVector, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import { delinearizesRGBColor, sRGBColor, srgbFromVector, srgbToHSL, srgbToHSV, srgbToHWB } from '../srgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
 import { OKLabColor, oklabFromVector, oklabToOKLCh } from '../oklab';
@@ -123,11 +123,11 @@ export const xyzFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  * then delinearizes the RGB values (applies gamma correction) to get standard RGB values.
  *
  * @param {XYZColor} color - The XYZ color to convert
- * @returns {RGBColor} The color in RGB space
+ * @returns {sRGBColor} The color in RGB space
  */
-export const xyzToRGB = (color: XYZColor): RGBColor => {
+export const xyzToRGB = (color: XYZColor): sRGBColor => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
-  return delinearizeRGBColor(rgbFromVector(lRGB, color.alpha));
+  return delinearizesRGBColor(srgbFromVector(lRGB, color.alpha));
 };
 
 /**
@@ -140,7 +140,7 @@ export const xyzToRGB = (color: XYZColor): RGBColor => {
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {HSLColor} The color in HSL space
  */
-export const xyzToHSL = (color: XYZColor): HSLColor => rgbToHSL(xyzToRGB(color));
+export const xyzToHSL = (color: XYZColor): HSLColor => srgbToHSL(xyzToRGB(color));
 
 /**
  * Converts a color from CIE XYZ to HSV color space.
@@ -152,7 +152,7 @@ export const xyzToHSL = (color: XYZColor): HSLColor => rgbToHSL(xyzToRGB(color))
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {HSVColor} The color in HSV space
  */
-export const xyzToHSV = (color: XYZColor): HSVColor => rgbToHSV(xyzToRGB(color));
+export const xyzToHSV = (color: XYZColor): HSVColor => srgbToHSV(xyzToRGB(color));
 
 /**
  * Converts a color from CIE XYZ to HWB color space.
@@ -164,7 +164,7 @@ export const xyzToHSV = (color: XYZColor): HSVColor => rgbToHSV(xyzToRGB(color))
  * @param {XYZColor} color - The XYZ color to convert
  * @returns {HWBColor} The color in HWB space
  */
-export const xyzToHWB = (color: XYZColor): HWBColor => rgbToHWB(xyzToRGB(color));
+export const xyzToHWB = (color: XYZColor): HWBColor => srgbToHWB(xyzToRGB(color));
 
 /**
  * Converts a color from CIE XYZ to CIE Lab color space.

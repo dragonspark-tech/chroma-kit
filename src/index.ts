@@ -1,8 +1,8 @@
-﻿import './conversion/register-conversions';
+import './conversion/register-conversions';
 
 export {
-  rgb,
-  rgbFromVector,
+  srgb,
+  srgbFromVector,
   hsl,
   hslFromVector,
   hsv,

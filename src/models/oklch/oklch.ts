@@ -1,7 +1,7 @@
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { oklab, OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab';
-import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import { sRGBColor, srgbToHSL, srgbToHSV, srgbToHWB } from '../srgb';
 import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToRGB } from '../xyz';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
@@ -110,9 +110,9 @@ export const oklchFromVector = (v: number[], alpha?: number): OKLChColor => {
  * This function first converts the OKLCh color to XYZ, then from XYZ to RGB.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
- * @returns {RGBColor} The color in RGB space
+ * @returns {sRGBColor} The color in RGB space
  */
-export const oklchToRGB = (color: OKLChColor): RGBColor => {
+export const oklchToRGB = (color: OKLChColor): sRGBColor => {
   const xyz = oklchToXYZ(color);
   return xyzToRGB(xyz);
 };
@@ -127,7 +127,7 @@ export const oklchToRGB = (color: OKLChColor): RGBColor => {
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {HSLColor} The color in HSL space
  */
-export const oklchToHSL = (color: OKLChColor): HSLColor => rgbToHSL(oklchToRGB(color));
+export const oklchToHSL = (color: OKLChColor): HSLColor => srgbToHSL(oklchToRGB(color));
 
 /**
  * Converts a color from OKLCh to HSV color space.
@@ -139,7 +139,7 @@ export const oklchToHSL = (color: OKLChColor): HSLColor => rgbToHSL(oklchToRGB(c
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {HSVColor} The color in HSV space
  */
-export const oklchToHSV = (color: OKLChColor): HSVColor => rgbToHSV(oklchToRGB(color));
+export const oklchToHSV = (color: OKLChColor): HSVColor => srgbToHSV(oklchToRGB(color));
 
 /**
  * Converts a color from OKLCh to HWB color space.
@@ -151,7 +151,7 @@ export const oklchToHSV = (color: OKLChColor): HSVColor => rgbToHSV(oklchToRGB(c
  * @param {OKLChColor} color - The OKLCh color to convert
  * @returns {HWBColor} The color in HWB space
  */
-export const oklchToHWB = (color: OKLChColor): HWBColor => rgbToHWB(oklchToRGB(color));
+export const oklchToHWB = (color: OKLChColor): HWBColor => srgbToHWB(oklchToRGB(color));
 
 /**
  * Converts a color from OKLCh to CIE XYZ color space.

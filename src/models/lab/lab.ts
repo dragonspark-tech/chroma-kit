@@ -1,7 +1,7 @@
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
 import { xyz, XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
 import { ϵ, κ } from './constants';
-import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import { sRGBColor, srgbToHSL, srgbToHSV, srgbToHWB } from '../srgb';
 import { lch, LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
@@ -110,9 +110,9 @@ export const labFromVector = (v: number[], alpha?: number): LabColor => {
  * from Lab to RGB, which typically goes through XYZ.
  *
  * @param {LabColor} color - The Lab color to convert
- * @returns {RGBColor} The color in RGB space
+ * @returns {sRGBColor} The color in RGB space
  */
-export const labToRGB = (color: LabColor): RGBColor => xyzToRGB(labToXYZ(color));
+export const labToRGB = (color: LabColor): sRGBColor => xyzToRGB(labToXYZ(color));
 
 /**
  * Converts a color from CIE Lab to HSL color space.
@@ -123,7 +123,7 @@ export const labToRGB = (color: LabColor): RGBColor => xyzToRGB(labToXYZ(color))
  * @param {LabColor} color - The Lab color to convert
  * @returns {HSLColor} The color in HSL space
  */
-export const labToHSL = (color: LabColor): HSLColor => rgbToHSL(labToRGB(color));
+export const labToHSL = (color: LabColor): HSLColor => srgbToHSL(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to HSV color space.
@@ -134,7 +134,7 @@ export const labToHSL = (color: LabColor): HSLColor => rgbToHSL(labToRGB(color))
  * @param {LabColor} color - The Lab color to convert
  * @returns {HSVColor} The color in HSV space
  */
-export const labToHSV = (color: LabColor): HSVColor => rgbToHSV(labToRGB(color));
+export const labToHSV = (color: LabColor): HSVColor => srgbToHSV(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to HWB color space.
@@ -146,7 +146,7 @@ export const labToHSV = (color: LabColor): HSVColor => rgbToHSV(labToRGB(color))
  * @returns {HWBColor} The color in HWB space
  *
  */
-export const labToHWB = (color: LabColor): HWBColor => rgbToHWB(labToRGB(color));
+export const labToHWB = (color: LabColor): HWBColor => srgbToHWB(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to CIE XYZ color space.

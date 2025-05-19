@@ -8,12 +8,12 @@
  * "ChromaKit|v1 {colorspace} {component1} {component2} ... [/ {alpha}]"
  *
  * For example:
- * "ChromaKit|v1 rgb 255 0 0" (red in RGB)
+ * "ChromaKit|v1 srgb 255 0 0" (red in RGB)
  * "ChromaKit|v1 hsl 0 100 50 / 0.5" (semi-transparent red in HSL)
  */
 
 import { type Color, type ColorSpace, colorVectorMappings } from '../foundation';
-import { rgbFromVector } from '../models/rgb';
+import { srgbFromVector } from '../models/srgb';
 import { xyzFromVector } from '../models/xyz';
 import { hslFromVector } from '../models/hsl';
 import { hsvFromVector } from '../models/hsv';
@@ -61,8 +61,8 @@ export function parseV1(src: string): Color {
   const nums = tokens.map(Number);
 
   switch (space) {
-    case 'rgb':
-      return rgbFromVector(nums, alpha);
+    case 'srgb':
+      return srgbFromVector(nums, alpha);
     case 'hsl':
       return hslFromVector(nums, alpha);
     case 'hsv':

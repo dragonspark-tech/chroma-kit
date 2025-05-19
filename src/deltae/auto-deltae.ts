@@ -1,4 +1,4 @@
-import { parse } from '../semantics/parsing';
+import { parseColor } from '../semantics/parsing';
 import { deltaE76 } from './deltae-76';
 import { deltaECMC } from './deltae-cmc';
 import { deltaE2000 } from './deltae-2000';
@@ -51,22 +51,22 @@ export const deltaE = (
 ): number => {
   switch (algorithm) {
     case 'Euclidean':
-      return deltaE76(parse(color, 'lab'), parse(sample, 'lab'));
+      return deltaE76(parseColor(color, 'lab'), parseColor(sample, 'lab'));
 
     case 'CMC':
-      return deltaECMC(parse(color, 'lch'), parse(sample, 'lch'));
+      return deltaECMC(parseColor(color, 'lch'), parseColor(sample, 'lch'));
 
     case '2000':
-      return deltaE2000(parse(color, 'lab'), parse(sample, 'lab'));
+      return deltaE2000(parseColor(color, 'lab'), parseColor(sample, 'lab'));
 
     case 'OKLab':
-      return deltaEOK(parse(color, 'oklab'), parse(sample, 'oklab'));
+      return deltaEOK(parseColor(color, 'oklab'), parseColor(sample, 'oklab'));
 
     case 'ScaledOKLab':
-      return deltaEOKScaled(parse(color, 'oklab'), parse(sample, 'oklab'));
+      return deltaEOKScaled(parseColor(color, 'oklab'), parseColor(sample, 'oklab'));
 
     case 'Jz':
-      return deltaEJZ(parse(color, 'jzczhz'), parse(sample, 'jzczhz') as JzCzHzColor);
+      return deltaEJZ(parseColor(color, 'jzczhz'), parseColor(sample, 'jzczhz') as JzCzHzColor);
 
     default:
       throw new Error(`Unknown algorithm: ${algorithm}`);

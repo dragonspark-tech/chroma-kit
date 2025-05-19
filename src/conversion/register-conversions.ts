@@ -4,7 +4,7 @@
  * with the conversion system, enabling automatic path finding between color spaces.
  *
  * The registered conversions form a graph where:
- * - Nodes are color spaces (rgb, xyz, lab, etc.)
+ * - Nodes are color spaces (srgb, xyz, lab, etc.)
  * - Edges are direct conversion functions between spaces
  *
  * This graph structure allows the conversion system to find paths between any two
@@ -12,7 +12,7 @@
  */
 
 import { registerConversion } from './conversion';
-import { rgbToHSL, rgbToHSV, rgbToHWB, rgbToXYZ } from '../models/rgb';
+import { srgbToHSL, srgbToHSV, srgbToHWB, srgbToXYZ } from '../models/srgb';
 import {
   xyzToJzAzBz,
   xyzToJzCzHz,
@@ -46,24 +46,24 @@ import { hwbToRGB } from '../models/hwb';
  */
 export function registerAllConversions(): void {
   // RGB color space conversions
-  registerConversion('rgb', 'xyz', rgbToXYZ);
-  registerConversion('rgb', 'hsl', rgbToHSL);
-  registerConversion('rgb', 'hsv', rgbToHSV);
-  registerConversion('rgb', 'hwb', rgbToHWB);
+  registerConversion('srgb', 'xyz', srgbToXYZ);
+  registerConversion('srgb', 'hsl', srgbToHSL);
+  registerConversion('srgb', 'hsv', srgbToHSV);
+  registerConversion('srgb', 'hwb', srgbToHWB);
 
   // HSL color space conversions
-  registerConversion('hsl', 'rgb', hslToRGB);
+  registerConversion('hsl', 'srgb', hslToRGB);
   registerConversion('hsl', 'hsv', hslToHSV);
 
   // HSV color space conversions
-  registerConversion('hsv', 'rgb', hsvToRGB);
+  registerConversion('hsv', 'srgb', hsvToRGB);
   registerConversion('hsv', 'hsl', hsvToHSL);
 
   // HWB color space conversions
-  registerConversion('hwb', 'rgb', hwbToRGB);
+  registerConversion('hwb', 'srgb', hwbToRGB);
 
   // XYZ color space conversions (central hub for many conversions)
-  registerConversion('xyz', 'rgb', xyzToRGB);
+  registerConversion('xyz', 'srgb', xyzToRGB);
   registerConversion('xyz', 'lab', xyzToLab);
   registerConversion('xyz', 'lch', xyzToLCh);
   registerConversion('xyz', 'oklab', xyzToOKLab);

@@ -1,7 +1,7 @@
 import { lab, LabColor, labToXYZ } from '../lab';
 import { OKLabColor, oklabToOKLCh } from '../oklab';
 import { OKLChColor } from '../oklch';
-import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import { sRGBColor, srgbToHSL, srgbToHSV, srgbToHWB } from '../srgb';
 import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
@@ -107,9 +107,9 @@ export const lchFromVector = (v: number[], alpha?: number): LChColor => {
  * This function first converts the LCh color to XYZ, then from XYZ to RGB.
  *
  * @param {LChColor} color - The LCh color to convert
- * @returns {RGBColor} The color in RGB space
+ * @returns {sRGBColor} The color in RGB space
  */
-export const lchToRGB = (color: LChColor): RGBColor => xyzToRGB(lchToXYZ(color));
+export const lchToRGB = (color: LChColor): sRGBColor => xyzToRGB(lchToXYZ(color));
 
 /**
  * Converts a color from CIE LCh to HSL color space.
@@ -121,7 +121,7 @@ export const lchToRGB = (color: LChColor): RGBColor => xyzToRGB(lchToXYZ(color))
  * @param {LChColor} color - The LCh color to convert
  * @returns {HSLColor} The color in HSL space
  */
-export const lchToHSL = (color: LChColor): HSLColor => rgbToHSL(lchToRGB(color));
+export const lchToHSL = (color: LChColor): HSLColor => srgbToHSL(lchToRGB(color));
 
 /**
  * Converts a color from CIE LCh to HSV color space.
@@ -133,7 +133,7 @@ export const lchToHSL = (color: LChColor): HSLColor => rgbToHSL(lchToRGB(color))
  * @param {LChColor} color - The LCh color to convert
  * @returns {HSVColor} The color in HSV space
  */
-export const lchToHSV = (color: LChColor): HSVColor => rgbToHSV(lchToRGB(color));
+export const lchToHSV = (color: LChColor): HSVColor => srgbToHSV(lchToRGB(color));
 
 /**
  * Converts a color from CIE LCh to HWB color space.
@@ -145,7 +145,7 @@ export const lchToHSV = (color: LChColor): HSVColor => rgbToHSV(lchToRGB(color))
  * @param {LChColor} color - The LCh color to convert
  * @returns {HWBColor} The color in HWB space
  */
-export const lchToHWB = (color: LChColor): HWBColor => rgbToHWB(lchToRGB(color));
+export const lchToHWB = (color: LChColor): HWBColor => srgbToHWB(lchToRGB(color));
 
 /**
  * Converts a color from CIE LCh to CIE XYZ color space.

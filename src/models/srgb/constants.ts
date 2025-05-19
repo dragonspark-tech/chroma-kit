@@ -1,9 +1,9 @@
 ﻿import { type Matrix3x3 } from '../../utils/linear';
 
-export const RGB_INVERSE = 1 / 255;
+export const SRGB_INVERSE = 1 / 255;
 
 /**
- * Transformation matrix for converting linear RGB values to CIE XYZ color space.
+ * Transformation matrix for converting linear sRGB values to CIE XYZ color space.
  *
  * This matrix is based on the standard sRGB color space with D65 white point.
  * It's used in the RGB to XYZ conversion process after linearizing the RGB values.
@@ -13,7 +13,7 @@ export const RGB_INVERSE = 1 / 255;
  * Y = 0.2126729*R + 0.7151522*G + 0.0721750*B
  * Z = 0.0193339*R + 0.1191920*G + 0.9503041*B
  */
-export const RGB_XYZ_MATRIX: Matrix3x3 = [
+export const SRGB_XYZ_MATRIX: Matrix3x3 = [
   [0.4124564, 0.3575761, 0.1804375],
   [0.2126729, 0.7151522, 0.072175],
   [0.0193339, 0.119192, 0.9503041]

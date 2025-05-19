@@ -1,16 +1,16 @@
-import { rgb, RGBColor } from './rgb';
-import { normalizeRGBColor } from './transform';
+import { srgb, sRGBColor } from './srgb';
+import { normalizesRGBColor } from './transform';
 
 /**
  * Parses a CSS RGB color string into an RGBColor object.
  *
- * Supports both comma and space syntax, as well as both rgb() and rgba() formats:
- * - rgb(255, 128, 0)
+ * Supports both comma and space syntax, as well as both srgb() and rgba() formats:
+ * - srgb(255, 128, 0)
  * - rgba(255, 128, 0, 0.5)
- * - rgb(255 128 0)
- * - rgb(255 128 0 / 0.5)
- * - rgb(100%, 50%, 0%)
- * - rgb(100% 50% 0% / 0.5)
+ * - srgb(255 128 0)
+ * - srgb(255 128 0 / 0.5)
+ * - srgb(100%, 50%, 0%)
+ * - srgb(100% 50% 0% / 0.5)
  *
  * The function handles:
  * - RGB values as either integers (0-255) or percentages (0-100%)
@@ -19,10 +19,10 @@ import { normalizeRGBColor } from './transform';
  * - Whitespace flexibility according to CSS specifications
  *
  * @param {string} src - The CSS RGB color string to parse
- * @returns {RGBColor} The parsed RGB color object, with values normalized to 0-1 range
+ * @returns {sRGBColor} The parsed RGB color object, with values normalized to 0-1 range
  * @throws {SyntaxError} If the string format is invalid
  */
-export function rgbFromCSSString(src: string): RGBColor {
+export function srgbFromCSSString(src: string): sRGBColor {
   let i = 4;
   const N = src.length;
 
@@ -61,7 +61,7 @@ export function rgbFromCSSString(src: string): RGBColor {
       return v;
     } else {
       if (pct) v *= 2.55;
-      if (v > 255) throw new SyntaxError('rgb() out of range');
+      if (v > 255) throw new SyntaxError('srgb() out of range');
       return v;
     }
   };
@@ -114,5 +114,5 @@ export function rgbFromCSSString(src: string): RGBColor {
   if (src[i] !== ')') throw new SyntaxError('missing ")"');
   if (++i !== N) throw new SyntaxError('unexpected text after ")"');
 
-  return normalizeRGBColor(rgb(r, g, b, a));
+  return normalizesRGBColor(srgb(r, g, b, a));
 }

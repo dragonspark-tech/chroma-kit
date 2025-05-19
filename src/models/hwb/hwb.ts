@@ -2,17 +2,17 @@ import { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import {
-  rgb,
-  RGBColor,
-  rgbToHSL,
-  rgbToHSV,
-  rgbToJzAzBz, rgbToJzCzHz,
-  rgbToLab,
-  rgbToLCH,
-  rgbToOKLab,
-  rgbToOKLCh,
-  rgbToXYZ
-} from '../rgb';
+  srgb,
+  sRGBColor,
+  srgbToHSL,
+  srgbToHSV,
+  srgbToJzAzBz, srgbToJzCzHz,
+  srgbToLab,
+  srgbToLCH,
+  srgbToOKLab,
+  srgbToOKLCh,
+  srgbToXYZ
+} from '../srgb';
 import { hsl, HSLColor, hslToRGB } from '../hsl';
 import { HSVColor } from '../hsv';
 import { XYZColor } from '../xyz';
@@ -119,14 +119,14 @@ export const hwbFromVector = (v: number[], alpha?: number): HWBColor => {
  * When whiteness + blackness >= 1, the color becomes a shade of gray.
  *
  * @param {HWBColor} color - The HWB color to convert
- * @returns {RGBColor} The color in RGB space
+ * @returns {sRGBColor} The color in RGB space
  */
-export const hwbToRGB = (color: HWBColor): RGBColor => {
+export const hwbToRGB = (color: HWBColor): sRGBColor => {
   const { h, w, b, alpha } = color;
 
   if (w + b >= 1) {
     const gray = w / (w + b);
-    return rgb(gray, gray, gray, alpha);
+    return srgb(gray, gray, gray, alpha);
   }
 
   const baseHSL = hsl(h, 1, 0.5);
@@ -136,7 +136,7 @@ export const hwbToRGB = (color: HWBColor): RGBColor => {
   const aG = (baseRGB.g * (1 - w - b)) + w;
   const aB = (baseRGB.b * (1 - w - b)) + w;
 
-  return rgb(aR, aG, aB, alpha);
+  return srgb(aR, aG, aB, alpha);
 }
 
 /**
@@ -148,7 +148,7 @@ export const hwbToRGB = (color: HWBColor): RGBColor => {
  * @returns {HSLColor} The color in HSL space
  */
 export const hwbToHSL = (color: HWBColor): HSLColor =>
-  rgbToHSL(hwbToRGB(color));
+  srgbToHSL(hwbToRGB(color));
 
 /**
  * Converts an HWB color to the HSV color space.
@@ -159,7 +159,7 @@ export const hwbToHSL = (color: HWBColor): HSLColor =>
  * @returns {HSVColor} The color in HSV space
  */
 export const hwbToHSV = (color: HWBColor): HSVColor =>
-  rgbToHSV(hwbToRGB(color));
+  srgbToHSV(hwbToRGB(color));
 
 /**
  * Converts an HWB color to the CIE XYZ color space.
@@ -170,7 +170,7 @@ export const hwbToHSV = (color: HWBColor): HSVColor =>
  * @returns {XYZColor} The color in XYZ space
  */
 export const hwbToXYZ = (color: HWBColor): XYZColor =>
-  rgbToXYZ(hwbToRGB(color));
+  srgbToXYZ(hwbToRGB(color));
 
 /**
  * Converts an HWB color to the CIE Lab color space.
@@ -182,7 +182,7 @@ export const hwbToXYZ = (color: HWBColor): XYZColor =>
  * @returns {LabColor} The color in Lab space
  */
 export const hwbToLab = (color: HWBColor): LabColor =>
-  rgbToLab(hwbToRGB(color));
+  srgbToLab(hwbToRGB(color));
 
 /**
  * Converts an HWB color to the CIE LCH color space.
@@ -195,7 +195,7 @@ export const hwbToLab = (color: HWBColor): LabColor =>
  * @returns {LChColor} The color in LCH space
  */
 export const hwbToLCH = (color: HWBColor): LChColor =>
-  rgbToLCH(hwbToRGB(color));
+  srgbToLCH(hwbToRGB(color));
 
 /**
  * Converts an HWB color to the OKLab color space.
@@ -208,7 +208,7 @@ export const hwbToLCH = (color: HWBColor): LChColor =>
  * @returns {OKLabColor} The color in OKLab space
  */
 export const hwbToOKLab = (color: HWBColor): OKLabColor =>
-  rgbToOKLab(hwbToRGB(color));
+  srgbToOKLab(hwbToRGB(color));
 
 /**
  * Converts an HWB color to the OKLCh color space.
@@ -221,7 +221,7 @@ export const hwbToOKLab = (color: HWBColor): OKLabColor =>
  * @returns {OKLChColor} The color in OKLCh space
  */
 export const hwbToOKLCh = (color: HWBColor): OKLChColor =>
-  rgbToOKLCh(hwbToRGB(color));
+  srgbToOKLCh(hwbToRGB(color));
 
 /**
  * Converts an HWB color to the JzAzBz color space.
@@ -234,7 +234,7 @@ export const hwbToOKLCh = (color: HWBColor): OKLChColor =>
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
 export const hwbToJzAzBz = (color: HWBColor, peakLuminance: number = 10000): JzAzBzColor =>
-  rgbToJzAzBz(hwbToRGB(color), peakLuminance);
+  srgbToJzAzBz(hwbToRGB(color), peakLuminance);
 
 /**
  * Converts an HWB color to the JzCzHz color space.
@@ -249,4 +249,4 @@ export const hwbToJzAzBz = (color: HWBColor, peakLuminance: number = 10000): JzA
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
 export const hwbToJzCzHz = (color: HWBColor, peakLuminance: number = 10000): JzCzHzColor =>
-  rgbToJzCzHz(hwbToRGB(color), peakLuminance);
+  srgbToJzCzHz(hwbToRGB(color), peakLuminance);

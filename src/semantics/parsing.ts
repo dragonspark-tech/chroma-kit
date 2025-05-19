@@ -10,7 +10,7 @@
 
 import { Color, ColorSpace, CreatedColor } from '../foundation';
 import { parseV1 } from './serialization';
-import { hexToRGB, rgbFromCSSString } from '../models/rgb';
+import { hexTosRGB, srgbFromCSSString } from '../models/srgb';
 import { hslFromCSSString } from '../models/hsl';
 import { hsvFromCSSString } from '../models/hsv';
 import { labFromCSSString } from '../models/lab';
@@ -34,14 +34,14 @@ let hotIndex = 0;
  * 2. Recently parsed strings are retrieved from a hot cache
  * 3. Hex strings (e.g., "#FF0000") are parsed via a fast path
  * 4. ChromaKit's own serialization format is handled efficiently
- * 5. CSS color strings (rgb, hsl, lab, etc.) are parsed based on their prefix
+ * 5. CSS color strings (srgb, hsl, lab, etc.) are parsed based on their prefix
  *
  * @param input A color string or Color object to parse/convert
  * @param targetSpace The destination color space
  * @returns A Color object in the specified target space
  * @throws {SyntaxError} If the input string format is invalid or unsupported
  */
-export function parse<T extends ColorSpace>(
+export function parseColor<T extends ColorSpace>(
   input: string | Color,
   targetSpace: T
 ): CreatedColor<T> {
@@ -52,7 +52,7 @@ export function parse<T extends ColorSpace>(
 
   // Fast path for hex strings (starting with '#')
   if (input.charCodeAt(0) === 35) {
-    const col = hexToRGB(input);
+    const col = hexTosRGB(input);
     hotKeys[hotIndex] = input;
     hotVals[hotIndex] = col;
     hotIndex = (hotIndex + 1) & (HOT_CACHE_SIZE - 1);
@@ -76,8 +76,8 @@ export function parse<T extends ColorSpace>(
     ((input.charCodeAt(2) | 32) << 8) |
     (input.charCodeAt(3) | 32);
   switch (prefix) {
-    case 0x72676200: // 'rgb('
-      return rgbFromCSSString(input).to(targetSpace);
+    case 0x72676200: // 'srgb('
+      return srgbFromCSSString(input).to(targetSpace);
     case 0x68736c00: // 'hsl('
       return hslFromCSSString(input).to(targetSpace);
     case 0x68736c61: // 'hsla'

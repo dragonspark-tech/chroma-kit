@@ -1,7 +1,7 @@
 import { OKLAB_LMS_MATRIX, OKLCH_THROUGH_LMS_XYZ_MATRIX } from './constants';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { XYZColor, xyzFromVector, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz';
-import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import { sRGBColor, srgbToHSL, srgbToHSV, srgbToHWB } from '../srgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { JzAzBzColor } from '../jzazbz';
@@ -110,9 +110,9 @@ export const oklabFromVector = (v: number[], alpha?: number): OKLabColor => {
  * This function first converts the OKLab color to XYZ, then from XYZ to RGB.
  *
  * @param {OKLabColor} color - The OKLab color to convert
- * @returns {RGBColor} The color in RGB space
+ * @returns {sRGBColor} The color in RGB space
  */
-export const oklabToRGB = (color: OKLabColor): RGBColor => xyzToRGB(oklabToXYZ(color));
+export const oklabToRGB = (color: OKLabColor): sRGBColor => xyzToRGB(oklabToXYZ(color));
 
 /**
  * Converts a color from OKLab to HSL color space.
@@ -124,7 +124,7 @@ export const oklabToRGB = (color: OKLabColor): RGBColor => xyzToRGB(oklabToXYZ(c
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {HSLColor} The color in HSL space
  */
-export const oklabToHSL = (color: OKLabColor): HSLColor => rgbToHSL(oklabToRGB(color));
+export const oklabToHSL = (color: OKLabColor): HSLColor => srgbToHSL(oklabToRGB(color));
 
 /**
  * Converts a color from OKLab to HSV color space.
@@ -136,7 +136,7 @@ export const oklabToHSL = (color: OKLabColor): HSLColor => rgbToHSL(oklabToRGB(c
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {HSVColor} The color in HSV space
  */
-export const oklabToHSV = (color: OKLabColor): HSVColor => rgbToHSV(oklabToRGB(color));
+export const oklabToHSV = (color: OKLabColor): HSVColor => srgbToHSV(oklabToRGB(color));
 
 /**
  * Converts a color from OKLab to HWB color space.
@@ -148,7 +148,7 @@ export const oklabToHSV = (color: OKLabColor): HSVColor => rgbToHSV(oklabToRGB(c
  * @param {OKLabColor} color - The OKLab color to convert
  * @returns {HWBColor} The color in HWB space
  */
-export const oklabToHWB = (color: OKLabColor): HWBColor => rgbToHWB(oklabToRGB(color));
+export const oklabToHWB = (color: OKLabColor): HWBColor => srgbToHWB(oklabToRGB(color));
 
 /**
  * Converts a color from OKLab to CIE XYZ color space.

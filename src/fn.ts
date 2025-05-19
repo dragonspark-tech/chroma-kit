@@ -1,7 +1,7 @@
 export { serializeV1, parseV1 } from './semantics/serialization';
 export { registerConversion, convertColor } from './conversion/conversion';
 
-export * from './models/rgb/rgb';
+export * from './models/srgb/srgb';
 export * from './models/xyz/xyz';
 export * from './models/hsl/hsl';
 export * from './models/hsv/hsv';

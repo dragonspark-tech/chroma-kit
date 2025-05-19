@@ -4,14 +4,14 @@ import type { OKLChColor } from './models/oklch';
 import type { JzAzBzColor } from './models/jzazbz';
 import type { JzCzHzColor } from './models/jzczhz';
 import type { LabColor } from './models/lab';
-import type { RGBColor } from './models/rgb';
+import type { sRGBColor } from './models/srgb';
 import type { XYZColor } from './models/xyz';
 import type { HSLColor } from './models/hsl';
 import type { HSVColor } from './models/hsv';
 import { HWBColor } from './models/hwb';
 
 export type Color =
-  | RGBColor
+  | sRGBColor
   | HSLColor
   | HSVColor
   | HWBColor
@@ -34,8 +34,8 @@ export interface ColorBase {
   to: <T extends ColorBase>(colorSpace: ColorSpace) => T;
 }
 
-export type CreatedColor<T extends ColorSpace> = T extends 'rgb'
-  ? RGBColor
+export type CreatedColor<T extends ColorSpace> = T extends 'srgb'
+  ? sRGBColor
   : T extends 'xyz'
     ? XYZColor
     : T extends 'hsl'
