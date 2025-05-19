@@ -10,7 +10,7 @@ import { jzczhz, JzCzHzColor } from '../jzczhz';
 import { IlluminantD65 } from '../../standards/illuminants';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
-import { Color, ColorBase } from '../../foundation';
+import { ColorBase } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
 
 /**

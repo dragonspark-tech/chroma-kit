@@ -10,7 +10,7 @@ import { JzCzHzColor } from '../jzczhz';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
 import { convertColor } from '../../conversion/conversion';
-import { Color, ColorBase } from '../../foundation';
+import { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 
 /**

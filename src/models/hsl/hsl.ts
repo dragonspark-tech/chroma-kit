@@ -7,7 +7,7 @@ import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
-import { Color, ColorBase, ColorSpace } from '../../foundation';
+import { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 

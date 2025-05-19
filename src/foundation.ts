@@ -32,20 +32,27 @@ export interface ColorBase {
   to: <T extends ColorBase>(colorSpace: ColorSpace) => T;
 }
 
-export type ColorArray<T extends ColorBase> = T[];
-
-export type ColorSpaceTypeMap = {
-  rgb: RGBColor;
-  xyz: XYZColor;
-  hsl: HSLColor;
-  hsv: HSVColor;
-  lab: LabColor;
-  lch: LChColor;
-  oklab: OKLabColor;
-  oklch: OKLChColor;
-  jzazbz: JzAzBzColor;
-  jzczhz: JzCzHzColor;
-}
+export type CreatedColor<T extends ColorSpace> = T extends 'rgb'
+  ? RGBColor
+  : T extends 'xyz'
+    ? XYZColor
+    : T extends 'hsl'
+      ? HSLColor
+      : T extends 'hsv'
+        ? HSVColor
+        : T extends 'lab'
+          ? LabColor
+          : T extends 'lch'
+            ? LChColor
+            : T extends 'oklab'
+              ? OKLabColor
+              : T extends 'oklch'
+                ? OKLChColor
+                : T extends 'jzazbz'
+                  ? JzAzBzColor
+                  : T extends 'jzczhz'
+                    ? JzCzHzColor
+                    : never;
 
 /**
  * A mapping of color spaces to their respective channel identifiers.

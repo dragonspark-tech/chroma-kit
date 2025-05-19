@@ -1,4 +1,4 @@
-import { ColorBase, ColorSpace } from '../foundation';
+import { ColorBase } from '../foundation';
 
 /**
  * Type for a color conversion function that converts from one color space to another.

@@ -10,7 +10,7 @@ import { oklch, OKLChColor } from '../oklch';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
 import { IlluminantD65 } from '../../standards/illuminants';
-import { Color, ColorBase } from '../../foundation';
+import { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 

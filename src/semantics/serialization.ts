@@ -1,4 +1,4 @@
-import { type Color, colorVectorMappings, type ColorSpace } from '../foundation';
+import { type Color, type ColorSpace, colorVectorMappings } from '../foundation';
 import { rgbFromVector } from '../models/rgb';
 import { xyzFromVector } from '../models/xyz';
 import { hslFromVector } from '../models/hsl';

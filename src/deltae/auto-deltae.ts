@@ -1,14 +1,12 @@
 import { parse } from '../semantics/parsing';
 import { deltaE76 } from './deltae-76';
 import { deltaECMC } from './deltae-cmc';
-import { LChColor } from '../models/lch';
 import { deltaE2000 } from './deltae-2000';
-import { LabColor } from '../models/lab';
 import { deltaEOK } from './deltae-ok';
-import { OKLabColor } from '../models/oklab';
 import { deltaEOKScaled } from './deltae-ok-scaled';
 import { deltaEJZ } from './deltae-jz';
 import { JzCzHzColor } from '../models/jzczhz';
+import { Color } from '../foundation';
 
 /**
  * Represents the available algorithms for calculating color difference (Delta E) between two colors.
@@ -46,30 +44,31 @@ export type DeltaEAlgorithm = 'Euclidean' | 'CMC' | '2000' | 'OKLab' | 'ScaledOK
  *
  * @returns {number} The computed color difference value using the specified algorithm.
  */
-export const deltaE = (color: any, sample: any, algorithm: DeltaEAlgorithm = '2000'): number => {
-  const parsedColor = parse(color);
-  const parsedSample = parse(sample);
-
+export const deltaE = (
+  color: string | Color,
+  sample: string | Color,
+  algorithm: DeltaEAlgorithm = '2000'
+): number => {
   switch (algorithm) {
     case 'Euclidean':
-      return deltaE76(parsedColor, parsedSample);
+      return deltaE76(parse(color, 'xyz'), parse(sample, 'xyz'));
 
     case 'CMC':
-      return deltaECMC(parsedColor.to<LChColor>('lch'), parsedSample.to<LChColor>('lch'));
+      return deltaECMC(parse(color, 'lch'), parse(sample, 'lch'));
 
     case '2000':
-      return deltaE2000(parsedColor.to<LabColor>('lab'), parsedSample.to<LabColor>('lab'));
+      return deltaE2000(parse(color, 'lab'), parse(sample, 'lab'));
 
     case 'OKLab':
-      return deltaEOK(parsedColor.to<OKLabColor>('oklab'), parsedSample.to<OKLabColor>('oklab'));
+      return deltaEOK(parse(color, 'oklab'), parse(sample, 'oklab'));
 
     case 'ScaledOKLab':
-      return deltaEOKScaled(parsedColor.to<OKLabColor>('oklab'), parsedSample.to<OKLabColor>('oklab'));
+      return deltaEOKScaled(parse(color, 'oklab'), parse(sample, 'oklab'));
 
     case 'Jz':
-      return deltaEJZ(parsedColor.to<JzCzHzColor>('jzczhz'), parsedSample.to<JzCzHzColor>('jzczhz'));
+      return deltaEJZ(parse(color, 'jzczhz'), parse(sample, 'jzczhz') as JzCzHzColor);
 
     default:
       throw new Error(`Unknown algorithm: ${algorithm}`);
   }
-}
+};

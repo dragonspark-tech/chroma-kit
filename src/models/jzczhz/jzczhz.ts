@@ -18,7 +18,7 @@ import { OKLabColor } from '../oklab';
 import { OKLChColor } from '../oklch';
 import { HSLColor } from '../hsl';
 import { HSVColor } from '../hsv';
-import { Color, ColorBase } from '../../foundation';
+import { ColorBase } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
 import { serializeV1 } from '../../semantics/serialization';
 
