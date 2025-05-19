@@ -1,5 +1,4 @@
 export { serializeV1, parseV1 } from './semantics/serialization';
-export { registerAllConversions } from './conversion/register-conversions';
 export { registerConversion, convertColor } from './conversion/conversion';
 
 export * from './models/rgb/rgb';

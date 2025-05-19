@@ -1,17 +1,68 @@
 {
-  "name": "chroma-kit",
+  "name": "@dragonspark/chroma-kit",
+  "description": "A modern, lightweight and blazingly fast color manipulation library.",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dragonspark-tech/chroma-kit.git"
+  },
+  "bugs": "https://github.com/dragonspark-tech/chroma-kit/issues",
+  "contributors": [
+    {
+      "name": "David S. García (Azæl)",
+      "email": "azael@dragonspark.io",
+      "url": "https://github.com/azaeldragon"
+    }
+  ],
+  "keywords": [
+    "dragonspark",
+    "color",
+    "parser",
+    "convert",
+    "tiny",
+    "hex",
+    "rgb",
+    "delta-e",
+    "xyz",
+    "hsl",
+    "hsv",
+    "hwb",
+    "lab",
+    "lch",
+    "css"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": [
+      {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "require": "./dist/index.js"
+      },
+      "./dist/index.js"
+    ],
+    "./fn": [
+      {
+        "types": "./dist/fn.d.ts",
+        "import": "./dist/fn.js",
+        "require": "./dist/fn.js"
+      },
+      "./dist/fn.js"
+    ],
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build-precomputed": "jiti ./toolchain/build.ts",
     "build": "pnpm build-precomputed && rimraf ./dist && tsup src/index.ts src/fn.ts src/fluent.ts src/deltae.ts --experimental-dts --format esm",
     "playground": "jiti ./playground.ts"
   },
-  "type": "module",
-  "keywords": [],
-  "author": "",
-  "license": "Apache-2.0",
   "devDependencies": {
     "@microsoft/api-extractor": "^7.52.8",
     "@swc/core": "^1.11.24",

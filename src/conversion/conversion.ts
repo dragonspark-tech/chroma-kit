@@ -95,6 +95,11 @@ function findConversionPath(from: string, to: string): string[] | null {
   return null;
 }
 
+const buildConversionError = (from: string, to: string) =>
+    `No conversion path could be found from ${from} to ${to}.` +
+    `\nConversions must be manually registered when using the procedural API.` +
+    `\nIf you're using the to() methods, Use direct conversions instead, like rgbToOKLCh().`;
+
 /**
  * Gets a conversion function that converts from one color space to another.
  * If a direct conversion exists, it is returned. Otherwise, a chain of conversions is created.
@@ -117,11 +122,9 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
 
   // Find a path between the color spaces
   const path = findConversionPath(from, to);
-  if (!path || path.length < 2) {
-    throw new Error(
-      `No conversion found from ${from} to ${to}.\nPlease open an issue at https://github.com/dragonspark-tech/chroma-kit/issues`
-    );
-  }
+
+  if (!path || path.length < 2)
+    throw Error(buildConversionError(from, to));
 
   // Create a chain of conversions
   return (color: TFrom, ...args: any[]): TTo => {
@@ -135,11 +138,8 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
         (entry) => entry.from === fromSpace && entry.to === toSpace
       );
 
-      if (!conversion) {
-        throw new Error(
-          `No conversion found from ${fromSpace} to ${toSpace}.\nPlease open an issue at https://github.com/dragonspark-tech/chroma-kit/issues`
-        );
-      }
+      if (!conversion)
+        throw new Error(buildConversionError(fromSpace, toSpace));
 
       result = conversion.convert(result, ...args);
     }
