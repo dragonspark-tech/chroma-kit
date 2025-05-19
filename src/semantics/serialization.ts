@@ -23,6 +23,7 @@ import { lchFromVector } from '../models/lch';
 import { oklchFromVector } from '../models/oklch';
 import { jzazbzFromVector } from '../models/jzazbz';
 import { jzczhzFromVector } from '../models/jzczhz';
+import { hwbFromVector } from '../models/hwb';
 
 /**
  * Type guard utility to ensure all color spaces are handled.
@@ -67,6 +68,8 @@ export function parseV1(src: string): Color {
       return hslFromVector(nums, alpha);
     case 'hsv':
       return hsvFromVector(nums, alpha);
+    case 'hwb':
+      return hwbFromVector(nums, alpha);
     case 'xyz':
       return xyzFromVector(nums, alpha);
     case 'lab':

@@ -71,7 +71,7 @@ export type CreatedColor<T extends ColorSpace> = T extends 'srgb'
  * `ColorSpace` and the associated values are readonly arrays of strings.
  */
 export const colorVectorMappings: Record<ColorSpace, readonly string[]> = {
-  rgb: ['r', 'g', 'b'],
+  srgb: ['r', 'g', 'b'],
   xyz: ['x', 'y', 'z'],
   hsl: ['h', 's', 'l'],
   hsv: ['h', 's', 'v'],
