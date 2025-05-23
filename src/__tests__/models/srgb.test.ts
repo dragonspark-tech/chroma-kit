@@ -584,16 +584,16 @@ describe('sRGB Color Model', () => {
       it('should convert pure green to Lab', () => {
         const color = srgb(0, 1, 0);
         const lab = srgbToLab(color);
-        expect(lab.l).toBeCloseTo(87.73, 2);
+        expect(lab.l).toBeCloseTo(87.7355, 2);
         expect(lab.a).toBeCloseTo(-86.18, 2);
-        expect(lab.b).toBeCloseTo(83.18, 2);
+        expect(lab.b).toBeCloseTo(83.1866, 2);
       });
 
       it('should convert pure blue to Lab', () => {
         const color = srgb(0, 0, 1);
         const lab = srgbToLab(color);
         expect(lab.l).toBeCloseTo(32.3, 2);
-        expect(lab.a).toBeCloseTo(79.19, 2);
+        expect(lab.a).toBeCloseTo(79.1952, 2);
         expect(lab.b).toBeCloseTo(-107.86, 2);
       });
 
@@ -630,8 +630,8 @@ describe('sRGB Color Model', () => {
       it('should convert pure green to LCH', () => {
         const color = srgb(0, 1, 0);
         const lch = srgbToLCH(color);
-        expect(lch.l).toBeCloseTo(87.73, 2);
-        expect(lch.c).toBeCloseTo(119.775, 2);
+        expect(lch.l).toBeCloseTo(87.7355, 2);
+        expect(lch.c).toBeCloseTo(119.7801, 2);
         expect(lch.h).toBeCloseTo(136.015, 2);
       });
 

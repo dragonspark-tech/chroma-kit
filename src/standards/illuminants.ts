@@ -40,9 +40,9 @@ export const IlluminantA: Illuminant = {
  */
 export const IlluminantD50: Illuminant = {
   name: 'D50',
-  xR: 0.96422,
+  xR: 0.9642956764295677,
   yR: 1.0,
-  zR: 0.82521
+  zR: 0.8251046025104602
 };
 
 /**
@@ -58,7 +58,7 @@ export const IlluminantD50: Illuminant = {
  */
 export const IlluminantD65: Illuminant = {
   name: 'D65',
-  xR: 0.95047,
+  xR: 0.9504559270516716,
   yR: 1.0,
-  zR: 1.08883
+  zR: 1.0890577507598784
 };

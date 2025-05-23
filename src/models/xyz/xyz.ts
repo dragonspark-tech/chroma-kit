@@ -234,9 +234,9 @@ export const xyzToHWB = (color: XYZColor, performGamutMapping: boolean = true): 
 export const xyzToLab = (color: XYZColor): LabColor => {
   const i = color.illuminant || IlluminantD65;
 
-  const xn = color.x / i.xR,
-    yn = color.y / i.yR,
-    zn = color.z / i.zR;
+  const xn = color.x / i.xR;
+  const yn = color.y / i.yR;
+  const zn = color.z / i.zR;
 
   const fx = xn > ϵ ? Math.cbrt(xn) : (κ * xn + 16) / 116;
   const fy = yn > ϵ ? Math.cbrt(yn) : (κ * yn + 16) / 116;
