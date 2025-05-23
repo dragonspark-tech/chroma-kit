@@ -250,11 +250,12 @@ const calculateHSpaceHue = (color: sRGBColor, max: number, min: number): number 
   let h = 0;
 
   if (Δ !== 0) {
-    h = max === r ? (g - b) / Δ + (g < b ? 6 : 0) : max === g ? (b - r) / Δ + 2 : (r - g) / Δ + 4;
+    h =
+    max === r ? (g - b) / Δ + (g < b ? 6 : 0) :
+    max === g ? (b - r) / Δ + 2 :
+    (r - g) / Δ + 4;
 
     h *= 60;
-
-    if (h < 0) h += 360;
   }
 
   return h;
@@ -283,7 +284,9 @@ export const srgbToHSL = (color: sRGBColor): HSLColor => {
   const l = (max + min) * 0.5;
 
   if (max !== min) {
-    s = l > 0.5 ? Δ / (2 - max - min) : Δ / (max + min);
+    s =
+    l > 0.5 ? Δ / (2 - max - min) :
+    Δ / (max + min);
   }
 
   return hsl(h, s, l, color.alpha);

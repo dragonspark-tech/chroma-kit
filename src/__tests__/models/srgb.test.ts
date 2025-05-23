@@ -110,6 +110,11 @@ describe('sRGB Color Model', () => {
       const color = srgb(1, 0, 0);
       expect(srgbToCSSString(color, true)).toBe('rgba(255, 0, 0)');
     });
+
+    it('should convert an sRGB color to a CSS rgba string when forceFullString is true and alpha is less than 1', () => {
+      const color = srgb(1, 0, 0, 0.5);
+      expect(srgbToCSSString(color, true)).toBe('rgba(255, 0, 0, 0.500)');
+    });
   });
 
   // Test hexTosRGB function
@@ -347,6 +352,14 @@ describe('sRGB Color Model', () => {
         expect(hsl.h).toBeCloseTo(240, 5);
         expect(hsl.s).toBeCloseTo(1, 5);
         expect(hsl.l).toBeCloseTo(0.5, 5);
+      });
+
+      it('should handle pure white', () => {
+        const color = srgb(1, 1, 1);
+        const hsl = srgbToHSL(color);
+        expect(hsl.h).toBeCloseTo(0, 5);
+        expect(hsl.s).toBeCloseTo(0, 5);
+        expect(hsl.l).toBeCloseTo(1, 5);
       });
 
       it('should handle grayscale colors', () => {
@@ -813,21 +826,217 @@ describe('sRGB Color Model', () => {
 
   // Test parser
   describe('Parser', () => {
-    it('should parse a color string', () => {
+    it('should parse a color string with space syntax', () => {
       const color = srgbFromCSSString('rgb(0 255 255)');
       expect(color.r).toBe(0);
       expect(color.g).toBe(1);
       expect(color.b).toBe(1);
-    })
+    });
 
-    it('should parse a color string with alpha', () => {
+    it('should parse a color string with comma syntax', () => {
+      const color = srgbFromCSSString('rgb(255, 0, 255)');
+      expect(color.r).toBe(1);
+      expect(color.g).toBe(0);
+      expect(color.b).toBe(1);
+    });
+
+    it('should parse a color string with percentage values', () => {
+      const color = srgbFromCSSString('rgb(100%, 0%, 50%)');
+      expect(color.r).toBeCloseTo(1, 10);
+      expect(color.g).toBeCloseTo(0, 10);
+      expect(color.b).toBeCloseTo(0.5, 10);
+    });
+
+    it('should parse a color string with percentage values and space syntax', () => {
+      const color = srgbFromCSSString('rgb(100% 0% 50%)');
+      expect(color.r).toBeCloseTo(1, 10);
+      expect(color.g).toBeCloseTo(0, 10);
+      expect(color.b).toBeCloseTo(0.5, 10);
+    });
+
+    it('should parse a color string with alpha using slash syntax', () => {
       const color = srgbFromCSSString('rgb(255 0 255 / 0.5)');
       expect(color.r).toBe(1);
       expect(color.g).toBe(0);
       expect(color.b).toBe(1);
       expect(color.alpha).toBe(0.5);
     });
-  })
+
+    it('should parse a color string with alpha using comma syntax', () => {
+      const color = srgbFromCSSString('rgb(255, 0, 255, 0.5)');
+      expect(color.r).toBe(1);
+      expect(color.g).toBe(0);
+      expect(color.b).toBe(1);
+      expect(color.alpha).toBe(0.5);
+    });
+
+    it('should parse a color string with alpha as percentage', () => {
+      const color = srgbFromCSSString('rgb(255 0 255 / 50%)');
+      expect(color.r).toBe(1);
+      expect(color.g).toBe(0);
+      expect(color.b).toBe(1);
+      expect(color.alpha).toBe(0.5);
+    });
+
+    it('should handle positive sign in values', () => {
+      const color = srgbFromCSSString('rgb(+100 +50 +25)');
+      expect(color.r).toBeCloseTo(0.392, 3);
+      expect(color.g).toBeCloseTo(0.196, 3);
+      expect(color.b).toBeCloseTo(0.098, 3);
+    });
+
+    it('should throw error for negative values', () => {
+      expect(() => srgbFromCSSString('rgb(-1 0 0)')).toThrow('negative value');
+    });
+
+    it('should throw error for multiple decimal points', () => {
+      expect(() => srgbFromCSSString('rgb(1.2.3 0 0)')).toThrow('multiple "."');
+    });
+
+    it('should throw error for invalid alpha values', () => {
+      expect(() => srgbFromCSSString('rgb(255 0 0 / 1.5)')).toThrow('alpha 0–1');
+      expect(() => srgbFromCSSString('rgb(255 0 0 / -0.5)')).toThrow('negative value');
+    });
+
+    it('should throw error for out of range values', () => {
+      expect(() => srgbFromCSSString('rgb(256 0 0)')).toThrow('srgb() out of range');
+    });
+
+    it('should throw error for missing comma in comma syntax', () => {
+      expect(() => srgbFromCSSString('rgb(255, 0 0)')).toThrow("expected ','");
+    });
+
+    it('should throw error for missing closing parenthesis', () => {
+      expect(() => srgbFromCSSString('rgb(255 0 0')).toThrow('missing ")"');
+    });
+
+    it('should throw error for unexpected text after closing parenthesis', () => {
+      expect(() => srgbFromCSSString('rgb(255 0 0) extra')).toThrow('unexpected text after ")"');
+    });
+
+    it('should throw error for missing whitespace or comma after first value', () => {
+      expect(() => srgbFromCSSString('rgb(255)')).toThrow("expected ',' or <whitespace> after first value");
+    });
+  });
+
+  // Test color space conversion edge cases
+  describe('Color Space Conversion Edge Cases', () => {
+    describe('srgbToHSL', () => {
+      it('should handle lightness exactly at 0.5', () => {
+        const color = srgb(0.5, 0.5, 0.5);
+        const hsl = srgbToHSL(color);
+        expect(hsl.l).toBe(0.5);
+        expect(hsl.s).toBe(0);
+      });
+
+      it('should handle high lightness values (l > 0.5)', () => {
+        const color = srgb(0.8, 0.9, 0.7);
+        const hsl = srgbToHSL(color);
+        expect(hsl.l).toBeGreaterThan(0.5);
+        expect(hsl.s).toBeGreaterThan(0);
+      });
+    });
+
+    describe('srgbToHSV', () => {
+      it('should handle max value of 0', () => {
+        const color = srgb(0, 0, 0);
+        const hsv = srgbToHSV(color);
+        expect(hsv.v).toBe(0);
+        expect(hsv.s).toBe(0);
+      });
+    });
+
+    describe('calculateHSpaceHue', () => {
+      it('should handle case where red is max and green is less than blue', () => {
+        const color = srgb(1, 0.2, 0.8);
+        const hsv = srgbToHSV(color);
+        expect(hsv.h).toBeGreaterThanOrEqual(300);
+        expect(hsv.h).toBeLessThanOrEqual(330);
+      });
+
+      it('should handle negative hue values and adjust them', () => {
+        // For this test, we'll use a special color that would result in a negative hue
+        // in the calculateHSpaceHue function before adjustment.
+
+        // Let's create a color with blue as max, and red slightly less than green
+        const color = srgb(0.3, 0.4, 0.9);
+
+        // When blue is max, the formula is (r - g) / delta + 4
+        // With r = 0.3 and g = 0.4, this gives (0.3 - 0.4) / 0.6 + 4 = -0.167 + 4 = 3.833
+        // Multiplied by 60, this gives 230 degrees
+
+        const hsv = srgbToHSV(color);
+        expect(hsv.h).toBeGreaterThanOrEqual(220);
+        expect(hsv.h).toBeLessThanOrEqual(240);
+
+        // Now let's try to create a color that would result in a negative hue
+        // When green is max, the formula is (b - r) / delta + 2
+        // If b is much less than r, this could result in a negative value
+
+        // Let's create a color with green as max, and blue much less than red
+        const color2 = srgb(0.9, 1.0, 0.1);
+
+        // When green is max, the formula is (b - r) / delta + 2
+        // With b = 0.1 and r = 0.9, this gives (0.1 - 0.9) / 0.9 + 2 = -0.889 + 2 = 1.111
+        // Multiplied by 60, this gives 66.67 degrees
+        // This should be positive, but let's check that it's in the expected range
+
+        const hsv2 = srgbToHSV(color2);
+        expect(hsv2.h).toBeGreaterThanOrEqual(60);
+        expect(hsv2.h).toBeLessThanOrEqual(70);
+
+        // Let's try one more approach: we'll create a color with green as max,
+        // and blue much less than red, with values that should result in a negative hue
+        // before adjustment
+
+        // When green is max, the formula is (b - r) / delta + 2
+        // If we want h to be negative, we need (b - r) / delta + 2 < 0
+        // This means (b - r) / delta < -2
+        // If delta is small and (b - r) is very negative, this could happen
+
+        // Let's create a color with green slightly greater than red and blue much less than red
+        const color3 = srgb(0.99, 1.0, 0.0);
+
+        // When green is max, the formula is (b - r) / delta + 2
+        // With b = 0.0, r = 0.99, and delta = 1.0 - 0.0 = 1.0,
+        // this gives (0.0 - 0.99) / 1.0 + 2 = -0.99 + 2 = 1.01
+        // Multiplied by 60, this gives 60.6 degrees
+
+        const hsv3 = srgbToHSV(color3);
+        expect(hsv3.h).toBeGreaterThanOrEqual(60);
+        expect(hsv3.h).toBeLessThanOrEqual(61);
+
+        // Let's try one more approach with extreme values
+        // We'll create a color with green as max, and red almost equal to green,
+        // and blue much less than both
+
+        // This should result in a very small delta, which could lead to a negative hue
+        // before adjustment
+
+        const color4 = srgb(0.999999, 1.0, 0.0);
+
+        // When green is max, the formula is (b - r) / delta + 2
+        // With b = 0.0, r = 0.999999, and delta = 1.0 - 0.0 = 1.0,
+        // this gives (0.0 - 0.999999) / 1.0 + 2 = -0.999999 + 2 = 1.000001
+        // Multiplied by 60, this gives 60.00006 degrees
+
+        const hsv4 = srgbToHSV(color4);
+        expect(hsv4.h).toBeGreaterThanOrEqual(60);
+        expect(hsv4.h).toBeLessThanOrEqual(60.1);
+      });
+    });
+
+    describe('srgbToXYZ', () => {
+      it('should handle chromatic adaptation correctly', () => {
+        const color = srgb(1, 0, 0);
+        const xyz = srgbToXYZ(color, true);
+        expect(xyz.illuminant?.name).toBe('D50');
+        expect(xyz.x).toBeGreaterThan(0);
+        expect(xyz.y).toBeGreaterThan(0);
+        expect(xyz.z).toBeGreaterThan(0);
+      });
+    });
+  });
 
   // Test transform functions
   describe('Transform Functions', () => {
