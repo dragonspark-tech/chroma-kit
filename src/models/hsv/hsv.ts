@@ -80,7 +80,9 @@ export const hsvFromVector = (v: number[], alpha?: number) => {
  * @returns {sRGBColor} The color in RGB space
  */
 export const hsvToRGB = (color: HSVColor): sRGBColor => {
-  let [h, s, v] = [color.h, color.s, color.v];
+  // Normalize hue to [0, 360) range
+  let h = ((color.h % 360) + 360) % 360;
+  let [s, v] = [color.s, color.v];
 
   const c = v * s;
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
