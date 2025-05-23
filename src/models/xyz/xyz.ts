@@ -131,7 +131,7 @@ export const xyzToRGB = (color: XYZColor, performGamutMapping: boolean = true): 
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
 
   // Check if the color is within the sRGB gamut
-  const isInGamut = lRGB.every(value => value >= 0 && value <= 1);
+  const isInGamut = lRGB.every((value) => value >= 0 && value <= 1);
 
   // If the color is already in gamut or gamut mapping is disabled, return it directly
   if (isInGamut || !performGamutMapping) {
@@ -139,33 +139,20 @@ export const xyzToRGB = (color: XYZColor, performGamutMapping: boolean = true): 
   }
 
   // Perform gamut mapping by scaling the color to fit within the gamut
-  // Find the maximum amount by which any component exceeds the gamut
-  const maxOutOfGamut = Math.max(
-    Math.max(0, -Math.min(lRGB[0], lRGB[1], lRGB[2])), // How far below 0
-    Math.max(0, Math.max(lRGB[0], lRGB[1], lRGB[2]) - 1) // How far above 1
-  );
 
-  if (maxOutOfGamut > 0) {
-    // If any component is out of gamut, scale all components to fit
-    // For values < 0, we need to increase them
-    // For values > 1, we need to decrease them
-    // We'll use a simple scaling approach that preserves the relative proportions
+  if (Math.min(lRGB[0], lRGB[1], lRGB[2]) < 0) {
+    const minValue = Math.min(lRGB[0], lRGB[1], lRGB[2]);
+    lRGB[0] -= minValue;
+    lRGB[1] -= minValue;
+    lRGB[2] -= minValue;
+  }
 
-    // First, handle negative values by shifting all components up if needed
-    if (Math.min(lRGB[0], lRGB[1], lRGB[2]) < 0) {
-      const minValue = Math.min(lRGB[0], lRGB[1], lRGB[2]);
-      lRGB[0] -= minValue;
-      lRGB[1] -= minValue;
-      lRGB[2] -= minValue;
-    }
-
-    // Then, handle values > 1 by scaling down if needed
-    const maxValue = Math.max(lRGB[0], lRGB[1], lRGB[2]);
-    if (maxValue > 1) {
-      lRGB[0] /= maxValue;
-      lRGB[1] /= maxValue;
-      lRGB[2] /= maxValue;
-    }
+  // Then, handle values > 1 by scaling down if needed
+  const maxValue = Math.max(lRGB[0], lRGB[1], lRGB[2]);
+  if (maxValue > 1) {
+    lRGB[0] /= maxValue;
+    lRGB[1] /= maxValue;
+    lRGB[2] /= maxValue;
   }
 
   return delinearizesRGBColor(srgbFromVector(lRGB, color.alpha));
@@ -322,7 +309,7 @@ export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzA
   }
 
   const Xa = x * 203;
-  const Ya = y * 203
+  const Ya = y * 203;
   const Za = z * 203;
 
   const Xm = b * Xa - (b - 1) * Za;

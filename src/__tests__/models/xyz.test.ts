@@ -211,6 +211,19 @@ describe('XYZ Color Model', () => {
         expect(rgb.b).toBeLessThanOrEqual(1);
       });
 
+      it('should handle out-of-gamut colors correctly', () => {
+        const laserGreen = xyz(0.2, 0.8, 0.1);
+        const rgb = xyzToRGB(laserGreen);
+
+        // After gamut mapping, all values should be within 0-1 range
+        expect(rgb.r).toBeGreaterThanOrEqual(0);
+        expect(rgb.r).toBeLessThanOrEqual(1);
+        expect(rgb.g).toBeGreaterThanOrEqual(0);
+        expect(rgb.g).toBeLessThanOrEqual(1);
+        expect(rgb.b).toBeGreaterThanOrEqual(0);
+        expect(rgb.b).toBeLessThanOrEqual(1);
+      })
+
       it('should not perform gamut mapping when disabled', () => {
         // Create an XYZ color that is out of the sRGB gamut
         const outOfGamutColor = xyz(2.0, 0.0, 0.0);
