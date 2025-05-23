@@ -29,7 +29,7 @@ export function labFromCSSString(src: string): LabColor {
     isPercentageOnly: true,
     min: 0,
     max: 100,
-    scale: 0.01
+    scale: 1
   });
 
   parser.determineDelimiterStyle();
