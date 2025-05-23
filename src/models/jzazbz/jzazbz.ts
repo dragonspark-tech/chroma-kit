@@ -273,7 +273,7 @@ export const jzazbzPQInverse = (E: number, peakLuminance: number = 10000): numbe
 
   const num = c1 + c2 * x;
   const den = 1 + c3 * x;
-  
+
   return (num / den) ** m2p;
 };
 
@@ -288,6 +288,8 @@ export const jzazbzPQInverse = (E: number, peakLuminance: number = 10000): numbe
  * @returns {number} The encoded non-linear value
  */
 export const jzazbzPQForward = (Ep: number, peakLuminance: number = 10000): number => {
+  if (Ep === 0) return 0;
+
   const y = Math.pow(Ep, 1 / m2p);
   const num = c1 - y;
   const den = c3 * y - c2;
