@@ -97,7 +97,7 @@ describe('sRGB Color Model', () => {
   describe('srgbToCSSString', () => {
     it('should convert an sRGB color to a CSS hex string when alpha is 1', () => {
       const color = srgb(1, 0, 0);
-      expect(srgbToCSSString(color)).toBe('#f00');
+      expect(srgbToCSSString(color)).toBe('#ff0000');
     });
 
     it('should convert an sRGB color to a CSS rgba string when alpha is less than 1', () => {
@@ -169,17 +169,7 @@ describe('sRGB Color Model', () => {
   describe('srgbToHex', () => {
     it('should convert an sRGB color to a hex string', () => {
       const color = srgb(1, 0, 0);
-      expect(srgbToHex(color)).toBe('#f00');
-    });
-
-    it('should use shorthand notation when possible', () => {
-      const color = srgb(1, 0, 0);
-      expect(srgbToHex(color)).toBe('#f00');
-    });
-
-    it('should use shorthand notation with alpha when possible', () => {
-      const color = srgb(1, 0, 0, 0xaa / 255);
-      expect(srgbToHex(color)).toBe('#f00a');
+      expect(srgbToHex(color)).toBe('#ff0000');
     });
 
     it('should include alpha in the hex string when alpha is less than 1', () => {
@@ -189,12 +179,12 @@ describe('sRGB Color Model', () => {
 
     it('should not include alpha in the hex string when alpha is 1', () => {
       const color = srgb(1, 0, 0, 1);
-      expect(srgbToHex(color)).toBe('#f00');
+      expect(srgbToHex(color)).toBe('#ff0000');
     });
 
     it('should handle non-shorthand colors correctly', () => {
       const color = srgb(0.2, 0.4, 0.6);
-      expect(srgbToHex(color)).toBe('#369');
+      expect(srgbToHex(color)).toBe('#336699');
     });
   });
 

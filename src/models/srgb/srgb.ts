@@ -1,6 +1,6 @@
 ﻿import { XYZColor, xyzFromVector, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { SRGB_INVERSE, SRGB_XYZ_MATRIX } from './constants';
+import { HEX_CHARS, SRGB_INVERSE, SRGB_XYZ_MATRIX } from './constants';
 import { denormalizesRGBColor, linearizesRGBColor, normalizesRGBColor } from './transform';
 import { getAdaptationMatrix } from '../../adaptation/chromatic-adaptation';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
@@ -188,52 +188,42 @@ export const hexTosRGB = (hex: string): sRGBColor => {
   return normalizesRGBColor(srgb(r, g, b, a));
 };
 
+
 /**
- * Converts an RGB color object to a hexadecimal color string.
+ * Converts an sRGB color to its hexadecimal string representation.
  *
- * This function automatically determines whether to use shorthand notation
- * when possible (e.g., #abc instead of #aabbcc). It handles alpha values
- * and will include them in the hex string only if they're defined and not 255 (fully opaque).
+ * The function takes an sRGB color object and converts its red, green, blue, and optional alpha components
+ * into a hexadecimal color string. The output is always in 6-character format (RRGGBB) or 8-character format (RRGGBBAA)
+ * if an alpha value is provided and not equal to 1.
  *
- * The function first denormalizes the RGB values (converts from 0-1 to 0-255 range),
- * then formats them as a hex string. Values are clamped to the valid range and rounded.
+ * The RGB values are normalized to fit the 0-255 integer range and clamped to ensure they remain valid.
+ * The alpha value, if present, is normalized to the 0-255 range before being included in the hexadecimal format.
  *
- * @param {sRGBColor} color - The RGB color object to convert
- * @returns {string} The hexadecimal color string (with leading '#')
+ * @param {sRGBColor} color - An object representing the sRGB color components. The object should contain `r`, `g`, and `b` properties in normalized ranges (0.0 to 1.0) and an optional `alpha` property in the same range.
+ * @returns {string} The hexadecimal string representation of the sRGB color.
  */
 export const srgbToHex = (color: sRGBColor): string => {
   const nC = denormalizesRGBColor(color);
 
-  let r = Math.max(0, Math.min(255, Math.round(nC.r))),
-    g = Math.max(0, Math.min(255, Math.round(nC.g))),
-    b = Math.max(0, Math.min(255, Math.round(nC.b)));
-  let a = nC.alpha;
-  let alpha: number | undefined = undefined;
-  if (a !== undefined) {
-    alpha = Math.max(0, Math.min(255, Math.round(a * 255)));
-  }
+  // Round and clamp RGB values (denormalized)
+  const r = Math.max(0, Math.min(255, Math.round(nC.r)));
+  const g = Math.max(0, Math.min(255, Math.round(nC.g)));
+  const b = Math.max(0, Math.min(255, Math.round(nC.b)));
 
-  // Check if each component has the same value for both nibbles (e.g., 0xAA, 0xBB)
-  // This means the hex representation can be shortened (e.g., #aabbcc -> #abc)
-  const isShort = (n: number) => (n & 0xf0) >> 4 === (n & 0x0f);
-  const canShort =
-    isShort(r) && isShort(g) && isShort(b) && (alpha === undefined || isShort(alpha));
+  // Alpha remains in 0..1 range, convert to 0..255 for hex
+  const alpha = color.alpha !== undefined ? Math.max(0, Math.min(255, Math.round(color.alpha * 255))) : undefined;
 
-  if (canShort) {
-    // For shorthand, we use the high nibble (or low nibble, they're the same)
-    let hex = `#${(r >> 4).toString(16)}${(g >> 4).toString(16)}${(b >> 4).toString(16)}`;
-    if (alpha !== undefined && alpha !== 255) {
-      hex += (alpha >> 4).toString(16);
-    }
-    return hex;
-  }
+  // Always use full 6-char format (or 8-char with alpha)
+  let result = '#' +
+    HEX_CHARS[(r & 0xF0) >> 4] + HEX_CHARS[r & 0x0F] +
+    HEX_CHARS[(g & 0xF0) >> 4] + HEX_CHARS[g & 0x0F] +
+    HEX_CHARS[(b & 0xF0) >> 4] + HEX_CHARS[b & 0x0F];
 
-  // Full hex format
-  let hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   if (alpha !== undefined && alpha !== 255) {
-    hex += alpha.toString(16).padStart(2, '0');
+    result += HEX_CHARS[(alpha & 0xF0) >> 4] + HEX_CHARS[alpha & 0x0F];
   }
-  return hex;
+
+  return result;
 };
 
 /**
