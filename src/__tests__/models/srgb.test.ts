@@ -1,4 +1,4 @@
-import '../../src/conversion/register-conversions';
+import '../../conversion/register-conversions';
 
 import { describe, expect, it } from 'vitest';
 import {
@@ -18,7 +18,7 @@ import {
   srgbToOKLCh,
   srgbToJzAzBz,
   srgbToJzCzHz
-} from '../../src/models/srgb/srgb';
+} from '../../models/srgb/srgb';
 import {
   normalizesRGBColor,
   denormalizesRGBColor,
@@ -26,8 +26,8 @@ import {
   linearizesRGBColor,
   applysRGBInverseGammaTransfer,
   delinearizesRGBColor,
-  alphaBlendsRGBColor, srgbFromCSSString
-} from '../../src/models/srgb';
+  srgbFromCSSString
+} from '../../models/srgb';
 
 describe('sRGB Color Model', () => {
   // Test srgb factory function
@@ -287,46 +287,6 @@ describe('sRGB Color Model', () => {
     });
   });
 
-  // Test alphaBlendsRGBColor function
-  describe('alphaBlendsRGBColor', () => {
-    it('should blend two colors with alpha', () => {
-      const foreground = srgb(1, 0, 0, 0.5);
-      const background = srgb(0, 0, 1);
-      const blended = alphaBlendsRGBColor(foreground, background);
-      expect(blended.r).toBeCloseTo(0.5, 5);
-      expect(blended.g).toBeCloseTo(0, 5);
-      expect(blended.b).toBeCloseTo(0.5, 5);
-      expect(blended.alpha).toBe(1); // Result is always fully opaque
-    });
-
-    it('should handle fully transparent foreground', () => {
-      const foreground = srgb(1, 0, 0, 0);
-      const background = srgb(0, 0, 1);
-      const blended = alphaBlendsRGBColor(foreground, background);
-      expect(blended.r).toBeCloseTo(0, 5);
-      expect(blended.g).toBeCloseTo(0, 5);
-      expect(blended.b).toBeCloseTo(1, 5);
-    });
-
-    it('should handle fully opaque foreground', () => {
-      const foreground = srgb(1, 0, 0, 1);
-      const background = srgb(0, 0, 1);
-      const blended = alphaBlendsRGBColor(foreground, background);
-      expect(blended.r).toBeCloseTo(1, 5);
-      expect(blended.g).toBeCloseTo(0, 5);
-      expect(blended.b).toBeCloseTo(0, 5);
-    });
-
-    it('should clamp values to the valid range', () => {
-      const foreground = srgb(1.2, -0.2, 0.5, 0.5);
-      const background = srgb(0.5, 0.5, 0.5);
-      const blended = alphaBlendsRGBColor(foreground, background);
-      expect(blended.r).toBeCloseTo(0.85, 5); // Clamped to 1.0 for foreground
-      expect(blended.g).toBeCloseTo(0.15, 5); // Clamped to 0.0 for foreground
-      expect(blended.b).toBeCloseTo(0.5, 5);
-    });
-  });
-
   // Test color space conversion functions
   describe('Color Space Conversions', () => {
     const testColor = srgb(0.5, 0.4, 0.3);
@@ -364,6 +324,43 @@ describe('sRGB Color Model', () => {
         const hsl = srgbToHSL(colorWithAlpha);
         expect(hsl.alpha).toBe(0.7);
       });
+
+      it('should convert pure red to HSL', () => {
+        const color = srgb(1, 0, 0);
+        const hsl = srgbToHSL(color);
+        expect(hsl.h).toBeCloseTo(0, 5);
+        expect(hsl.s).toBeCloseTo(1, 5);
+        expect(hsl.l).toBeCloseTo(0.5, 5);
+      });
+
+      it('should convert pure green to HSL', () => {
+        const color = srgb(0, 1, 0);
+        const hsl = srgbToHSL(color);
+        expect(hsl.h).toBeCloseTo(120, 5);
+        expect(hsl.s).toBeCloseTo(1, 5);
+        expect(hsl.l).toBeCloseTo(0.5, 5);
+      });
+
+      it('should convert pure blue to HSL', () => {
+        const color = srgb(0, 0, 1);
+        const hsl = srgbToHSL(color);
+        expect(hsl.h).toBeCloseTo(240, 5);
+        expect(hsl.s).toBeCloseTo(1, 5);
+        expect(hsl.l).toBeCloseTo(0.5, 5);
+      });
+
+      it('should handle grayscale colors', () => {
+        const color = srgb(0.5, 0.5, 0.5);
+        const hsl = srgbToHSL(color);
+        expect(hsl.s).toBeCloseTo(0, 5);
+        expect(hsl.l).toBeCloseTo(0.5, 5);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const hsl = srgbToHSL(color);
+        expect(hsl.alpha).toBe(0.5);
+      });
     });
 
     describe('srgbToHSV', () => {
@@ -396,6 +393,43 @@ describe('sRGB Color Model', () => {
         const hsv = srgbToHSV(colorWithAlpha);
         expect(hsv.alpha).toBe(0.7);
       });
+
+      it('should convert pure red to HSV', () => {
+        const color = srgb(1, 0, 0);
+        const hsv = srgbToHSV(color);
+        expect(hsv.h).toBeCloseTo(0, 5);
+        expect(hsv.s).toBeCloseTo(1, 5);
+        expect(hsv.v).toBeCloseTo(1, 5);
+      });
+
+      it('should convert pure green to HSV', () => {
+        const color = srgb(0, 1, 0);
+        const hsv = srgbToHSV(color);
+        expect(hsv.h).toBeCloseTo(120, 5);
+        expect(hsv.s).toBeCloseTo(1, 5);
+        expect(hsv.v).toBeCloseTo(1, 5);
+      });
+
+      it('should convert pure blue to HSV', () => {
+        const color = srgb(0, 0, 1);
+        const hsv = srgbToHSV(color);
+        expect(hsv.h).toBeCloseTo(240, 5);
+        expect(hsv.s).toBeCloseTo(1, 5);
+        expect(hsv.v).toBeCloseTo(1, 5);
+      });
+
+      it('should handle grayscale colors', () => {
+        const color = srgb(0.5, 0.5, 0.5);
+        const hsv = srgbToHSV(color);
+        expect(hsv.s).toBeCloseTo(0, 5);
+        expect(hsv.v).toBeCloseTo(0.5, 5);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const hsv = srgbToHSV(color);
+        expect(hsv.alpha).toBe(0.5);
+      });
     });
 
     describe('srgbToHWB', () => {
@@ -411,6 +445,43 @@ describe('sRGB Color Model', () => {
         const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
         const hwb = srgbToHWB(colorWithAlpha);
         expect(hwb.alpha).toBe(0.7);
+      });
+
+      it('should convert pure red to HWB', () => {
+        const color = srgb(1, 0, 0);
+        const hwb = srgbToHWB(color);
+        expect(hwb.h).toBeCloseTo(0, 5);
+        expect(hwb.w).toBeCloseTo(0, 5);
+        expect(hwb.b).toBeCloseTo(0, 5);
+      });
+
+      it('should convert pure green to HWB', () => {
+        const color = srgb(0, 1, 0);
+        const hwb = srgbToHWB(color);
+        expect(hwb.h).toBeCloseTo(120, 5);
+        expect(hwb.w).toBeCloseTo(0, 5);
+        expect(hwb.b).toBeCloseTo(0, 5);
+      });
+
+      it('should convert pure blue to HWB', () => {
+        const color = srgb(0, 0, 1);
+        const hwb = srgbToHWB(color);
+        expect(hwb.h).toBeCloseTo(240, 5);
+        expect(hwb.w).toBeCloseTo(0, 5);
+        expect(hwb.b).toBeCloseTo(0, 5);
+      });
+
+      it('should handle grayscale colors', () => {
+        const color = srgb(0.5, 0.5, 0.5);
+        const hwb = srgbToHWB(color);
+        expect(hwb.w).toBeCloseTo(0.5, 5);
+        expect(hwb.b).toBeCloseTo(0.5, 5);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const hwb = srgbToHWB(color);
+        expect(hwb.alpha).toBe(0.5);
       });
     });
 
@@ -434,6 +505,45 @@ describe('sRGB Color Model', () => {
         const xyz = srgbToXYZ(colorWithAlpha);
         expect(xyz.alpha).toBe(0.7);
       });
+
+      it('should convert pure red to XYZ', () => {
+        const color = srgb(1, 0, 0);
+        const xyz = srgbToXYZ(color);
+        expect(xyz.x).toBeCloseTo(0.4124, 3);
+        expect(xyz.y).toBeCloseTo(0.2126, 3);
+        expect(xyz.z).toBeCloseTo(0.0193, 3);
+      });
+
+      it('should convert pure green to XYZ', () => {
+        const color = srgb(0, 1, 0);
+        const xyz = srgbToXYZ(color);
+        expect(xyz.x).toBeCloseTo(0.3576, 3);
+        expect(xyz.y).toBeCloseTo(0.7152, 3);
+        expect(xyz.z).toBeCloseTo(0.1192, 3);
+      });
+
+      it('should convert pure blue to XYZ', () => {
+        const color = srgb(0, 0, 1);
+        const xyz = srgbToXYZ(color);
+        expect(xyz.x).toBeCloseTo(0.1805, 3);
+        expect(xyz.y).toBeCloseTo(0.0722, 3);
+        expect(xyz.z).toBeCloseTo(0.9505, 3);
+      });
+
+      it('should handle chromatic adaptation', () => {
+        const color = srgb(1, 0, 0);
+        const xyz = srgbToXYZ(color, true);
+        // Values will be different due to chromatic adaptation
+        expect(xyz.x).not.toBeCloseTo(0.4124, 4);
+        expect(xyz.y).not.toBeCloseTo(0.2126, 4);
+        expect(xyz.z).not.toBeCloseTo(0.0193, 4);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const xyz = srgbToXYZ(color);
+        expect(xyz.alpha).toBe(0.5);
+      });
     });
 
     describe('srgbToLab', () => {
@@ -450,6 +560,36 @@ describe('sRGB Color Model', () => {
         const lab = srgbToLab(colorWithAlpha);
         expect(lab.alpha).toBe(0.7);
       });
+
+      it('should convert pure red to Lab', () => {
+        const color = srgb(1, 0, 0);
+        const lab = srgbToLab(color);
+        expect(lab.l).toBeCloseTo(53.24, 2);
+        expect(lab.a).toBeCloseTo(80.09, 2);
+        expect(lab.b).toBeCloseTo(67.20, 2);
+      });
+
+      it('should convert pure green to Lab', () => {
+        const color = srgb(0, 1, 0);
+        const lab = srgbToLab(color);
+        expect(lab.l).toBeCloseTo(87.73, 2);
+        expect(lab.a).toBeCloseTo(-86.18, 2);
+        expect(lab.b).toBeCloseTo(83.18, 2);
+      });
+
+      it('should convert pure blue to Lab', () => {
+        const color = srgb(0, 0, 1);
+        const lab = srgbToLab(color);
+        expect(lab.l).toBeCloseTo(32.30, 2);
+        expect(lab.a).toBeCloseTo(79.19, 2);
+        expect(lab.b).toBeCloseTo(-107.86, 2);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const lab = srgbToLab(color);
+        expect(lab.alpha).toBe(0.5);
+      });
     });
 
     describe('srgbToLCH', () => {
@@ -465,6 +605,36 @@ describe('sRGB Color Model', () => {
         const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
         const lch = srgbToLCH(colorWithAlpha);
         expect(lch.alpha).toBe(0.7);
+      });
+
+      it('should convert pure red to LCH', () => {
+        const color = srgb(1, 0, 0);
+        const lch = srgbToLCH(color);
+        expect(lch.l).toBeCloseTo(53.24, 2);
+        expect(lch.c).toBeCloseTo(104.55, 2);
+        expect(lch.h).toBeCloseTo(40.00, 2);
+      });
+
+      it('should convert pure green to LCH', () => {
+        const color = srgb(0, 1, 0);
+        const lch = srgbToLCH(color);
+        expect(lch.l).toBeCloseTo(87.73, 2);
+        expect(lch.c).toBeCloseTo(119.775, 2);
+        expect(lch.h).toBeCloseTo(136.015, 2);
+      });
+
+      it('should convert pure blue to LCH', () => {
+        const color = srgb(0, 0, 1);
+        const lch = srgbToLCH(color);
+        expect(lch.l).toBeCloseTo(32.30, 2);
+        expect(lch.c).toBeCloseTo(133.81, 2);
+        expect(lch.h).toBeCloseTo(306.284, 2);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const lch = srgbToLCH(color);
+        expect(lch.alpha).toBe(0.5);
       });
     });
 
@@ -487,6 +657,29 @@ describe('sRGB Color Model', () => {
         const oklab = srgbToOKLab(colorWithAlpha);
         expect(oklab.alpha).toBe(0.7);
       });
+
+      it('should convert pure red to OKLab', () => {
+        const color = srgb(1, 0, 0);
+        const oklab = srgbToOKLab(color);
+        expect(oklab.l).toBeCloseTo(0.627986, 4);
+        expect(oklab.a).toBeCloseTo(0.2248, 4);
+        expect(oklab.b).toBeCloseTo(0.1258, 4);
+      });
+
+      it('should handle chromatic adaptation', () => {
+        const color = srgb(1, 0, 0);
+        const oklab = srgbToOKLab(color, true);
+        // Values will be different due to chromatic adaptation
+        expect(oklab.l).not.toBeCloseTo(0.6279, 4);
+        expect(oklab.a).not.toBeCloseTo(0.2248, 4);
+        expect(oklab.b).not.toBeCloseTo(0.1258, 4);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const oklab = srgbToOKLab(color);
+        expect(oklab.alpha).toBe(0.5);
+      });
     });
 
     describe('srgbToOKLCh', () => {
@@ -507,6 +700,29 @@ describe('sRGB Color Model', () => {
         const colorWithAlpha = srgb(0.5, 0.4, 0.3, 0.7);
         const oklch = srgbToOKLCh(colorWithAlpha);
         expect(oklch.alpha).toBe(0.7);
+      });
+
+      it('should convert pure red to OKLCh', () => {
+        const color = srgb(1, 0, 0);
+        const oklch = srgbToOKLCh(color);
+        expect(oklch.l).toBeCloseTo(0.627986, 4);
+        expect(oklch.c).toBeCloseTo(0.257640, 4);
+        expect(oklch.h).toBeCloseTo(29.23, 2);
+      });
+
+      it('should handle chromatic adaptation', () => {
+        const color = srgb(1, 0, 0);
+        const oklch = srgbToOKLCh(color, true);
+        // Values will be different due to chromatic adaptation
+        expect(oklch.l).not.toBeCloseTo(0.6279, 4);
+        expect(oklch.c).not.toBeCloseTo(0.2577, 4);
+        expect(oklch.h).not.toBeCloseTo(29.23, 2);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const oklch = srgbToOKLCh(color);
+        expect(oklch.alpha).toBe(0.5);
       });
     });
 
@@ -529,6 +745,27 @@ describe('sRGB Color Model', () => {
         const jzazbz = srgbToJzAzBz(colorWithAlpha);
         expect(jzazbz.alpha).toBe(0.7);
       });
+
+      it('should convert pure red to JzAzBz', () => {
+        const color = srgb(1, 0, 0);
+        const jzazbz = srgbToJzAzBz(color);
+        expect(jzazbz.jz).toBeCloseTo(0.13438, 4);
+        expect(jzazbz.az).toBeCloseTo(0.11789, 4);
+        expect(jzazbz.bz).toBeCloseTo(0.11188, 4);
+      });
+
+      it('should handle different peak luminance values', () => {
+        const color = srgb(1, 0, 0);
+        const jzazbz = srgbToJzAzBz(color, 5000);
+        // Values will be different due to different peak luminance
+        expect(jzazbz.jz).not.toBeCloseTo(0.2231, 4);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const jzazbz = srgbToJzAzBz(color);
+        expect(jzazbz.alpha).toBe(0.5);
+      });
     });
 
     describe('srgbToJzCzHz', () => {
@@ -550,6 +787,27 @@ describe('sRGB Color Model', () => {
         const jzczhz = srgbToJzCzHz(colorWithAlpha);
         expect(jzczhz.alpha).toBe(0.7);
       });
+
+      it('should convert pure red to JzCzHz', () => {
+        const color = srgb(1, 0, 0);
+        const jzczhz = srgbToJzCzHz(color);
+        expect(jzczhz.jz).toBeCloseTo(0.13438, 4);
+        expect(jzczhz.cz).toBeCloseTo(0.16252, 4);
+        expect(jzczhz.hz).toBeCloseTo(43.502, 2);
+      });
+
+      it('should handle different peak luminance values', () => {
+        const color = srgb(1, 0, 0);
+        const jzczhz = srgbToJzCzHz(color, 5000);
+        // Values will be different due to different peak luminance
+        expect(jzczhz.jz).not.toBeCloseTo(0.2231, 4);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(1, 0, 0, 0.5);
+        const jzczhz = srgbToJzCzHz(color);
+        expect(jzczhz.alpha).toBe(0.5);
+      });
     });
   });
 
@@ -570,4 +828,55 @@ describe('sRGB Color Model', () => {
       expect(color.alpha).toBe(0.5);
     });
   })
+
+  // Test transform functions
+  describe('Transform Functions', () => {
+    describe('linearizesRGBColor', () => {
+      it('should linearize RGB values', () => {
+        const color = srgb(0.5, 0.5, 0.5);
+        const linear = linearizesRGBColor(color);
+        expect(linear.r).toBeCloseTo(0.2140, 4);
+        expect(linear.g).toBeCloseTo(0.2140, 4);
+        expect(linear.b).toBeCloseTo(0.2140, 4);
+      });
+
+      it('should handle values below threshold', () => {
+        const color = srgb(0.04, 0.04, 0.04);
+        const linear = linearizesRGBColor(color);
+        expect(linear.r).toBeCloseTo(0.0031, 4);
+        expect(linear.g).toBeCloseTo(0.0031, 4);
+        expect(linear.b).toBeCloseTo(0.0031, 4);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(0.5, 0.5, 0.5, 0.5);
+        const linear = linearizesRGBColor(color);
+        expect(linear.alpha).toBe(0.5);
+      });
+    });
+
+    describe('delinearizesRGBColor', () => {
+      it('should delinearize RGB values', () => {
+        const color = srgb(0.2140, 0.2140, 0.2140);
+        const delinear = delinearizesRGBColor(color);
+        expect(delinear.r).toBeCloseTo(0.5, 4);
+        expect(delinear.g).toBeCloseTo(0.5, 4);
+        expect(delinear.b).toBeCloseTo(0.5, 4);
+      });
+
+      it('should handle values below threshold', () => {
+        const color = srgb(0.0031, 0.0031, 0.0031);
+        const delinear = delinearizesRGBColor(color);
+        expect(delinear.r).toBeCloseTo(0.040052, 4);
+        expect(delinear.g).toBeCloseTo(0.040052, 4);
+        expect(delinear.b).toBeCloseTo(0.040052, 4);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = srgb(0.2140, 0.2140, 0.2140, 0.5);
+        const delinear = delinearizesRGBColor(color);
+        expect(delinear.alpha).toBe(0.5);
+      });
+    });
+  });
 });

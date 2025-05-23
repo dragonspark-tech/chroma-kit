@@ -29,7 +29,7 @@ import { jzazbzToJzCzHz, jzazbzToXYZ } from '../models/jzazbz';
 import { jzczhzToJzAzBz } from '../models/jzczhz';
 import { lchToLab } from '../models/lch';
 import { hslToHSV, hslToRGB } from '../models/hsl';
-import { hsvToHSL, hsvToRGB } from '../models/hsv';
+import { hsvToHSL, hsvToHWB, hsvToRGB } from '../models/hsv';
 import { hwbToRGB } from '../models/hwb';
 
 /**
@@ -49,7 +49,6 @@ export function registerAllConversions(): void {
   registerConversion('srgb', 'xyz', srgbToXYZ);
   registerConversion('srgb', 'hsl', srgbToHSL);
   registerConversion('srgb', 'hsv', srgbToHSV);
-  registerConversion('srgb', 'hwb', srgbToHWB);
 
   // HSL color space conversions
   registerConversion('hsl', 'srgb', hslToRGB);
@@ -58,6 +57,7 @@ export function registerAllConversions(): void {
   // HSV color space conversions
   registerConversion('hsv', 'srgb', hsvToRGB);
   registerConversion('hsv', 'hsl', hsvToHSL);
+  registerConversion('hsv', 'hwb', hsvToHWB);
 
   // HWB color space conversions
   registerConversion('hwb', 'srgb', hwbToRGB);

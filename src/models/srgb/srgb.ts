@@ -12,7 +12,7 @@ import { LChColor } from '../lch';
 import { JzAzBzColor } from '../jzazbz';
 import { JzCzHzColor } from '../jzczhz';
 import { hsl, HSLColor } from '../hsl';
-import { hsv, HSVColor } from '../hsv';
+import { hsv, HSVColor, hsvToHWB } from '../hsv';
 import { serializeV1 } from '../../semantics/serialization';
 import { ColorBase, ColorSpace } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
@@ -324,16 +324,8 @@ export const srgbToHSV = (color: sRGBColor): HSVColor => {
  * @param {sRGBColor} color - The RGB color to convert
  * @returns {HWBColor} The color in HWB space
  */
-export const srgbToHWB = (color: sRGBColor): HWBColor => {
-  const [r, g, b] = [color.r, color.g, color.b];
-
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-
-  const h = calculateHSpaceHue(color, max, min);
-
-  return hwb(h, min, max, color.alpha);
-};
+export const srgbToHWB = (color: sRGBColor): HWBColor =>
+  hsvToHWB(srgbToHSV(color));
 
 /**
  * Converts an RGB color to the CIE XYZ color space.

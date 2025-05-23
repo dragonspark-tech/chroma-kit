@@ -300,7 +300,7 @@ export const xyzToOKLCh = (color: XYZColor): OKLChColor => oklabToOKLCh(xyzToOKL
  * Converts a color from CIE XYZ to JzAzBz color space.
  *
  * This function implements the XYZ to JzAzBz conversion algorithm, which includes:
- * 1. Pre-adapting XYZ values using chromatic adaptation factors
+ * 1. Pre-adapting XYZ values using chromatic adaptation factors to absolute D65 XYZ values
  * 2. Converting to LMS cone responses using a transformation matrix
  * 3. Applying the inverse Perceptual Quantizer (PQ) function to the LMS values
  * 4. Converting to Iz, az, bz using another transformation matrix
@@ -314,11 +314,21 @@ export const xyzToOKLCh = (color: XYZColor): OKLChColor => oklabToOKLCh(xyzToOKL
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
 export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzAzBzColor => {
-  const Xp = b * color.x - (b - 1) * color.z;
-  const Yp = g * color.y - (g - 1) * color.x;
-  const Zp = color.z;
+  const { x, y, z } = color;
 
-  const [L, M, S] = multiplyMatrixByVector(XYZ_JZAZBZ_LMS_MATRIX, [Xp, Yp, Zp]);
+  const illuminant = color.illuminant || IlluminantD65;
+  if (illuminant.name !== 'D65') {
+    throw new Error('JzAzBz is only defined for the D65 illuminant');
+  }
+
+  const Xa = x * 203;
+  const Ya = y * 203
+  const Za = z * 203;
+
+  const Xm = b * Xa - (b - 1) * Za;
+  const Ym = g * Ya - (g - 1) * Xa;
+
+  const [L, M, S] = multiplyMatrixByVector(XYZ_JZAZBZ_LMS_MATRIX, [Xm, Ym, Za]);
 
   const Lp = jzazbzPQInverse(L, peakLuminance);
   const Mp = jzazbzPQInverse(M, peakLuminance);

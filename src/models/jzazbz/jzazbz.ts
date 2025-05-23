@@ -270,8 +270,10 @@ export const jzazbzToJzCzHz = (color: JzAzBzColor): JzCzHzColor => {
  */
 export const jzazbzPQInverse = (E: number, peakLuminance: number = 10000): number => {
   const x = (E / peakLuminance) ** m1;
+
   const num = c1 + c2 * x;
   const den = 1 + c3 * x;
+  
   return (num / den) ** m2p;
 };
 

@@ -11,8 +11,8 @@ import {
   SA98G_MIN_DELTA_Y
 } from './constants';
 
-import { applyBlackSoftClamp, deriveYFromRGBColor, inputConformsToClamp } from './support';
-import { alphaBlendsRGBColor, sRGBColor } from '../../models/srgb';
+import { alphaBlendsRGBColor, applyBlackSoftClamp, deriveYFromRGBColor, inputConformsToClamp } from './support';
+import { sRGBColor } from '../../models/srgb';
 
 /**
  * Calculates the contrast between two colors using the APCA (Accessible Perceptual Contrast Algorithm).

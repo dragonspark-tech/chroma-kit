@@ -21,7 +21,7 @@ import { JzCzHzColor } from '../jzczhz';
 import { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
-import { HWBColor } from '../hwb';
+import { hwb, HWBColor } from '../hwb';
 
 /**
  * Represents a color in the HSV color space.
@@ -134,7 +134,7 @@ export const hsvToHSL = (color: HSVColor): HSLColor => {
 /**
  * Converts a color from HSV to HWB color space.
  *
- * This function first converts the HSV color to RGB, then from RGB to HWB.
+ * This function leverages the ease of conversion from HSV to HWB.
  * The HWB color space is a cylindrical representation of RGB, using hue,
  * whiteness, and blackness components.
  *
@@ -142,7 +142,11 @@ export const hsvToHSL = (color: HSVColor): HSLColor => {
  * @returns {HWBColor} The color in HWB space
  */
 export const hsvToHWB = (color: HSVColor): HWBColor =>
-  srgbToHWB(hsvToRGB(color))
+{
+  const {h, s, v} = color;
+
+  return hwb(h, (1 - s) * v, 1 - v, color.alpha);
+}
 
 /**
  * Converts an HSV color to the CIE XYZ color space.
