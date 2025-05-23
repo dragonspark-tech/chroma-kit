@@ -2,30 +2,29 @@ import '../../conversion/register-conversions';
 
 import { describe, expect, it } from 'vitest';
 import {
-  srgb,
-  sRGBColor,
-  srgbToCSSString,
-  srgbFromVector,
   hexTosRGB,
+  srgb,
+  srgbFromVector,
+  srgbToCSSString,
   srgbToHex,
   srgbToHSL,
   srgbToHSV,
   srgbToHWB,
-  srgbToXYZ,
+  srgbToJzAzBz,
+  srgbToJzCzHz,
   srgbToLab,
   srgbToLCH,
   srgbToOKLab,
   srgbToOKLCh,
-  srgbToJzAzBz,
-  srgbToJzCzHz
+  srgbToXYZ
 } from '../../models/srgb/srgb';
 import {
-  normalizesRGBColor,
-  denormalizesRGBColor,
   applysRGBGammaTransfer,
-  linearizesRGBColor,
   applysRGBInverseGammaTransfer,
   delinearizesRGBColor,
+  denormalizesRGBColor,
+  linearizesRGBColor,
+  normalizesRGBColor,
   srgbFromCSSString
 } from '../../models/srgb';
 
@@ -179,9 +178,9 @@ describe('sRGB Color Model', () => {
     });
 
     it('should use shorthand notation with alpha when possible', () => {
-      const color = srgb(1, 0, 0, 0xAA / 255);
+      const color = srgb(1, 0, 0, 0xaa / 255);
       expect(srgbToHex(color)).toBe('#f00a');
-    })
+    });
 
     it('should include alpha in the hex string when alpha is less than 1', () => {
       const color = srgb(1, 0, 0, 0.5);
@@ -242,7 +241,7 @@ describe('sRGB Color Model', () => {
       });
 
       it('should apply gamma correction for values > 0.04045', () => {
-        expect(applysRGBGammaTransfer(0.5)).toBeCloseTo(0.2140, 4);
+        expect(applysRGBGammaTransfer(0.5)).toBeCloseTo(0.214, 4);
         expect(applysRGBGammaTransfer(1)).toBeCloseTo(1, 5);
       });
     });
@@ -254,7 +253,7 @@ describe('sRGB Color Model', () => {
       });
 
       it('should apply inverse gamma correction for values > 0.0031308', () => {
-        expect(applysRGBInverseGammaTransfer(0.5)).toBeCloseTo(0.7350, 3);
+        expect(applysRGBInverseGammaTransfer(0.5)).toBeCloseTo(0.735, 3);
         expect(applysRGBInverseGammaTransfer(1)).toBeCloseTo(1, 5);
       });
     });
@@ -264,7 +263,7 @@ describe('sRGB Color Model', () => {
         const color = srgb(1, 0.5, 0);
         const linearized = linearizesRGBColor(color);
         expect(linearized.r).toBeCloseTo(1, 5);
-        expect(linearized.g).toBeCloseTo(0.2140, 4);
+        expect(linearized.g).toBeCloseTo(0.214, 4);
         expect(linearized.b).toBeCloseTo(0, 5);
       });
 
@@ -277,7 +276,7 @@ describe('sRGB Color Model', () => {
 
     describe('delinearizesRGBColor', () => {
       it('should delinearize an sRGB color', () => {
-        const color = srgb(1, 0.2140, 0);
+        const color = srgb(1, 0.214, 0);
         const delinearized = delinearizesRGBColor(color);
         expect(delinearized.r).toBeCloseTo(1, 5);
         expect(delinearized.g).toBeCloseTo(0.5, 1);
@@ -285,7 +284,7 @@ describe('sRGB Color Model', () => {
       });
 
       it('should preserve the alpha value', () => {
-        const color = srgb(1, 0.2140, 0, 0.5);
+        const color = srgb(1, 0.214, 0, 0.5);
         const delinearized = delinearizesRGBColor(color);
         expect(delinearized.alpha).toBe(0.5);
       });
@@ -297,15 +296,15 @@ describe('sRGB Color Model', () => {
     const testColor = srgb(0.5, 0.4, 0.3);
 
     describe('fluent conversion', () => {
-      it ('should convert dynamically into the target color space', () => {
+      it('should convert dynamically into the target color space', () => {
         const hsl = testColor.to('hsl');
 
         expect(hsl.space).toBe('hsl');
         expect(hsl.h).toBeCloseTo(30, 0);
         expect(hsl.s).toBeCloseTo(0.25, 2);
         expect(hsl.l).toBeCloseTo(0.4, 2);
-      })
-    })
+      });
+    });
 
     describe('srgbToHSL', () => {
       it('should convert sRGB to HSL', () => {
@@ -579,7 +578,7 @@ describe('sRGB Color Model', () => {
         const lab = srgbToLab(color);
         expect(lab.l).toBeCloseTo(53.24, 2);
         expect(lab.a).toBeCloseTo(80.09, 2);
-        expect(lab.b).toBeCloseTo(67.20, 2);
+        expect(lab.b).toBeCloseTo(67.2, 2);
       });
 
       it('should convert pure green to Lab', () => {
@@ -593,7 +592,7 @@ describe('sRGB Color Model', () => {
       it('should convert pure blue to Lab', () => {
         const color = srgb(0, 0, 1);
         const lab = srgbToLab(color);
-        expect(lab.l).toBeCloseTo(32.30, 2);
+        expect(lab.l).toBeCloseTo(32.3, 2);
         expect(lab.a).toBeCloseTo(79.19, 2);
         expect(lab.b).toBeCloseTo(-107.86, 2);
       });
@@ -625,7 +624,7 @@ describe('sRGB Color Model', () => {
         const lch = srgbToLCH(color);
         expect(lch.l).toBeCloseTo(53.24, 2);
         expect(lch.c).toBeCloseTo(104.55, 2);
-        expect(lch.h).toBeCloseTo(40.00, 2);
+        expect(lch.h).toBeCloseTo(40.0, 2);
       });
 
       it('should convert pure green to LCH', () => {
@@ -639,7 +638,7 @@ describe('sRGB Color Model', () => {
       it('should convert pure blue to LCH', () => {
         const color = srgb(0, 0, 1);
         const lch = srgbToLCH(color);
-        expect(lch.l).toBeCloseTo(32.30, 2);
+        expect(lch.l).toBeCloseTo(32.3, 2);
         expect(lch.c).toBeCloseTo(133.81, 2);
         expect(lch.h).toBeCloseTo(306.284, 2);
       });
@@ -719,7 +718,7 @@ describe('sRGB Color Model', () => {
         const color = srgb(1, 0, 0);
         const oklch = srgbToOKLCh(color);
         expect(oklch.l).toBeCloseTo(0.627986, 4);
-        expect(oklch.c).toBeCloseTo(0.257640, 4);
+        expect(oklch.c).toBeCloseTo(0.25764, 4);
         expect(oklch.h).toBeCloseTo(29.23, 2);
       });
 
@@ -915,7 +914,9 @@ describe('sRGB Color Model', () => {
     });
 
     it('should throw error for missing whitespace or comma after first value', () => {
-      expect(() => srgbFromCSSString('rgb(255)')).toThrow("expected ',' or <whitespace> after first value");
+      expect(() => srgbFromCSSString('rgb(255)')).toThrow(
+        "expected ',' or <whitespace> after first value"
+      );
     });
   });
 
@@ -1044,9 +1045,9 @@ describe('sRGB Color Model', () => {
       it('should linearize RGB values', () => {
         const color = srgb(0.5, 0.5, 0.5);
         const linear = linearizesRGBColor(color);
-        expect(linear.r).toBeCloseTo(0.2140, 4);
-        expect(linear.g).toBeCloseTo(0.2140, 4);
-        expect(linear.b).toBeCloseTo(0.2140, 4);
+        expect(linear.r).toBeCloseTo(0.214, 4);
+        expect(linear.g).toBeCloseTo(0.214, 4);
+        expect(linear.b).toBeCloseTo(0.214, 4);
       });
 
       it('should handle values below threshold', () => {
@@ -1066,7 +1067,7 @@ describe('sRGB Color Model', () => {
 
     describe('delinearizesRGBColor', () => {
       it('should delinearize RGB values', () => {
-        const color = srgb(0.2140, 0.2140, 0.2140);
+        const color = srgb(0.214, 0.214, 0.214);
         const delinear = delinearizesRGBColor(color);
         expect(delinear.r).toBeCloseTo(0.5, 4);
         expect(delinear.g).toBeCloseTo(0.5, 4);
@@ -1082,7 +1083,7 @@ describe('sRGB Color Model', () => {
       });
 
       it('should preserve alpha value', () => {
-        const color = srgb(0.2140, 0.2140, 0.2140, 0.5);
+        const color = srgb(0.214, 0.214, 0.214, 0.5);
         const delinear = delinearizesRGBColor(color);
         expect(delinear.alpha).toBe(0.5);
       });

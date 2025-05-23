@@ -4,18 +4,18 @@ import { describe, expect, it } from 'vitest';
 import {
   hsl,
   HSLColor,
-  hslToCSSString,
   hslFromVector,
-  hslToRGB,
+  hslToCSSString,
   hslToHSV,
   hslToHWB,
-  hslToXYZ,
+  hslToJzAzBz,
+  hslToJzCzHz,
   hslToLab,
   hslToLCh,
   hslToOKLab,
   hslToOKLCh,
-  hslToJzAzBz,
-  hslToJzCzHz
+  hslToRGB,
+  hslToXYZ
 } from '../../models/hsl';
 import { hslFromCSSString } from '../../models/hsl/parser';
 import { srgb } from '../../models/srgb';
@@ -158,11 +158,15 @@ describe('HSL Color Model', () => {
     });
 
     it('should throw an error when saturation is not a percentage', () => {
-      expect(() => hslFromCSSString('hsl(120, 0.5, 60%)')).toThrow('saturation and lightness must be percentages');
+      expect(() => hslFromCSSString('hsl(120, 0.5, 60%)')).toThrow(
+        'saturation and lightness must be percentages'
+      );
     });
 
     it('should throw an error when lightness is not a percentage', () => {
-      expect(() => hslFromCSSString('hsl(120, 50%, 0.6)')).toThrow('saturation and lightness must be percentages');
+      expect(() => hslFromCSSString('hsl(120, 50%, 0.6)')).toThrow(
+        'saturation and lightness must be percentages'
+      );
     });
 
     it('should throw an error when hue is a percentage', () => {
@@ -198,7 +202,9 @@ describe('HSL Color Model', () => {
     });
 
     it('should throw an error for extra text after closing parenthesis', () => {
-      expect(() => hslFromCSSString('hsl(120, 50%, 60%)extra')).toThrow('unexpected text after ")"');
+      expect(() => hslFromCSSString('hsl(120, 50%, 60%)extra')).toThrow(
+        'unexpected text after ")"'
+      );
     });
   });
 

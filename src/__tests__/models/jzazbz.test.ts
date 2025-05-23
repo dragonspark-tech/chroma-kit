@@ -4,20 +4,20 @@ import { describe, expect, it } from 'vitest';
 import {
   jzazbz,
   JzAzBzColor,
-  toCSSString,
   jzazbzFromVector,
-  jzazbzToRGB,
+  jzazbzPQForward,
+  jzazbzPQInverse,
   jzazbzToHSL,
   jzazbzToHSV,
   jzazbzToHWB,
-  jzazbzToXYZ,
+  jzazbzToJzCzHz,
   jzazbzToLab,
   jzazbzToLCh,
   jzazbzToOKLab,
   jzazbzToOKLCh,
-  jzazbzToJzCzHz,
-  jzazbzPQInverse,
-  jzazbzPQForward
+  jzazbzToRGB,
+  jzazbzToXYZ,
+  toCSSString
 } from '../../models/jzazbz';
 import { jzazbzFromCSSString } from '../../models/jzazbz/parser';
 import { IlluminantD65 } from '../../standards/illuminants';
@@ -93,12 +93,12 @@ describe('JzAzBz Color Model', () => {
   describe('toCSSString', () => {
     it('should convert a JzAzBz color to a CSS string', () => {
       const color = jzazbz(0.5, 0.1, 0.2);
-      expect(toCSSString(color)).toBe('jzazbz(0.500000 0.100000 0.200000)');
+      expect(toCSSString(color)).toBe('color(jzazbz 0.500000 0.100000 0.200000)');
     });
 
     it('should include alpha in the CSS string when alpha is defined', () => {
       const color = jzazbz(0.5, 0.1, 0.2, 0.8);
-      expect(toCSSString(color)).toBe('jzazbz(0.500000 0.100000 0.200000 / 0.800)');
+      expect(toCSSString(color)).toBe('color(jzazbz 0.500000 0.100000 0.200000 / 0.800)');
     });
   });
 
@@ -159,8 +159,12 @@ describe('JzAzBz Color Model', () => {
     });
 
     it('should throw error for invalid alpha values', () => {
-      expect(() => jzazbzFromCSSString('jzazbz(0.5 0.1 0.2 / 1.5)')).toThrow('alpha must be between 0 and 1');
-      expect(() => jzazbzFromCSSString('jzazbz(0.5 0.1 0.2 / -0.5)')).toThrow('alpha must be between 0 and 1');
+      expect(() => jzazbzFromCSSString('jzazbz(0.5 0.1 0.2 / 1.5)')).toThrow(
+        'alpha must be between 0 and 1'
+      );
+      expect(() => jzazbzFromCSSString('jzazbz(0.5 0.1 0.2 / -0.5)')).toThrow(
+        'alpha must be between 0 and 1'
+      );
     });
 
     it('should throw error for missing comma in comma syntax', () => {
@@ -172,15 +176,21 @@ describe('JzAzBz Color Model', () => {
     });
 
     it('should throw error for unexpected text after closing parenthesis', () => {
-      expect(() => jzazbzFromCSSString('jzazbz(0.5 0.1 0.2) extra')).toThrow('unexpected text after ")"');
+      expect(() => jzazbzFromCSSString('jzazbz(0.5 0.1 0.2) extra')).toThrow(
+        'unexpected text after ")"'
+      );
     });
 
     it('should throw error for missing whitespace or comma after first value', () => {
-      expect(() => jzazbzFromCSSString('jzazbz(0.5)')).toThrow("expected ',' or <whitespace> after first value");
+      expect(() => jzazbzFromCSSString('jzazbz(0.5)')).toThrow(
+        "expected ',' or <whitespace> after first value"
+      );
     });
 
     it('should throw error for invalid format', () => {
-      expect(() => jzazbzFromCSSString('rgb(255, 0, 0)')).toThrow('Invalid JzAzBz color string format');
+      expect(() => jzazbzFromCSSString('rgb(255, 0, 0)')).toThrow(
+        'Invalid JzAzBz color string format'
+      );
     });
   });
 
@@ -510,7 +520,9 @@ describe('JzAzBz Color Model', () => {
   // Test specific color conversions
   describe('Specific Color Conversions', () => {
     it('should convert D65 white point correctly', () => {
-      const white = xyz(0.95047, 1.0, 1.08883, undefined, IlluminantD65).to('jzazbz') as JzAzBzColor;
+      const white = xyz(0.95047, 1.0, 1.08883, undefined, IlluminantD65).to(
+        'jzazbz'
+      ) as JzAzBzColor;
 
       // White point should have near-zero a and b components
       expect(white.jz).toBeGreaterThan(0);

@@ -4,18 +4,18 @@ import { describe, expect, it } from 'vitest';
 import {
   hwb,
   HWBColor,
-  hwbToCSSString,
   hwbFromVector,
-  hwbToRGB,
+  hwbToCSSString,
   hwbToHSL,
   hwbToHSV,
-  hwbToXYZ,
+  hwbToJzAzBz,
+  hwbToJzCzHz,
   hwbToLab,
   hwbToLCH,
   hwbToOKLab,
   hwbToOKLCh,
-  hwbToJzAzBz,
-  hwbToJzCzHz
+  hwbToRGB,
+  hwbToXYZ
 } from '../../models/hwb';
 import { hwbFromCSSString } from '../../models/hwb/parser';
 import { srgb } from '../../models/srgb';

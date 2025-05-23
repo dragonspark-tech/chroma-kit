@@ -4,18 +4,18 @@ import { describe, expect, it } from 'vitest';
 import {
   xyz,
   XYZColor,
-  xyzToCSSString,
   xyzFromVector,
-  xyzToRGB,
+  xyzToCSSString,
   xyzToHSL,
   xyzToHSV,
   xyzToHWB,
+  xyzToJzAzBz,
+  xyzToJzCzHz,
   xyzToLab,
   xyzToLCh,
   xyzToOKLab,
   xyzToOKLCh,
-  xyzToJzAzBz,
-  xyzToJzCzHz
+  xyzToRGB
 } from '../../models/xyz';
 import { xyzFromCSSString } from '../../models/xyz/parser';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
@@ -161,9 +161,13 @@ describe('XYZ Color Model', () => {
     });
 
     it('should throw an error for invalid XYZ color format', () => {
-      expect(() => xyzFromCSSString('rgb(0, 0, 0)')).toThrow('XYZ color string must start with "color(xyz-"');
+      expect(() => xyzFromCSSString('rgb(0, 0, 0)')).toThrow(
+        'XYZ color string must start with "color(xyz-"'
+      );
       expect(() => xyzFromCSSString('color(xyz-)')).toThrow('Invalid XYZ color format');
-      expect(() => xyzFromCSSString('color(xyz-unknown 0.5 0.6 0.7)')).toThrow('Unsupported illuminant: unknown');
+      expect(() => xyzFromCSSString('color(xyz-unknown 0.5 0.6 0.7)')).toThrow(
+        'Unsupported illuminant: unknown'
+      );
     });
   });
 
@@ -408,7 +412,9 @@ describe('XYZ Color Model', () => {
 
       it('should throw an error for non-D65 illuminant', () => {
         const colorD50 = xyz(0.5, 0.6, 0.7, undefined, IlluminantD50);
-        expect(() => xyzToJzAzBz(colorD50)).toThrow('JzAzBz is only defined for the D65 illuminant');
+        expect(() => xyzToJzAzBz(colorD50)).toThrow(
+          'JzAzBz is only defined for the D65 illuminant'
+        );
       });
 
       it('should preserve alpha', () => {
