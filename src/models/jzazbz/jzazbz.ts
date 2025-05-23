@@ -53,7 +53,7 @@ export const toCSSString = (color: JzAzBzColor): string => {
   const azFormatted = az.toFixed(6);
   const bzFormatted = bz.toFixed(6);
 
-  return `jzazbz(${jzFormatted} ${azFormatted} ${bzFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
+  return `color(jzazbz ${jzFormatted} ${azFormatted} ${bzFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
 };
 
 /**

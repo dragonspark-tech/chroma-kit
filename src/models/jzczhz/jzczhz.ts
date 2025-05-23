@@ -55,12 +55,7 @@ export interface JzCzHzColor extends ColorBase {
  */
 export const jzczhzToCSSString = (color: JzCzHzColor): string => {
   const { jz, cz, hz, alpha } = color;
-
-  const jzFormatted = jz.toFixed(4);
-  const czFormatted = cz.toFixed(4);
-  const hzFormatted = hz.toFixed(2);
-
-  return `jzczhz(${jzFormatted} ${czFormatted} ${hzFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
+  return `color(jzczhz ${jz} ${cz} ${hz}${alpha !== undefined ? ` / ${alpha}` : ''})`;
 };
 
 /**
