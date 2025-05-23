@@ -60,7 +60,7 @@
   ],
   "scripts": {
     "build-precomputed": "jiti ./toolchain/build.ts",
-    "build": "pnpm build-precomputed && rimraf ./dist && tsup src/index.ts src/fn.ts --experimental-dts --format esm",
+    "build": "pnpm build-precomputed && rimraf ./dist && tsup --config tsup.config.ts",
     "test": "vitest run --config vitest.config.ts",
     "coverage": "vitest run --config vitest.config.ts --coverage"
   },

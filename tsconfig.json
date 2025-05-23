@@ -9,7 +9,8 @@
     "strict": true,
     "useDefineForClassFields": true,
     "outDir": "dist",
-    "sourceMap": true,
+    "sourceMap": true
   },
-  "include": ["./src/**/*", "./test/**/*"]
+  "include": ["./src/**/*", "./test/**/*"],
+  "exclude": ["node_modules"]
 }
