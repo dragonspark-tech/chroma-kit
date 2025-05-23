@@ -23,7 +23,8 @@ import { normalizesRGBColor } from './transform';
  * @throws {SyntaxError} If the string format is invalid
  */
 export function srgbFromCSSString(src: string): sRGBColor {
-  let i = 4;
+  // Determine starting index based on whether it's rgb or rgba
+  let i = src.toLowerCase().startsWith('rgba') ? 5 : 4;
   const N = src.length;
 
   const isWS = (cc: number) => cc <= 32;
