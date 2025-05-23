@@ -13,6 +13,7 @@ import { convertColor } from '../../conversion/conversion';
 import { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { HWBColor } from '../hwb';
+import { constrainAngle } from '../../utils/angles';
 
 /**
  * Represents a color in the CIE Lab color space.
@@ -32,6 +33,8 @@ export interface LabColor extends ColorBase {
   l: number;
   a: number;
   b: number;
+
+  illuminant?: Illuminant;
 }
 
 /**
@@ -63,14 +66,16 @@ export const labToCSSString = (color: LabColor): string => {
  * @param {number} a - The green-red component (negative values are green, positive values are red)
  * @param {number} b - The blue-yellow component (negative values are blue, positive values are yellow)
  * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @param {Illuminant} [illuminant] - The reference white point to use, defaults to D65
  * @returns {LabColor} A new Lab color object
  */
-export const lab = (l: number, a: number, b: number, alpha?: number): LabColor => ({
+export const lab = (l: number, a: number, b: number, alpha?: number, illuminant?: Illuminant): LabColor => ({
   space: 'lab',
   l,
   a,
   b,
   alpha,
+  illuminant: illuminant ?? IlluminantD65,
 
   toString() {
     return serializeV1(this);
@@ -93,14 +98,15 @@ export const lab = (l: number, a: number, b: number, alpha?: number): LabColor =
  *
  * @param {number[]} v - A vector containing the Lab components [l, a, b]
  * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @param {Illuminant} [illuminant] - The reference white point to use, defaults to D65
  * @returns {LabColor} A new Lab color object
  * @throws {Error} If the vector does not have exactly 3 components
  */
-export const labFromVector = (v: number[], alpha?: number): LabColor => {
+export const labFromVector = (v: number[], alpha?: number, illuminant?: Illuminant): LabColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
   }
-  return lab(v[0], v[1], v[2], alpha);
+  return lab(v[0], v[1], v[2], alpha, illuminant);
 };
 
 /**
@@ -200,10 +206,15 @@ export const labToXYZ = (color: LabColor, illuminant?: Illuminant): XYZColor => 
  * @returns {LChColor} The color in LCh space
  */
 export const labToLCH = (color: LabColor): LChColor => {
-  const c = Math.hypot(color.a, color.b);
-  const h = ((Math.atan2(color.b, color.a) * 180) / Math.PI + 360) % 360;
+  const { l, a, b, alpha, illuminant } = color;
 
-  return lch(color.l, c, h, color.alpha);
+  const ϵLCh = 0.0015;
+
+  const isAchromatic = Math.abs(a) < ϵLCh && Math.abs(b) < ϵLCh;
+  let h = isAchromatic ? 0 : constrainAngle((Math.atan2(b, a) * 180) / Math.PI);
+  let C = isAchromatic ? 0 : Math.sqrt(a ** 2 + b ** 2);
+
+  return lch(l, C, h, alpha, illuminant);
 };
 
 /**

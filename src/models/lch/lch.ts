@@ -11,6 +11,7 @@ import { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import { HWBColor } from '../hwb';
+import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
 
 /**
  * Represents a color in the CIE LCh color space.
@@ -30,6 +31,8 @@ export interface LChColor extends ColorBase {
   l: number;
   c: number;
   h: number;
+
+  illuminant?: Illuminant;
 }
 
 /**
@@ -61,14 +64,16 @@ export const lchToCSSString = (color: LChColor): string => {
  * @param {number} c - The chroma (saturation/colorfulness) component
  * @param {number} h - The hue angle in degrees (0-360)
  * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @param {Illuminant} [illuminant] - The reference white point to use, defaults to D65
  * @returns {LChColor} A new LCh color object
  */
-export const lch = (l: number, c: number, h: number, alpha?: number): LChColor => ({
+export const lch = (l: number, c: number, h: number, alpha?: number, illuminant?: Illuminant): LChColor => ({
   space: 'lch',
   l,
   c,
   h,
   alpha,
+  illuminant: illuminant ?? IlluminantD65,
 
   toString() {
     return serializeV1(this);
@@ -91,14 +96,15 @@ export const lch = (l: number, c: number, h: number, alpha?: number): LChColor =
  *
  * @param {number[]} v - A vector containing the LCh components [l, c, h]
  * @param {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @param {Illuminant} [illuminant] - The reference white point to use, defaults to D65
  * @returns {LChColor} A new LCh color object
  * @throws {Error} If the vector does not have exactly 3 components
  */
-export const lchFromVector = (v: number[], alpha?: number): LChColor => {
+export const lchFromVector = (v: number[], alpha?: number, illuminant?: Illuminant): LChColor => {
   if (v.length !== 3) {
     throw new Error('Invalid vector length');
   }
-  return lch(v[0], v[1], v[2], alpha);
+  return lch(v[0], v[1], v[2], alpha, illuminant);
 };
 
 /**

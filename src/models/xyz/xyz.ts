@@ -242,7 +242,7 @@ export const xyzToLab = (color: XYZColor): LabColor => {
   const fy = yn > ϵ ? Math.cbrt(yn) : (κ * yn + 16) / 116;
   const fz = zn > ϵ ? Math.cbrt(zn) : (κ * zn + 16) / 116;
 
-  return lab(116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz), color.alpha);
+  return lab(116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz), color.alpha, color.illuminant);
 };
 
 /**
