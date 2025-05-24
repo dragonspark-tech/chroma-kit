@@ -22,7 +22,7 @@ export type ColorParserFn = (input: string) => Color;
  * Interface for a color parser registry entry.
  * Each entry represents a parser for a specific color format.
  */
-interface ParserRegistryEntry {
+export interface ParserRegistryEntry {
   /** The pattern to match for this parser */
   pattern: RegExp;
   /** The function that performs the parsing */
@@ -43,6 +43,20 @@ const accessOrder: string[] = [];
 
 /* istanbul ignore next -- test helper */
 /* @__TEST__ */
+/**
+ * An object used internally for testing purposes, exposing private utilities and methods.
+ * This variable should not be accessed directly in production code.
+ *
+ * @property {Function} cacheSet - A function to set values in the cache.
+ * @property {Function} cacheGet - A function to retrieve values from the cache.
+ * @property {Object} cache - An object representing the current state of the cache.
+ * @property {Array} accessOrder - An array that tracks the order in which cache keys are accessed.
+ * @property {Function} isValidHexColor - A utility function to validate if a string is a valid hex color code.
+ * @property {Function} isValidChromaKitV1 - A utility function to validate if input conforms to Chroma Kit V1 specifications.
+ * @property {Object} parserRegistry - A registry object managing different parser implementations.
+ *
+ * @private
+ */
 export const __TEST_ONLY = { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1, parserRegistry };
 
 /**
@@ -194,7 +208,7 @@ function getCSSColorParser(input: string): ColorParserFn | null {
  *
  * @param input A color string or Color object to parse/convert
  * @param targetSpace The destination color space
- * @returns A Color object in the specified target space
+ * @returns {CreatedColor} A Color object in the specified target space
  * @throws {TypeError} If input is null, undefined, or invalid type
  * @throws {SyntaxError} If the input string format is invalid or unsupported
  * @throws {Error} If no parsers are registered when trying to parse a CSS color string

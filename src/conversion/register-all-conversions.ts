@@ -97,5 +97,4 @@ export function registerAllConversions(): void {
   buildConversionGraph();
 }
 
-// Initialize the conversion system by registering all conversions
 registerAllConversions();

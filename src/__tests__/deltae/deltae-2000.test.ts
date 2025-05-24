@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { deltaE2000, type DeltaE2000Weights } from '../../deltae/deltae-2000';
-import { type LabColor } from '../../models/lab';
+import { deltaE2000, type DeltaE2000Weights } from '../../deltae';
+import { lab, type LabColor } from '../../models/lab';
 
 describe('Delta E 2000', () => {
   describe('Basic functionality', () => {
     it('should calculate the CIEDE2000 color difference between two Lab colors with default weights', () => {
-      const color1: LabColor = { space: 'lab', l: 50, a: 2.6772, b: -79.7751 };
-      const color2: LabColor = { space: 'lab', l: 50, a: 0, b: -82.7485 };
+      const color1 = lab(50, 2.6772, -79.7751);
+      const color2 = lab(50, 0, -82.7485);
 
       // This is a known test case from the CIEDE2000 paper
       // Expected result: 2.0425
@@ -14,15 +14,15 @@ describe('Delta E 2000', () => {
     });
 
     it('should return 0 for identical colors', () => {
-      const color: LabColor = { space: 'lab', l: 50, a: 2.6772, b: -79.7751 };
+      const color = lab(50, 2.6772, -79.7751);
       expect(deltaE2000(color, color)).toBe(0);
     });
   });
 
   describe('Weight factors', () => {
     it('should use the default weights (kL=1, kC=1, kH=1) when not provided', () => {
-      const color1: LabColor = { space: 'lab', l: 50, a: 2.6772, b: -79.7751 };
-      const color2: LabColor = { space: 'lab', l: 50, a: 0, b: -82.7485 };
+      const color1 = lab(50, 2.6772, -79.7751);
+      const color2 = lab(50, 0, -82.7485);
 
       const defaultResult = deltaE2000(color1, color2);
       const explicitDefaultResult = deltaE2000(color1, color2, { kL: 1, kC: 1, kH: 1 });
@@ -31,8 +31,8 @@ describe('Delta E 2000', () => {
     });
 
     it('should apply custom weight factors when provided', () => {
-      const color1: LabColor = { space: 'lab', l: 50, a: 2.6772, b: -79.7751 };
-      const color2: LabColor = { space: 'lab', l: 50, a: 0, b: -82.7485 };
+      const color1 = lab(50, 2.6772, -79.7751);
+      const color2 = lab(50, 0, -82.7485);
 
       const customWeights: DeltaE2000Weights = { kL: 2, kC: 1, kH: 1 };
       const result1 = deltaE2000(color1, color2, customWeights);
@@ -45,7 +45,7 @@ describe('Delta E 2000', () => {
       expect(result1).toBe(defaultResult);
 
       // Let's try a case where lightness differs
-      const color3: LabColor = { space: 'lab', l: 60, a: 2.6772, b: -79.7751 };
+      const color3 = lab(60, 2.6772, -79.7751);
 
       const resultWithLDiff = deltaE2000(color1, color3);
       const resultWithLDiffCustom = deltaE2000(color1, color3, customWeights);
@@ -99,8 +99,8 @@ describe('Delta E 2000', () => {
     it.each(testCases)(
       'should match expected result for Lab1(%f, %f, %f) and Lab2(%f, %f, %f)',
       (L1, a1, b1, L2, a2, b2, expectedDeltaE) => {
-        const color1: LabColor = { space: 'lab', l: L1, a: a1, b: b1 };
-        const color2: LabColor = { space: 'lab', l: L2, a: a2, b: b2 };
+        const color1 = lab(L1, a1, b1);
+        const color2 = lab(L2, a2, b2);
 
         expect(deltaE2000(color1, color2)).toBeCloseTo(expectedDeltaE, 4);
       }
@@ -109,8 +109,8 @@ describe('Delta E 2000', () => {
 
   describe('Edge cases', () => {
     it('should handle zero chroma values', () => {
-      const color1: LabColor = { space: 'lab', l: 50, a: 0, b: 0 };
-      const color2: LabColor = { space: 'lab', l: 55, a: 0, b: 0 };
+      const color1 = lab(50, 0, 0);
+      const color2 = lab(55, 0, 0);
 
       // When both colors have zero chroma, only lightness difference matters
       // This is a special case in the CIEDE2000 formula
@@ -119,12 +119,8 @@ describe('Delta E 2000', () => {
     });
 
     it('should handle alpha values if present (by ignoring them)', () => {
-      const color1: LabColor & { alpha?: number } = {
-        space: 'lab', l: 50, a: 2.6772, b: -79.7751, alpha: 1.0
-      };
-      const color2: LabColor & { alpha?: number } = {
-        space: 'lab', l: 50, a: 2.6772, b: -79.7751, alpha: 0.5
-      };
+      const color1 = lab(50, 2.6772, -79.7751, 1);
+      const color2 = lab(50, 2.6772, -79.7751, 0.5);
 
       // Alpha should be ignored, so identical colors should have a delta E of 0
       expect(deltaE2000(color1, color2)).toBe(0);
@@ -133,22 +129,22 @@ describe('Delta E 2000', () => {
 
   describe('Implementation details', () => {
     it('should handle the special case where C1p * C2p === 0', () => {
-      const color1: LabColor = { space: 'lab', l: 50, a: 0, b: 0 };
-      const color2: LabColor = { space: 'lab', l: 50, a: 0, b: 0 };
+      const color1 = lab(50, 0, 0);
+      const color2 = lab(50, 0, 0);
 
       // Both colors have zero chroma, so C1p * C2p === 0
       // This should trigger the special case handling for dhp and hp_ave
       expect(deltaE2000(color1, color2)).toBe(0);
 
       // Test with different lightness to ensure the calculation still works
-      const color3: LabColor = { space: 'lab', l: 60, a: 0, b: 0 };
+      const color3 = lab(60, 0, 0);
       expect(deltaE2000(color1, color3)).toBeGreaterThan(0);
     });
 
     it('should handle the special case where h2p - h1p > 180', () => {
       // Create colors where h2p - h1p > 180
-      const color1: LabColor = { space: 'lab', l: 50, a: 1, b: 0 }; // h1p ≈ 0
-      const color2: LabColor = { space: 'lab', l: 50, a: -1, b: 0 }; // h2p ≈ 180
+      const color1 = lab(50, 1, 0); // h1p ≈ 0
+      const color2 = lab(50, -1, 0); // h2p ≈ 180
 
       // This should trigger the special case handling for dhp
       expect(deltaE2000(color1, color2)).toBeGreaterThan(0);
@@ -156,8 +152,8 @@ describe('Delta E 2000', () => {
 
     it('should handle the special case where h2p - h1p < -180', () => {
       // Create colors where h2p - h1p < -180
-      const color1: LabColor = { space: 'lab', l: 50, a: -1, b: 0 }; // h1p ≈ 180
-      const color2: LabColor = { space: 'lab', l: 50, a: 1, b: 0 }; // h2p ≈ 0
+      const color1 = lab(50, 1, 0); // h1p ≈ 180
+      const color2 = lab(50, -1, 0); // h2p ≈ 0
 
       // This should trigger the special case handling for dhp
       expect(deltaE2000(color1, color2)).toBeGreaterThan(0);
@@ -165,8 +161,8 @@ describe('Delta E 2000', () => {
 
     it('should handle the special case where h1p + h2p > 360', () => {
       // Create colors where h1p + h2p > 360
-      const color1: LabColor = { space: 'lab', l: 50, a: -1, b: 1 }; // h1p ≈ 135
-      const color2: LabColor = { space: 'lab', l: 50, a: -1, b: -1 }; // h2p ≈ 225
+      const color1 = lab(50, -1, 1); // h1p ≈ 135
+      const color2 = lab(50, -1, -1); // h2p ≈ 225
 
       // This should trigger the special case handling for hp_ave
       expect(deltaE2000(color1, color2)).toBeGreaterThan(0);

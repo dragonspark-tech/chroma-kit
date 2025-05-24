@@ -5,6 +5,10 @@ dist
 tmp
 out-tsc
 .tsup
+doc
+
+# test files
+playground.ts
 
 # dependencies
 node_modules

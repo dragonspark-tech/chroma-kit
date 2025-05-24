@@ -65,7 +65,7 @@ export function clearConversionRegistry(): void {
  * @template TTo - The target color space type
  * @param from - The source color space identifier
  * @param to - The target color space identifier
- * @param convert - The conversion function
+ * @param convert {ColorConversionFn} - The conversion function
  */
 export function registerConversion<TFrom extends ColorBase, TTo extends ColorBase>(
   from: string,
@@ -156,7 +156,7 @@ const buildConversionError = (from: string, to: string): string =>
  * @template TTo - The target color space type
  * @param from - The source color space identifier
  * @param to - The target color space identifier
- * @returns A function that converts from the source color space to the target color space
+ * @returns {ColorConversionFn} A function that converts from the source color space to the target color space
  * @throws Error if no conversion path can be found
  */
 export function getConversionFunction<TFrom extends ColorBase, TTo extends ColorBase>(

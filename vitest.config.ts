@@ -5,7 +5,7 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     coverage: {
       provider: 'istanbul',
-      exclude: ['toolchain/**/*.ts', 'dist/**/*.js']
+      exclude: ['toolchain/**/*.ts', 'dist/**/*.js', 'doc/**/**.*', 'playground.ts']
     }
   }
 });
