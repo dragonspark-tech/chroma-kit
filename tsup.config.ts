@@ -5,6 +5,7 @@ export default defineConfig({
   format: ['esm'],
   external: ['vitest', '@vitest/ui', '@types/node'],
   target: 'es6',
-  dts: true,
-  experimentalDts: false
+  dts: false,
+  experimentalDts: true,
+  minify: true
 });

@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "moduleResolution": "Bundler",
+    "declaration": true,
+    "isolatedModules": true,
+    "strict": true,
+    "useDefineForClassFields": true,
+    "outDir": "dist",
+    "sourceMap": true
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules"]
+}

@@ -58,9 +58,15 @@
   "files": [
     "dist"
   ],
+  "sideEffects": [
+    "dist/index.js",
+    "src/conversion/register-all-conversions.ts",
+    "src/semantics/register-all-parsers.ts"
+  ],
   "scripts": {
-    "build-precomputed": "jiti ./toolchain/build.ts",
-    "build": "rimraf ./dist && tsup --config tsup.config.ts",
+    "build": "rimraf ./dist ./tsup && tsup --config tsup.config.ts && rimraf .tsup",
+    "build:precomputed": "jiti ./toolchain/build.ts",
+    "build:docs": "typedoc --options typedoc.json",
     "test": "vitest run --config vitest.config.ts",
     "coverage": "vitest run --config vitest.config.ts --coverage"
   },
@@ -73,6 +79,8 @@
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "tsup": "^8.5.0",
+    "typedoc": "^0.28.4",
+    "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "pnpm": {
