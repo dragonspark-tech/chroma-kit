@@ -21,8 +21,8 @@ export const computeAdaptationMatrix = (
   targetIlluminant: Illuminant,
   coneModel: ConeResponseModel
 ): Matrix3x3 => {
-  const xyzTarget = [sourceIlluminant.xR, sourceIlluminant.yR, sourceIlluminant.zR];
-  const xyzSource = [targetIlluminant.xR, targetIlluminant.yR, targetIlluminant.zR];
+  const xyzSource = [sourceIlluminant.xR, sourceIlluminant.yR, sourceIlluminant.zR];
+  const xyzTarget = [targetIlluminant.xR, targetIlluminant.yR, targetIlluminant.zR];
 
   const lmsSource = multiplyMatrixByVector(coneModel.matrix, xyzSource);
   const lmsTarget = multiplyMatrixByVector(coneModel.matrix, xyzTarget);
