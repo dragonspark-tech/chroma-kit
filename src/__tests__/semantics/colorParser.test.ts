@@ -33,6 +33,13 @@ describe('ColorStringParser', () => {
       expect(parser.getPosition()).toBe(7);
     });
 
+    it('should read a component with a plus sign', () => {
+      const parser = new ColorStringParser('rgb(+255, 0, 0)', 4);
+      const value = parser.readComponent();
+      expect(value).toBe(255);
+      expect(parser.getPosition()).toBe(8);
+    });
+
     it('should read a decimal component', () => {
       const parser = new ColorStringParser('rgb(0.5, 0, 0)', 4);
       const value = parser.readComponent();

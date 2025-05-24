@@ -28,6 +28,10 @@ const cache = new Map<string, Color>();
 // LRU eviction tracking
 const accessOrder: string[] = [];
 
+/* istanbul ignore next -- test helper */
+/* @__TEST__ */
+export const __TEST_ONLY = { cacheSet, cache, accessOrder };
+
 /**
  * Manages the hot cache with LRU eviction policy
  */
