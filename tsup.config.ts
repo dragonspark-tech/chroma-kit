@@ -1,7 +1,15 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/fn.ts', '!src/__tests__/**', '!src/**/*.test.*'],
+  entry: [
+    '!src/__tests__/**', '!src/**/*.test.*',
+
+    'src/index.ts',
+    'src/fn.ts',
+
+    'src/plugins/harmonies/index.ts',
+    'src/plugins/harmonies/fn.ts',
+  ],
   format: ['esm'],
   external: ['vitest', '@vitest/ui', '@types/node'],
   target: 'es6',

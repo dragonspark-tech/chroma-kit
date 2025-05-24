@@ -61,7 +61,10 @@
   "sideEffects": [
     "dist/index.js",
     "src/conversion/register-all-conversions.ts",
-    "src/semantics/register-all-parsers.ts"
+    "src/semantics/register-all-parsers.ts",
+
+    "dist/extensions/harmonies/index.js",
+    "src/extensions/harmonies/index.ts"
   ],
   "scripts": {
     "build": "rimraf ./dist ./tsup && tsup --config tsup.config.ts && rimraf .tsup",
