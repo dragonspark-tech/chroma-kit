@@ -30,7 +30,7 @@ const accessOrder: string[] = [];
 
 /* istanbul ignore next -- test helper */
 /* @__TEST__ */
-export const __TEST_ONLY = { cacheSet, cache, accessOrder };
+export const __TEST_ONLY = { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1 };
 
 /**
  * Manages the hot cache with LRU eviction policy

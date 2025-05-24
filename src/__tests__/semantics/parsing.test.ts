@@ -6,7 +6,8 @@ import { __TEST_ONLY } from '../../semantics/parsing';
 import { srgb } from '../../models/srgb';
 import * as serialization from '../../semantics/serialization';
 
-const { cacheSet, accessOrder } = __TEST_ONLY;
+// Access private functions for testing
+const { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1 } = __TEST_ONLY;
 
 describe('parseColor', () => {
   // Test parsing Color objects
@@ -73,6 +74,80 @@ describe('parseColor', () => {
 
     it('should throw for negative alpha value in ChromaKit|v1 format', () => {
       expect(() => parseColor('ChromaKit|v1 srgb 1 0 0 / -0.5', 'srgb')).toThrow('Invalid ChromaKit v1 format');
+    });
+  });
+
+  // Test isValidChromaKitV1 function directly
+  describe('isValidChromaKitV1', () => {
+    it('should return false for input with less than 3 coordinates', () => {
+      // This test targets line 127: if (coords.length < 3) return false;
+      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0')).toBe(false);
+
+      // Test with a mocked match object to directly test the code path
+      const originalMatch = String.prototype.match;
+      try {
+        // @ts-ignore - Mocking for testing
+        String.prototype.match = () => {
+          return ['match', 'srgb', ' 1 0', undefined];
+        };
+        expect(isValidChromaKitV1('mock')).toBe(false);
+      } finally {
+        String.prototype.match = originalMatch;
+      }
+    });
+
+    it('should return false for input with non-numeric coordinates', () => {
+      // This test targets line 128: if (!coords.every(s => !isNaN(Number(s)))) return false;
+      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 abc')).toBe(false);
+
+      // Test with a mocked match object to directly test the code path
+      const originalMatch = String.prototype.match;
+      try {
+        // @ts-ignore - Mocking for testing
+        String.prototype.match = () => {
+          return ['match', 'srgb', ' 1 0 abc', undefined];
+        };
+        expect(isValidChromaKitV1('mock')).toBe(false);
+      } finally {
+        String.prototype.match = originalMatch;
+      }
+    });
+
+    it('should return false for input with alpha outside [0,1] range', () => {
+      // This test targets line 133: if (!(alpha >= 0 && alpha <= 1)) return false;
+      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / 1.5')).toBe(false);
+      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / -0.5')).toBe(false);
+
+      // Test with a mocked match object to directly test the code path
+      const originalMatch = String.prototype.match;
+      try {
+        // @ts-ignore - Mocking for testing
+        String.prototype.match = () => {
+          return ['match', 'srgb', ' 1 0 0', '1.5'];
+        };
+        expect(isValidChromaKitV1('mock')).toBe(false);
+      } finally {
+        String.prototype.match = originalMatch;
+      }
+    });
+
+    it('should handle valid alpha values in [0,1] range', () => {
+      // Test with a mocked match object to directly test the code path
+      const originalMatch = String.prototype.match;
+      try {
+        // @ts-ignore - Mocking for testing
+        String.prototype.match = () => {
+          return ['match', 'srgb', ' 1 0 0', '0.5'];
+        };
+        expect(isValidChromaKitV1('mock')).toBe(true);
+      } finally {
+        String.prototype.match = originalMatch;
+      }
+
+      // Test with actual valid input
+      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / 0.5')).toBe(true);
+      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / 0')).toBe(true);
+      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / 1')).toBe(true);
     });
   });
 
@@ -345,6 +420,9 @@ describe('parseColor', () => {
   // Test cache management functions
   describe('cache management', () => {
     beforeEach(() => {
+      // Clear the cache before each test
+      clearColorCache();
+
       // Fill the cache with a few colors
       parseColor('#ff0000', 'srgb');
       parseColor('#00ff00', 'srgb');
@@ -369,6 +447,128 @@ describe('parseColor', () => {
       expect(stats).toHaveProperty('size');
       expect(stats).toHaveProperty('maxSize');
       expect(stats.maxSize).toBe(64); // HOT_CACHE_SIZE
+    });
+  });
+
+  // Test cacheGet and cacheSet functions directly
+  describe('cache internals', () => {
+    beforeEach(() => {
+      // Clear the cache before each test
+      clearColorCache();
+    });
+
+    it('should handle cacheGet for non-existent key', () => {
+      // This test targets line 43 in cacheGet
+      const result = cacheGet('non-existent-key');
+      expect(result).toBeUndefined();
+    });
+
+    it('should handle cacheGet for existing key', () => {
+      // Setup: Add a color to the cache
+      const color = srgb(1, 0, 0);
+      const key = 'test-key';
+      cacheSet(key, color);
+
+      // Test: Get the color from the cache
+      const result = cacheGet(key);
+      expect(result).toBe(color);
+
+      // Verify: Key is at the end of accessOrder
+      expect(accessOrder[accessOrder.length - 1]).toBe(key);
+    });
+
+    it('should handle cacheGet when key is not in accessOrder', () => {
+      // This test specifically targets the branch where index === -1 in cacheGet
+
+      // Setup: Manually add a color to the cache without updating accessOrder
+      const color = srgb(1, 0, 0);
+      const key = 'test-key-not-in-order';
+      cache.set(key, color);
+
+      // Verify key is not in accessOrder
+      expect(accessOrder.includes(key)).toBe(false);
+
+      // Test: Get the color from the cache
+      const result = cacheGet(key);
+      expect(result).toBe(color);
+
+      // Verify: Key is now at the end of accessOrder
+      expect(accessOrder[accessOrder.length - 1]).toBe(key);
+    });
+
+    it('should handle cacheSet when cache is full and key is not in cache', () => {
+      // This test targets line 55 in cacheSet
+
+      // Fill the cache to capacity
+      const cacheLimit = getCacheStats().maxSize;
+      for (let i = 0; i < cacheLimit; i++) {
+        cacheSet(`key-${i}`, srgb(i/cacheLimit, 0, 0));
+      }
+
+      // Verify the cache is full
+      expect(cache.size).toBe(cacheLimit);
+
+      // Add one more item to trigger eviction
+      const newKey = 'new-key';
+      const newColor = srgb(1, 1, 1);
+      cacheSet(newKey, newColor);
+
+      // Verify the first item was evicted
+      expect(cache.has('key-0')).toBe(false);
+      expect(cache.has(newKey)).toBe(true);
+      expect(cache.size).toBe(cacheLimit); // Size should remain the same
+    });
+
+    it('should handle cacheSet when cache is full but no LRU item exists', () => {
+      // This test specifically targets the branch where lru is undefined in cacheSet
+
+      // Setup: Clear the cache and accessOrder
+      clearColorCache();
+
+      // Manually set the cache size to the limit without adding to accessOrder
+      const cacheLimit = getCacheStats().maxSize;
+      for (let i = 0; i < cacheLimit; i++) {
+        cache.set(`key-${i}`, srgb(i/cacheLimit, 0, 0));
+      }
+
+      // Verify the cache is full but accessOrder is empty
+      expect(cache.size).toBe(cacheLimit);
+      expect(accessOrder.length).toBe(0);
+
+      // Add one more item to trigger eviction logic
+      const newKey = 'new-key';
+      const newColor = srgb(1, 1, 1);
+      cacheSet(newKey, newColor);
+
+      // Verify the new item was added
+      expect(cache.has(newKey)).toBe(true);
+      expect(accessOrder.includes(newKey)).toBe(true);
+    });
+
+    it('should handle cacheSet when cache is not full', () => {
+      // Add an item to a non-full cache
+      const key = 'test-key';
+      const color = srgb(1, 0, 0);
+      cacheSet(key, color);
+
+      // Verify the item was added
+      expect(cache.has(key)).toBe(true);
+      expect(cache.get(key)).toBe(color);
+    });
+
+    it('should handle cacheSet when key already exists in cache', () => {
+      // Add an item to the cache
+      const key = 'test-key';
+      const color1 = srgb(1, 0, 0);
+      cacheSet(key, color1);
+
+      // Replace it with a new color
+      const color2 = srgb(0, 1, 0);
+      cacheSet(key, color2);
+
+      // Verify the item was updated
+      expect(cache.get(key)).toBe(color2);
+      expect(accessOrder[accessOrder.length - 1]).toBe(key);
     });
   });
 
@@ -418,6 +618,15 @@ describe('parseColor', () => {
       });
 
       expect(() => parseColor('ChromaKit|v1 srgb 1 0 0', 'srgb')).toThrow('Failed to parse color');
+    });
+
+    it('should handle errors without a message property', () => {
+      // Mock parseV1 to throw an object without a message property
+      vi.spyOn(serialization, 'parseV1').mockImplementationOnce(() => {
+        throw { toString: () => 'Custom error object' };
+      });
+
+      expect(() => parseColor('ChromaKit|v1 srgb 1 0 0', 'srgb')).toThrow('Failed to parse color "ChromaKit|v1 srgb 1 0 0": Custom error object');
     });
 
     it('should throw for null input', () => {
