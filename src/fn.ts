@@ -1,5 +1,5 @@
 export { serializeV1, parseV1 } from './semantics/serialization';
-export { registerConversion } from './conversion/conversion';
+export { registerConversion, type ColorConversionFn } from './conversion/conversion';
 
 export { registerParser } from './semantics/parsing';
 export * from './semantics/default-parsers';
@@ -40,3 +40,6 @@ export * from './models/jzczhz/parser';
 
 export * from './deltae/index';
 export * from './contrast/index';
+
+export * from './standards/illuminants';
+export * from './foundation';

@@ -26,6 +26,7 @@ import { constrainAngle } from '../../utils/angles';
  * @property {number} a - The green-red component (negative values are green, positive values are red)
  * @property {number} b - The blue-yellow component (negative values are blue, positive values are yellow)
  * @property {number} [alpha] - The alpha (opacity) component (0-1), optional
+ * @property {Illuminant} [illuminant] - The reference white point used for this color
  */
 export interface LabColor extends ColorBase {
   space: 'lab';
