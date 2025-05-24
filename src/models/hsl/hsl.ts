@@ -40,6 +40,8 @@ export interface HSLColor extends ColorBase {
   h: number;
   s: number;
   l: number;
+
+  shiftHue(degrees: number): HSLColor;
 }
 
 export const hslToCSSString = (color: HSLColor): string => {
@@ -69,6 +71,11 @@ export const hsl = (h: number, s: number, l: number, alpha?: number): HSLColor =
 
   to<T extends ColorBase>(colorSpace: ColorSpace) {
     return convertColor<HSLColor, T>(this, colorSpace);
+  },
+
+  shiftHue(degrees: number): HSLColor {
+    const shift = (this.h + degrees) % 360;
+    return hsl(shift < 0 ? shift + 360 : shift, this.s, this.l, this.alpha);
   }
 });
 

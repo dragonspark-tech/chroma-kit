@@ -57,6 +57,24 @@ describe('HSL Color Model', () => {
       const color = hsl(120, 0.5, 0.6);
       expect(typeof color.to).toBe('function');
     });
+
+    it('should effectively shift based on a provided angle', () => {
+      const color = hsl(120, 0.5, 0.6);
+      const shifted = color.shiftHue(180);
+      expect(shifted.h).toBe(300);
+    });
+
+    it('should correctly shift based on a negative angle', () => {
+      const color = hsl(120, 0.5, 0.6);
+      const shifted = color.shiftHue(-180);
+      expect(shifted.h).toBe(300);
+    });
+
+    it('should correctly shift and wrap around the hue when out of bounds', () => {
+      const color = hsl(120, 0.5, 0.6);
+      const shifted = color.shiftHue(360);
+      expect(shifted.h).toBe(120);
+    });
   });
 
   // Test hslFromVector function
