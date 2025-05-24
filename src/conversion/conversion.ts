@@ -49,6 +49,15 @@ interface ConversionRegistryEntry<TFrom extends ColorBase, TTo extends ColorBase
 const conversionRegistry: ConversionRegistryEntry<any, any>[] = [];
 
 /**
+ * Clears the conversion registry.
+ * This is primarily used for testing purposes.
+ * @internal
+ */
+export function clearConversionRegistry(): void {
+  conversionRegistry.length = 0;
+}
+
+/**
  * Registers a conversion function from one color space to another.
  * This adds the conversion to the registry for later use.
  *
@@ -79,8 +88,10 @@ const conversionGraph: Record<string, string[]> = {};
  * This function should be called after all conversions are registered.
  */
 export function buildConversionGraph(): void {
+  // Clear the existing graph
   Object.keys(conversionGraph).forEach((key) => delete conversionGraph[key]);
 
+  // Build the graph from the registry
   for (const entry of conversionRegistry) {
     if (!conversionGraph[entry.from]) {
       conversionGraph[entry.from] = [];
@@ -99,10 +110,6 @@ export function buildConversionGraph(): void {
  * @returns An array of color space identifiers representing the conversion path, or null if no path exists
  */
 function findConversionPath(from: string, to: string): string[] | null {
-  if (from === to) {
-    return [from];
-  }
-
   const queue: { space: string; path: string[] }[] = [{ space: from, path: [from] }];
   const visited = new Set<string>([from]);
 
@@ -156,9 +163,15 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
   from: string,
   to: string
 ): ColorConversionFn<TFrom, TTo> {
+
+  if (from === to) {
+    return (color: TFrom) => color as unknown as TTo;
+  }
+
   const directConversion = conversionRegistry.find(
     (entry) => entry.from === from && entry.to === to
   );
+
   if (directConversion) {
     return directConversion.convert;
   }
@@ -209,14 +222,10 @@ export function convertColor<TFrom extends ColorBase, TTo extends ColorBase>(
   to: string,
   ...args: any[]
 ): TTo {
-  if (Object.keys(conversionGraph).length === 0) {
-    buildConversionGraph();
-  }
-
   const from = color.space;
 
-  if (from === to) {
-    return color as unknown as TTo;
+  if (Object.keys(conversionGraph).length === 0) {
+    buildConversionGraph();
   }
 
   const conversionFn = getConversionFunction<TFrom, TTo>(from, to);

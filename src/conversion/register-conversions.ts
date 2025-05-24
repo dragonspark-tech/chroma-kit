@@ -11,7 +11,7 @@
  * color spaces, even when direct conversions aren't available.
  */
 
-import { registerConversion } from './conversion';
+import { registerConversion, buildConversionGraph } from './conversion';
 import { srgbToHSL, srgbToHSV, srgbToHWB, srgbToXYZ } from '../models/srgb';
 import {
   xyzToJzAzBz,
@@ -49,6 +49,7 @@ export function registerAllConversions(): void {
   registerConversion('srgb', 'xyz', srgbToXYZ);
   registerConversion('srgb', 'hsl', srgbToHSL);
   registerConversion('srgb', 'hsv', srgbToHSV);
+  registerConversion('srgb', 'hwb', srgbToHWB);
 
   // HSL color space conversions
   registerConversion('hsl', 'srgb', hslToRGB);
@@ -91,6 +92,9 @@ export function registerAllConversions(): void {
 
   // JzCzHz color space conversions
   registerConversion('jzczhz', 'jzazbz', jzczhzToJzAzBz);
+
+  // Build the conversion graph after registering all conversions
+  buildConversionGraph();
 }
 
 // Initialize the conversion system by registering all conversions

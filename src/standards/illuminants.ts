@@ -33,7 +33,7 @@ export const IlluminantA: Illuminant = {
  * CIE standard illuminant D50 is intended to mathematically represent ‘horizon’ daylight in the early morning or late afternoon.
  * It's relative spectral power distribution is that of a blackbody radiator at a temperature of approximately 5000 K.
  *
- * Illuminant D50 should be used in colorimetric calculations where the use of such a correlated colour temperature is intended.
+ * Illuminant D50 should be used in colorimetric calculations where the use of such a correlated color temperature is intended.
  * It's the most commonly used illuminant in the graphic arts industry.
  *
  * @see https://cie.co.at/publications/colorimetry-part-2-cie-standard-illuminants-0

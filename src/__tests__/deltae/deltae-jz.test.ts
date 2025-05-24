@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { deltaEJZ } from '../../deltae/deltae-jz';
-import { type JzCzHzColor } from '../../models/jzczhz';
+import { jzczhz, type JzCzHzColor } from '../../models/jzczhz';
 import { DEG_TO_RAD } from '../../deltae/constants';
 
 describe('Delta E JZ', () => {
   describe('Basic functionality', () => {
     it('should calculate the color difference between two JzCzHz colors', () => {
-      const color1: JzCzHzColor = { space: 'jzczhz', jz: 0.01, cz: 0.02, hz: 30 };
-      const color2: JzCzHzColor = { space: 'jzczhz', jz: 0.02, cz: 0.03, hz: 60 };
+      const color1 = jzczhz(0.01, 0.02, 30);
+      const color2 = jzczhz(0.02, 0.03, 60);
 
       // Manual calculation
       const ΔJ = 0.01 - 0.02;

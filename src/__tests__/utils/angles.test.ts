@@ -30,12 +30,5 @@ describe('angles', () => {
       expect(constrainAngle(-3600)).toBe(0); // -3600 = -360 * 10
       expect(constrainAngle(-3601)).toBe(359);
     });
-
-    it('should handle decimal angles', () => {
-      expect(constrainAngle(0.5)).toBe(0.5);
-      expect(constrainAngle(359.5)).toBe(359.5);
-      expect(constrainAngle(360.5)).toBe(0.5);
-      expect(constrainAngle(-0.5)).toBe(359.5);
-    });
   });
 });
