@@ -101,5 +101,6 @@ export const contrastAPCA = (foreground: sRGBColor, background: sRGBColor): numb
         : predictiveColorContrast + SA98G_G4G_LOW_OFFSET_WHITE_ON_BLACK;
   }
 
-  return outputContrast;
+  // Convert to percentage (range from approximately -108% to 106%)
+  return outputContrast * 100;
 };

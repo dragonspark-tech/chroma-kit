@@ -62,9 +62,25 @@ export const contrast = (
   background: string | Color,
   algorithm: ContrastAlgorithm = 'APCA'
 ): number => {
+  // Parse the colors to their appropriate color spaces
+  const fgSRGB = parseColor(foreground, 'srgb');
+  const bgSRGB = parseColor(background, 'srgb');
+
+  // Check if colors are identical (comparing RGB values)
+  const colorsAreIdentical =
+    fgSRGB.r === bgSRGB.r &&
+    fgSRGB.g === bgSRGB.g &&
+    fgSRGB.b === bgSRGB.b;
+
+  // If colors are identical, return 0 for all algorithms for consistency
+  if (colorsAreIdentical) {
+    return 0;
+  }
+
+  // Otherwise, calculate contrast using the specified algorithm
   switch (algorithm) {
     case 'APCA':
-      return contrastAPCA(parseColor(foreground, 'srgb'), parseColor(background, 'srgb'));
+      return contrastAPCA(fgSRGB, bgSRGB);
     case 'DeltaL*':
       return contrastDeltaLStar(parseColor(foreground, 'lab'), parseColor(background, 'lab'));
     case 'DeltaPhi*':

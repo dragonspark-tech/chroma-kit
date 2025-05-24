@@ -35,11 +35,12 @@ export const contrastDeltaPhiStar = (
   color2: LabColor,
   threshold: number = 7.5
 ): number => {
-  const LStar1 = color1.l;
-  const LStar2 = color2.l;
+  // Ensure lightness values are non-negative
+  const LStar1 = Math.max(0, color1.l);
+  const LStar2 = Math.max(0, color2.l);
 
   const Δφ = Math.abs(LStar1 ** φ - LStar2 ** φ);
-  const contrast = (Δφ ** 1 / φ) * Math.SQRT2 - 40;
+  const contrast = (Δφ ** (1 / φ)) * Math.SQRT2 - 40;
 
   return contrast < threshold ? 0.0 : contrast;
 };
