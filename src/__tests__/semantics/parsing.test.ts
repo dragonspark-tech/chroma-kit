@@ -1,15 +1,22 @@
-import '../../conversion/register-conversions';
+import '../../conversion/register-all-conversions';
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { parseColor, clearColorCache, getCacheStats } from '../../semantics/parsing';
+import { parseColor, clearColorCache, getCacheStats, clearParserRegistry, registerParser } from '../../semantics/parsing';
 import { __TEST_ONLY } from '../../semantics/parsing';
 import { srgb } from '../../models/srgb';
 import * as serialization from '../../semantics/serialization';
+import { srgbFromCSSString } from '../../models/srgb';
+import { hslFromCSSString } from '../../models/hsl';
+import { registerAllParsers } from '../../semantics/register-all-parsers';
 
 // Access private functions for testing
-const { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1 } = __TEST_ONLY;
+const { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1, parserRegistry } = __TEST_ONLY;
 
 describe('parseColor', () => {
+  beforeEach(() => {
+    registerAllParsers();
+  });
+
   // Test parsing Color objects
   describe('parsing Color objects', () => {
     it('should convert a Color object to the target space', () => {
@@ -651,5 +658,95 @@ describe('parseColor', () => {
     it('should throw for whitespace-only string input', () => {
       expect(() => parseColor('   ', 'srgb')).toThrow('Color string cannot be empty');
     });
+  });
+});
+
+// Test parser registration functionality
+describe('parser registration', () => {
+  beforeEach(() => {
+    // Clear the parser registry before each test
+    clearParserRegistry();
+  });
+
+  it('should register a parser and use it for parsing', () => {
+    // Register the sRGB parser
+    registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+
+    // Verify the parser was registered
+    expect(parserRegistry.length).toBe(1);
+    expect(parserRegistry[0].pattern).toEqual(/^rgba?\s*\(/i);
+    expect(parserRegistry[0].parse).toBe(srgbFromCSSString);
+
+    // Use the parser to parse a color
+    const result = parseColor('rgb(255, 0, 0)', 'srgb');
+    expect(result.space).toBe('srgb');
+    expect(result.r).toBe(1);
+    expect(result.g).toBe(0);
+    expect(result.b).toBe(0);
+  });
+
+  it('should register multiple parsers and use them for parsing', () => {
+    // Register the sRGB and HSL parsers
+    registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+    registerParser(/^hsla?\s*\(/i, hslFromCSSString);
+
+    // Verify the parsers were registered
+    expect(parserRegistry.length).toBe(2);
+
+    // Use the sRGB parser to parse a color
+    const rgbResult = parseColor('rgb(255, 0, 0)', 'srgb');
+    expect(rgbResult.space).toBe('srgb');
+    expect(rgbResult.r).toBe(1);
+    expect(rgbResult.g).toBe(0);
+    expect(rgbResult.b).toBe(0);
+
+    // Use the HSL parser to parse a color
+    const hslResult = parseColor('hsl(0, 100%, 50%)', 'hsl');
+    expect(hslResult.space).toBe('hsl');
+    expect(hslResult.h).toBe(0);
+    expect(hslResult.s).toBe(1);
+    expect(hslResult.l).toBe(0.5);
+  });
+
+  it('should clear the parser registry', () => {
+    // Register a parser
+    registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+    expect(parserRegistry.length).toBe(1);
+
+    // Clear the registry
+    clearParserRegistry();
+    expect(parserRegistry.length).toBe(0);
+  });
+
+  it('should throw an error when no parsers are registered', () => {
+    // Try to parse a CSS color string without registering any parsers
+    clearParserRegistry();
+    expect(() => parseColor('lab(1, 0, 0)', 'srgb')).toThrow();
+  });
+
+  it('should throw an error when no matching parser is found', () => {
+    // Register only the sRGB parser
+    registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+
+    // Try to parse an HSL color string
+    expect(() => parseColor('hsl(0, 100%, 50%)', 'srgb')).toThrow('Unsupported color format');
+  });
+
+  it('should still parse hex colors without registering parsers', () => {
+    // Try to parse a hex color string without registering any parsers
+    const result = parseColor('#ff0000', 'srgb');
+    expect(result.space).toBe('srgb');
+    expect(result.r).toBe(1);
+    expect(result.g).toBe(0);
+    expect(result.b).toBe(0);
+  });
+
+  it('should still parse ChromaKit|v1 format without registering parsers', () => {
+    // Try to parse a ChromaKit|v1 string without registering any parsers
+    const result = parseColor('ChromaKit|v1 srgb 1 0 0', 'srgb');
+    expect(result.space).toBe('srgb');
+    expect(result.r).toBe(1);
+    expect(result.g).toBe(0);
+    expect(result.b).toBe(0);
   });
 });

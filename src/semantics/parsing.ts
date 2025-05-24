@@ -11,15 +11,28 @@
 
 import { Color, ColorSpace, CreatedColor } from '../foundation';
 import { parseV1 } from './serialization';
-import { hexTosRGB, srgbFromCSSString } from '../models/srgb';
-import { hslFromCSSString } from '../models/hsl';
-import { hsvFromCSSString } from '../models/hsv';
-import { labFromCSSString } from '../models/lab';
-import { lchFromCSSString } from '../models/lch';
-import { oklabFromCSSString } from '../models/oklab';
-import { oklchFromCSSString } from '../models/oklch';
-import { xyzFromCSSString } from '../models/xyz';
-import { hwbFromCSSString } from '../models/hwb';
+import { hexTosRGB } from '../models/srgb';
+
+/**
+ * Type for a color parser function that converts a string to a Color object.
+ */
+export type ColorParserFn = (input: string) => Color;
+
+/**
+ * Interface for a color parser registry entry.
+ * Each entry represents a parser for a specific color format.
+ */
+interface ParserRegistryEntry {
+  /** The pattern to match for this parser */
+  pattern: RegExp;
+  /** The function that performs the parsing */
+  parse: ColorParserFn;
+}
+
+/**
+ * A registry of all available color parsers.
+ */
+const parserRegistry: ParserRegistryEntry[] = [];
 
 // Cache for recently parsed colors to improve performance on repeated calls
 const HOT_CACHE_SIZE = 64; // Increased size for better hit rate
@@ -30,7 +43,7 @@ const accessOrder: string[] = [];
 
 /* istanbul ignore next -- test helper */
 /* @__TEST__ */
-export const __TEST_ONLY = { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1 };
+export const __TEST_ONLY = { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1, parserRegistry };
 
 /**
  * Manages the hot cache with LRU eviction policy
@@ -68,19 +81,24 @@ function cacheSet(key: string, color: Color): void {
 }
 
 /**
- * CSS color format patterns for efficient matching
+ * Registers a parser for a specific color format.
+ * This adds the parser to the registry for later use.
+ *
+ * @param pattern - The pattern to match for this parser
+ * @param parse - The parsing function
  */
-const COLOR_PATTERNS = {
-  rgb: /^rgba?\s*\(/i,
-  hsl: /^hsla?\s*\(/i,
-  hwb: /^hwb\s*\(/i,
-  hsv: /^hsv\s*\(/i,
-  lab: /^lab\s*\(/i,
-  lch: /^lch\s*\(/i,
-  oklab: /^oklab\s*\(/i,
-  oklch: /^oklch\s*\(/i,
-  color: /^color\s*\(/i,
-} as const;
+export function registerParser(pattern: RegExp, parse: ColorParserFn): void {
+  parserRegistry.push({ pattern, parse });
+}
+
+/**
+ * Clears the parser registry.
+ * This is primarily used for testing purposes.
+ * @internal
+ */
+export function clearParserRegistry(): void {
+  parserRegistry.length = 0;
+}
 
 /**
  * Validates hex color string format
@@ -138,39 +156,13 @@ function isValidChromaKitV1(input: string): boolean {
 /**
  * Determines the appropriate parser for a CSS color string
  */
-function getCSSColorParser(input: string): ((input: string) => Color) | null {
+function getCSSColorParser(input: string): ColorParserFn | null {
   const trimmed = input.trim().toLowerCase();
 
-  if (COLOR_PATTERNS.rgb.test(trimmed)) {
-    return srgbFromCSSString;
-  }
-  if (COLOR_PATTERNS.hsl.test(trimmed)) {
-    return hslFromCSSString;
-  }
-  if (COLOR_PATTERNS.hwb.test(trimmed)) {
-    return hwbFromCSSString;
-  }
-  if (COLOR_PATTERNS.hsv.test(trimmed)) {
-    return hsvFromCSSString;
-  }
-  if (COLOR_PATTERNS.lab.test(trimmed)) {
-    return labFromCSSString;
-  }
-  if (COLOR_PATTERNS.lch.test(trimmed)) {
-    return lchFromCSSString;
-  }
-  if (COLOR_PATTERNS.oklab.test(trimmed)) {
-    return oklabFromCSSString;
-  }
-  if (COLOR_PATTERNS.oklch.test(trimmed)) {
-    return oklchFromCSSString;
-  }
-  if (COLOR_PATTERNS.color.test(trimmed)) {
-    if (trimmed.includes('xyz-')) {
-      return xyzFromCSSString;
+  for (const entry of parserRegistry) {
+    if (entry.pattern.test(trimmed)) {
+      return entry.parse;
     }
-    // Could add more color() variants here
-    throw new SyntaxError('Generic CSS Color 4 parsing not implemented yet');
   }
 
   return null;
@@ -184,13 +176,28 @@ function getCSSColorParser(input: string): ((input: string) => Color) | null {
  * 2. Recently parsed strings are retrieved from a target-space-aware hot cache
  * 3. Hex strings (e.g., "#FF0000") are validated and parsed via a fast path
  * 4. ChromaKit's own serialization format is validated and handled efficiently
- * 5. CSS color strings are parsed based on pattern matching
+ * 5. CSS color strings are parsed based on registered parsers
+ *
+ * Note: Before parsing CSS color strings, you must register the appropriate parsers.
+ * You can either register all parsers at once:
+ * ```
+ * import { registerParsers } from './semantics/registerParsers';
+ * registerParsers();
+ * ```
+ *
+ * Or register only the parsers you need for better tree shaking:
+ * ```
+ * import { registerSRGBParser, registerHSLParser } from './semantics/registerParsers';
+ * registerSRGBParser();
+ * registerHSLParser();
+ * ```
  *
  * @param input A color string or Color object to parse/convert
  * @param targetSpace The destination color space
  * @returns A Color object in the specified target space
  * @throws {TypeError} If input is null, undefined, or invalid type
  * @throws {SyntaxError} If the input string format is invalid or unsupported
+ * @throws {Error} If no parsers are registered when trying to parse a CSS color string
  */
 export function parseColor<T extends ColorSpace>(
   input: string | Color,
@@ -243,6 +250,14 @@ export function parseColor<T extends ColorSpace>(
     }
     // CSS color string parsing
     else {
+      if (parserRegistry.length === 0) {
+        throw new Error(
+          `No valid parser was found for the supplied input.` +
+          `\nIf you're using the functional APIs, use direct parsers instead, like parseLabFromCSSString().` +
+          `\nIf you're using the parseColor() method, parsers must be manually registered.`
+        );
+      }
+
       const parser = getCSSColorParser(trimmedInput);
       if (!parser) {
         throw new SyntaxError(`Unsupported color format: ${trimmedInput}`);

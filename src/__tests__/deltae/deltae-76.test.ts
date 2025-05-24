@@ -1,4 +1,4 @@
-import '../../conversion/register-conversions';
+import '../../conversion/register-all-conversions';
 
 import { describe, expect, it } from 'vitest';
 import { deltaE76 } from '../../deltae/deltae-76';

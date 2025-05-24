@@ -1,4 +1,5 @@
-﻿import './conversion/register-conversions';
+﻿import './conversion/register-all-conversions';
+import './semantics/register-all-parsers';
 
 export {
   srgb,

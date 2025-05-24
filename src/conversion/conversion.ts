@@ -142,8 +142,8 @@ function findConversionPath(from: string, to: string): string[] | null {
  */
 const buildConversionError = (from: string, to: string): string =>
     `No conversion path could be found from ${from} to ${to}.` +
-    `\nConversions must be manually registered when using the procedural API.` +
-    `\nIf you're using the to() methods, Use direct conversions instead, like rgbToOKLCh().`;
+    `\nIf you're using the functional APIs, use direct conversions instead, like rgbToOKLCh().` +
+    `\nIf you're using the to() methods, conversions must be manually registered.`;
 
 /**
  * Gets a conversion function that converts from one color space to another.

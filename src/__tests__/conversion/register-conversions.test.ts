@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { registerAllConversions } from '../../conversion/register-conversions';
+import { registerAllConversions } from '../../conversion/register-all-conversions';
 import * as conversionModule from '../../conversion/conversion';
 import { clearConversionRegistry } from '../../conversion/conversion';
 import { srgb } from '../../models/srgb';

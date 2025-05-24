@@ -93,6 +93,27 @@ const greenHSL = hsl(120, 1, 0.5);
 const blueLab = lab(30, 20, -80);
 ```
 
+### Color Parsing
+
+ChromaKit provides a flexible system for parsing color strings. For better tree shaking and bundle size optimization, parsers are registered on demand:
+
+```js
+import { parseColor } from '@dragonspark/chromakit';
+import { registerSRGBParser, registerHSLParser, registerParsers } from '@dragonspark/chromakit/semantics/registerParsers';
+
+// Register only the parsers you need
+registerSRGBParser();
+registerHSLParser();
+
+// Or register all parsers at once
+// registerParsers();
+
+// Parse colors from strings
+const red = parseColor('#ff0000', 'srgb');           // Hex colors work without registration
+const blue = parseColor('rgb(0, 0, 255)', 'srgb');   // Requires sRGB parser registration
+const green = parseColor('hsl(120, 100%, 50%)', 'hsl'); // Requires HSL parser registration
+```
+
 ### Color Conversion
 
 ```js

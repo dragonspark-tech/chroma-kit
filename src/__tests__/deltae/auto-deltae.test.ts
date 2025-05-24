@@ -1,4 +1,4 @@
-import '../../conversion/register-conversions';
+import '../../conversion/register-all-conversions';
 
 import { describe, expect, it, vi, afterEach } from 'vitest';
 import { deltaE, type DeltaEAlgorithm } from '../../deltae/auto-deltae';
