@@ -1,6 +1,6 @@
 <p align="center">
     <a href="#">
-        <img alt="ChromaKit" src="https://github.com/user-attachments/assets/77a0c638-637e-48e3-918e-91de391f76a0" width="100%" />
+        <img alt="ChromaKit" src="./assets/gh_banner.png" width="100%" />
     </a>
 </p>
 
