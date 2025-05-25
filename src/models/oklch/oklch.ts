@@ -49,7 +49,7 @@ export const oklchToCSSString = (color: OKLChColor): string => {
 
   const lFormatted = (l * 100).toFixed(2);
   const cFormatted = c.toFixed(3);
-  const hFormatted = h.toFixed(2);
+  const hFormatted = h.toFixed(3);
 
   return `oklch(${lFormatted}% ${cFormatted} ${hFormatted}${alpha !== undefined ? ` / ${alpha.toFixed(3)}` : ''})`;
 };

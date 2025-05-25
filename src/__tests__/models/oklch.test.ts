@@ -89,12 +89,12 @@ describe('OKLCh Color Model', () => {
   describe('oklchToCSSString', () => {
     it('should convert an OKLCh color to a CSS string', () => {
       const color = oklch(0.5, 0.2, 270);
-      expect(oklchToCSSString(color)).toBe('oklch(50.00% 0.200 270.00)');
+      expect(oklchToCSSString(color)).toBe('oklch(50.00% 0.200 270.000)');
     });
 
     it('should include alpha in the CSS string when alpha is defined', () => {
       const color = oklch(0.5, 0.2, 270, 0.8);
-      expect(oklchToCSSString(color)).toBe('oklch(50.00% 0.200 270.00 / 0.800)');
+      expect(oklchToCSSString(color)).toBe('oklch(50.00% 0.200 270.000 / 0.800)');
     });
   });
 
