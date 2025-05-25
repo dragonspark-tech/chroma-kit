@@ -7,6 +7,9 @@ export default defineConfig({
     'src/index.ts',
     'src/fn.ts',
 
+    'src/plugins/a11y/index.ts',
+    'src/plugins/a11y/fn.ts',
+
     'src/plugins/harmonies/index.ts',
     'src/plugins/harmonies/fn.ts',
 
@@ -15,7 +18,7 @@ export default defineConfig({
   format: ['esm'],
   external: ['vitest', '@vitest/ui', '@types/node'],
   target: 'es6',
-  dts: false,
-  experimentalDts: true,
+  dts: true,
+  experimentalDts: false,
   minify: true
 });

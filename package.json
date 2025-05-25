@@ -37,22 +37,41 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": [
-      {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js",
-        "require": "./dist/index.js"
-      },
-      "./dist/index.js"
-    ],
-    "./fn": [
-      {
-        "types": "./dist/fn.d.ts",
-        "import": "./dist/fn.js",
-        "require": "./dist/fn.js"
-      },
-      "./dist/fn.js"
-    ],
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./fn": {
+      "types": "./dist/fn.d.ts",
+      "import": "./dist/fn.js",
+      "require": "./dist/fn.js"
+    },
+    "./plugins/a11y": {
+      "types": "./dist/plugins/a11y/index.d.ts",
+      "import": "./dist/plugins/a11y/index.js",
+      "require": "./dist/plugins/a11y/index.js"
+    },
+    "./plugins/a11y/fn": {
+      "types": "./dist/plugins/a11y/fn.d.ts",
+      "import": "./dist/plugins/a11y/fn.js",
+      "require": "./dist/plugins/a11y/fn.js"
+    },
+    "./plugins/harmonies": {
+      "types": "./dist/plugins/harmonies/index.d.ts",
+      "import": "./dist/plugins/harmonies/index.js",
+      "require": "./dist/plugins/harmonies/index.js"
+    },
+    "./plugins/harmonies/fn": {
+      "types": "./dist/plugins/harmonies/fn.d.ts",
+      "import": "./dist/plugins/harmonies/fn.js",
+      "require": "./dist/plugins/harmonies/fn.js"
+    },
+    "./plugins/tailwind": {
+      "types": "./dist/plugins/tailwind/index.d.ts",
+      "import": "./dist/plugins/tailwind/index.js",
+      "require": "./dist/plugins/tailwind/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -62,9 +81,10 @@
     "dist/index.js",
     "src/conversion/register-all-conversions.ts",
     "src/semantics/register-all-parsers.ts",
-
-    "dist/extensions/harmonies/index.js",
-    "src/extensions/harmonies/index.ts"
+    "dist/plugins/harmonies/index.js",
+    "src/plugins/harmonies/index.ts",
+    "dist/plugins/a11y/index.js",
+    "src/plugins/a11y/index.ts"
   ],
   "scripts": {
     "build": "rimraf ./dist ./tsup && tsup --config tsup.config.ts && rimraf .tsup",
