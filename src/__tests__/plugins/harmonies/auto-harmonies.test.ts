@@ -13,7 +13,7 @@ import {
 } from '../../../plugins/harmonies/src/harmonies';
 import { ColorSpace } from '../../../foundation';
 
-describe('Auto Harmonies', () => {
+describe('Harmonies Plugin - Automatic', () => {
   // Test color for all tests
   const testColor = hsl(120, 0.5, 0.6);
   const testColorString = 'hsl(120, 50%, 60%)';
