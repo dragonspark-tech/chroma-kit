@@ -45,7 +45,7 @@ pnpm add @dragonspark/chroma-kit
 ```
 
 ```js
-import { rgb, deltaE } from '@dragonspark/chromakit';
+import { rgb, deltaE } from '@dragonspark/chroma-kit';
 
 // Create colors
 const red = rgb(1, 0, 0);
@@ -82,10 +82,12 @@ Each color space is implemented with meticulous attention to the underlying math
 
 ## 🧩 API
 
+> You can browse our detailed API docs in [https://chromakit-docs.pages.dev/](https://chromakit-docs.pages.dev/)!
+
 ### Color Creation
 
 ```js
-import { rgb, hsl, lab } from '@dragonspark/chromakit';
+import { rgb, hsl, lab } from '@dragonspark/chroma-kit';
 
 // Create colors in different spaces
 const redRGB = rgb(1, 0, 0);
@@ -98,15 +100,16 @@ const blueLab = lab(30, 20, -80);
 ChromaKit provides a flexible system for parsing color strings. For better tree shaking and bundle size optimization, parsers are registered on demand:
 
 ```js
-import { parseColor } from '@dragonspark/chromakit';
-import { registerSRGBParser, registerHSLParser, registerParsers } from '@dragonspark/chromakit/semantics/registerParsers';
+import { parseColor } from '@dragonspark/chroma-kit';
+import { registerSRGBParser, registerHSLParser } from '@dragonspark/chroma-kit/semantics/default-parsers';
+import { registerAllParsers } from '@dragonspark/chroma-kit/semantics/register-all-parsers';
 
 // Register only the parsers you need
 registerSRGBParser();
 registerHSLParser();
 
 // Or register all parsers at once
-// registerParsers();
+// registerAllParsers();
 
 // Parse colors from strings
 const red = parseColor('#ff0000', 'rgb');           // Hex colors work without registration
@@ -117,7 +120,7 @@ const green = parseColor('hsl(120, 100%, 50%)', 'hsl'); // Requires HSL parser r
 ### Color Conversion
 
 ```js
-import { rgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chroma-kit';
 
 const color = rgb(1, 0, 0);
 
@@ -132,7 +135,7 @@ const lchColor = color.to('lch');
 The perception of color difference is a fascinating and complex area of color science. ChromaKit implements six different Delta E algorithms, each with its own strengths and applications:
 
 ```js
-import { rgb, deltaE } from '@dragonspark/chromakit';
+import { rgb, deltaE } from '@dragonspark/chroma-kit';
 
 const burgundy = rgb(0.5, 0.1, 0.2);
 const maroon = rgb(0.4, 0.1, 0.15);
@@ -155,7 +158,7 @@ Each algorithm has been implemented with careful attention to the original resea
 Contrast is crucial for accessibility, readability, and visual design. ChromaKit offers six different contrast algorithms, each providing unique insights:
 
 ```js
-import { rgb, contrast } from '@dragonspark/chromakit';
+import { rgb, contrast } from '@dragonspark/chroma-kit';
 
 const navy = rgb(0.05, 0.05, 0.3);
 const cream = rgb(0.98, 0.96, 0.86);
@@ -179,7 +182,7 @@ These algorithms allow you to evaluate contrast not just for accessibility compl
 ChromaKit implements precise color science standards including CIE standard illuminants:
 
 ```js
-import { rgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chroma-kit';
 
 // Convert a color to XYZ under different illuminants
 const color = rgb(0.8, 0.4, 0.2);
@@ -199,7 +202,7 @@ The library includes precise implementations of standard illuminants like D65 (d
 ### String Serialization
 
 ```js
-import { rgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chroma-kit';
 
 const color = rgb(1, 0, 0);
 
@@ -220,7 +223,7 @@ ChromaKit goes beyond basic color manipulation to offer advanced features for pr
 Colors appear differently under different lighting conditions. ChromaKit implements precise chromatic adaptation algorithms to simulate how colors transform across different illuminants:
 
 ```js
-import { rgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chroma-kit';
 
 // A warm orange color under standard daylight (D65)
 const orange = rgb(0.9, 0.6, 0.1);
@@ -245,7 +248,7 @@ console.log(`The color appears more ${adaptedColor.r > orange.r ? 'reddish' : 'y
 As displays evolve to support higher brightness levels and wider color gamuts, ChromaKit is ready with support for HDR color spaces:
 
 ```js
-import { rgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chroma-kit';
 
 // A vibrant red in standard dynamic range
 const sdrRed = rgb(1, 0, 0);
@@ -265,7 +268,7 @@ console.log('Perceptual lightness increases with display capability');
 ChromaKit's perceptually uniform color spaces allow for sophisticated color appearance modeling:
 
 ```js
-import { rgb, deltaE } from '@dragonspark/chromakit';
+import { rgb, deltaE } from '@dragonspark/chroma-kit';
 
 // Create a palette of colors
 const baseColor = rgb(0.2, 0.4, 0.6);
@@ -282,6 +285,88 @@ const differences = variations.map(color =>
 );
 
 console.log('Perceptual differences from base color:', differences);
+```
+
+## 🔌 Plugins
+
+ChromaKit includes several plugins that extend its functionality:
+
+### Accessibility (a11y)
+
+The accessibility plugin provides tools for ensuring your colors meet accessibility standards:
+
+```js
+import { rgb } from '@dragonspark/chroma-kit';
+import { checkAPCAContrast, checkWCAG21Contrast, getOptimalColorForContrast } from '@dragonspark/chroma-kit/plugins/a11y';
+
+// Check if colors meet accessibility standards
+const text = rgb(0.1, 0.1, 0.1);
+const background = rgb(0.95, 0.95, 0.95);
+
+// Check APCA contrast
+const apcaResult = checkAPCAContrast(text, background, 'normal-text');
+console.log(`APCA compliant: ${apcaResult.compliant}`);
+
+// Check WCAG 2.1 contrast
+const wcagResult = checkWCAG21Contrast(text, background, 'AA');
+console.log(`WCAG 2.1 compliant: ${wcagResult.compliant}`);
+
+// Find an optimal color that meets contrast requirements
+const optimalColor = getOptimalColorForContrast(text, background, 'WCAG21', 'AA');
+```
+
+### Color Harmonies
+
+The harmonies plugin provides tools for generating color harmonies:
+
+```js
+import { rgb } from '@dragonspark/chroma-kit';
+import { getComplementary, getAnalogous, getTriadic } from '@dragonspark/chroma-kit/plugins/harmonies';
+
+const color = rgb(0.2, 0.4, 0.8);
+
+// Generate complementary color
+const complementary = getComplementary(color);
+
+// Generate analogous colors
+const analogous = getAnalogous(color);
+
+// Generate triadic colors
+const triadic = getTriadic(color);
+```
+
+### Color Palettes
+
+The palettes plugin provides tools for generating color palettes:
+
+```js
+import { rgb } from '@dragonspark/chroma-kit';
+import { generatePalette } from '@dragonspark/chroma-kit/plugins/palettes';
+
+const baseColor = rgb(0.2, 0.4, 0.8);
+
+// Generate a palette with default settings
+const palette = generatePalette(baseColor);
+
+// Generate a palette with custom settings
+const customPalette = generatePalette(baseColor, {
+  family: 'tailwind',
+  shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
+});
+```
+
+### Tailwind Colors
+
+The tailwind plugin provides Tailwind CSS color utilities:
+
+```js
+import { getTailwindColors } from '@dragonspark/chroma-kit/plugins/tailwind';
+
+// Get all Tailwind colors
+const tailwindColors = getTailwindColors();
+
+// Access specific colors
+const blue500 = tailwindColors.blue[500];
 ```
 
 ## ✨ The ChromaKit Difference
