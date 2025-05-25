@@ -21,7 +21,7 @@ import {
   TRIADIC_HUESHIFT
 } from '../../../plugins/harmonies/src/constants';
 
-describe('Harmonies', () => {
+describe('Harmonies Plugin', () => {
   // Test base color for all tests
   const baseColor = hsl(120, 0.5, 0.6);
 

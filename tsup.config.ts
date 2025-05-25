@@ -9,6 +9,8 @@ export default defineConfig({
 
     'src/plugins/harmonies/index.ts',
     'src/plugins/harmonies/fn.ts',
+
+    'src/plugins/tailwind/index.ts'
   ],
   format: ['esm'],
   external: ['vitest', '@vitest/ui', '@types/node'],
