@@ -16,17 +16,16 @@ import {
   rgbToLCH,
   rgbToOKLab,
   rgbToOKLCh,
-  rgbToXYZ
-} from '../../models/rgb/rgb';
-import {
+  rgbToXYZ,
   applyRGBGammaTransfer,
   applyRGBInverseGammaTransfer,
   delinearizeRGBColor,
   denormalizeRGBColor,
   linearizeRGBColor,
   normalizeRGBColor,
-  rgbFromCSSString
+  rgbFromCSSString, isInSRGB
 } from '../../models/rgb';
+import { oklch, oklchToRGB } from '../../models/oklch';
 
 describe('RGB Color Model', () => {
   // Test rgb factory function
@@ -92,6 +91,27 @@ describe('RGB Color Model', () => {
       expect(() => rgbFromVector([0.5, 0.6, 0.7, 0.8])).toThrow('Invalid vector length');
     });
   });
+
+  describe('isInSRGB', () => {
+    it('should return true for sRGB colors', () => {
+      expect(isInSRGB(rgb(1, 0, 0))).toBe(true);
+      expect(isInSRGB(rgb(0, 0, 1))).toBe(true);
+      expect(isInSRGB(rgb(0, 0, 1))).toBe(true);
+      expect(isInSRGB(rgb(1, 1, 1))).toBe(true);
+    });
+
+    it('should return false for p3 colors', () => {
+      expect(isInSRGB(oklchToRGB(oklch(0.6588, 0.2861, 6.35), false))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.2569, 145.06), false))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.1692, 232.94), false))).toBe(false);
+    });
+
+    it('should return false for REC2020 colors', () => {
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.3447, 6.35), false))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.3541, 152.47), false))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.2507, 214.94), false))).toBe(false);
+    })
+  })
 
   // Test rgbToCSSString function
   describe('rgbToCSSString', () => {

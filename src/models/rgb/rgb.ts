@@ -38,6 +38,21 @@ export interface RGBColor extends ColorBase {
 }
 
 /**
+ * Determines if a given RGBColor object is within the sRGB color space.
+ *
+ * The sRGB color space is defined by having red (r), green (g), and blue (b) components
+ * in the range of 0 to 1, inclusive. Additionally, if an alpha component is defined,
+ * it must also be within the range of 0 to 1, inclusive.
+ *
+ * @param {RGBColor} color - The RGBColor object containing the color components (r, g, b, and optionally alpha).
+ * @returns {boolean} - Returns true if the color is within the sRGB color space; otherwise, false.
+ */
+export const isInSRGB = (color: RGBColor): boolean => {
+  const { r, g, b } = color;
+  return r >= 0 && r <= 1 && g >= 0 && g <= 1 && b >= 0 && b <= 1;
+};
+
+/**
  * Converts an RGB color object to a CSS-compatible string representation.
  *
  * For fully opaque colors, this function returns a hex format by default as it's more compact.
