@@ -9,7 +9,7 @@ import { type Color } from '../../../../foundation';
  * - APCA: Advanced Perceptual Contrast Algorithm
  * - WCAG21: Web Content Accessibility Guidelines 2.1
  */
-type OptimalContrastMethod = 'APCA' | "WCAG21";
+export type OptimalContrastMethod = 'APCA' | "WCAG21";
 
 /**
  * Function type for calculating contrast between two colors

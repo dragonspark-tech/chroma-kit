@@ -1,4 +1,4 @@
-export { checkAPCAContrast } from './src/checks/apca';
-export { checkWCAG21Contrast } from './src/checks/wcag21';
+export { checkAPCAContrast, type APCAContentType } from './src/checks/apca';
+export { checkWCAG21Contrast, type WCAG21ContentType } from './src/checks/wcag21';
 
-export { getOptimalColorForContrast } from './src/utils/optimal-contrast';
+export { getOptimalColorForContrast, type OptimalContrastMethod } from './src/utils/optimal-contrast';
