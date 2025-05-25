@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseV1, serializeV1 } from '../../semantics/serialization';
-import { srgb, sRGBColor } from '../../models/srgb';
+import { rgb, RGBColor } from '../../models/rgb';
 import { xyz, XYZColor } from '../../models/xyz';
 import { hsl, HSLColor } from '../../models/hsl';
 import { hsv, HSVColor } from '../../models/hsv';
@@ -15,18 +15,18 @@ import { IlluminantD65 } from '../../standards/illuminants';
 
 describe('Serialization', () => {
   describe('parseV1', () => {
-    it('should parse a valid sRGB ChromaKit|v1 string', () => {
-      const color = parseV1('ChromaKit|v1 srgb 1 0 0') as sRGBColor;
-      expect(color.space).toBe('srgb');
+    it('should parse a valid RGB ChromaKit|v1 string', () => {
+      const color = parseV1('ChromaKit|v1 rgb 1 0 0') as RGBColor;
+      expect(color.space).toBe('rgb');
       expect(color.r).toBe(1);
       expect(color.g).toBe(0);
       expect(color.b).toBe(0);
       expect(color.alpha).toBeUndefined();
     });
 
-    it('should parse a valid sRGB ChromaKit|v1 string with alpha', () => {
-      const color = parseV1('ChromaKit|v1 srgb 1 0 0 / 0.5') as sRGBColor;
-      expect(color.space).toBe('srgb');
+    it('should parse a valid RGB ChromaKit|v1 string with alpha', () => {
+      const color = parseV1('ChromaKit|v1 rgb 1 0 0 / 0.5') as RGBColor;
+      expect(color.space).toBe('rgb');
       expect(color.r).toBe(1);
       expect(color.g).toBe(0);
       expect(color.b).toBe(0);
@@ -123,16 +123,16 @@ describe('Serialization', () => {
     });
 
     it('should handle extra whitespace', () => {
-      const color = parseV1('  ChromaKit|v1   srgb   1   0   0  ') as sRGBColor;
-      expect(color.space).toBe('srgb');
+      const color = parseV1('  ChromaKit|v1   rgb   1   0   0  ') as RGBColor;
+      expect(color.space).toBe('rgb');
       expect(color.r).toBe(1);
       expect(color.g).toBe(0);
       expect(color.b).toBe(0);
     });
 
     it('should be case-insensitive for the tag', () => {
-      const color = parseV1('chromakit|v1 srgb 1 0 0') as sRGBColor;
-      expect(color.space).toBe('srgb');
+      const color = parseV1('chromakit|v1 rgb 1 0 0') as RGBColor;
+      expect(color.space).toBe('rgb');
       expect(color.r).toBe(1);
       expect(color.g).toBe(0);
       expect(color.b).toBe(0);
@@ -140,16 +140,16 @@ describe('Serialization', () => {
   });
 
   describe('serializeV1', () => {
-    it('should serialize an sRGB color', () => {
-      const color = srgb(1, 0, 0);
+    it('should serialize an RGB color', () => {
+      const color = rgb(1, 0, 0);
       const serialized = serializeV1(color);
-      expect(serialized).toBe('ChromaKit|v1 srgb 1 0 0');
+      expect(serialized).toBe('ChromaKit|v1 rgb 1 0 0');
     });
 
-    it('should serialize an sRGB color with alpha', () => {
-      const color = srgb(1, 0, 0, 0.5);
+    it('should serialize an RGB color with alpha', () => {
+      const color = rgb(1, 0, 0, 0.5);
       const serialized = serializeV1(color);
-      expect(serialized).toBe('ChromaKit|v1 srgb 1 0 0 / 0.5');
+      expect(serialized).toBe('ChromaKit|v1 rgb 1 0 0 / 0.5');
     });
 
     it('should serialize an HSL color', () => {
@@ -213,9 +213,9 @@ describe('Serialization', () => {
     });
 
     it('should round-trip correctly', () => {
-      const original = srgb(1, 0, 0, 0.5) as sRGBColor;
+      const original = rgb(1, 0, 0, 0.5) as RGBColor;
       const serialized = serializeV1(original);
-      const parsed = parseV1(serialized) as sRGBColor;
+      const parsed = parseV1(serialized) as RGBColor;
 
       expect(parsed.space).toBe(original.space);
       expect(parsed.r).toBe(original.r);

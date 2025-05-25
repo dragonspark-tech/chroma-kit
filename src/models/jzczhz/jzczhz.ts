@@ -11,7 +11,7 @@ import {
   jzazbzToXYZ
 } from '../jzazbz';
 import { XYZColor } from '../xyz';
-import { sRGBColor } from '../srgb';
+import { RGBColor } from '../rgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
@@ -115,9 +115,9 @@ export const jzczhzFromVector = (v: number[], alpha?: number): JzCzHzColor => {
  *
  * @param {JzCzHzColor} color - The JzCzHz color to convert
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
- * @returns {sRGBColor} The color in RGB space
+ * @returns {RGBColor} The color in RGB space
  */
-export const jzczhzToRGB = (color: JzCzHzColor, peakLuminance: number = 10000): sRGBColor =>
+export const jzczhzToRGB = (color: JzCzHzColor, peakLuminance: number = 10000): RGBColor =>
   jzazbzToRGB(jzczhzToJzAzBz(color), peakLuminance);
 
 /**

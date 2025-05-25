@@ -1,15 +1,15 @@
 import {
-  srgb,
-  sRGBColor,
-  srgbToHWB,
-  srgbToJzAzBz,
-  srgbToJzCzHz,
-  srgbToLab,
-  srgbToLCH,
-  srgbToOKLab,
-  srgbToOKLCh,
-  srgbToXYZ
-} from '../srgb';
+  rgb,
+  RGBColor,
+  rgbToHWB,
+  rgbToJzAzBz,
+  rgbToJzCzHz,
+  rgbToLab,
+  rgbToLCH,
+  rgbToOKLab,
+  rgbToOKLCh,
+  rgbToXYZ
+} from '../rgb';
 import { hsl, HSLColor } from '../hsl';
 import { XYZColor } from '../xyz';
 import { LabColor } from '../lab';
@@ -77,9 +77,9 @@ export const hsvFromVector = (v: number[], alpha?: number) => {
  * This function implements the standard algorithm for converting from HSV to RGB.
  *
  * @param {HSVColor} color - The HSV color to convert
- * @returns {sRGBColor} The color in RGB space
+ * @returns {RGBColor} The color in RGB space
  */
-export const hsvToRGB = (color: HSVColor): sRGBColor => {
+export const hsvToRGB = (color: HSVColor): RGBColor => {
   // Normalize hue to [0, 360) range
   let h = ((color.h % 360) + 360) % 360;
   let [s, v] = [color.s, color.v];
@@ -112,7 +112,7 @@ export const hsvToRGB = (color: HSVColor): sRGBColor => {
     b = x;
   }
 
-  return srgb(r + m, g + m, b + m, color.alpha);
+  return rgb(r + m, g + m, b + m, color.alpha);
 };
 
 /**
@@ -158,7 +158,7 @@ export const hsvToHWB = (color: HSVColor): HWBColor =>
  * @param {HSVColor} color - The HSV color to convert
  * @returns {XYZColor} The color in XYZ space
  */
-export const hsvToXYZ = (color: HSVColor): XYZColor => srgbToXYZ(hsvToRGB(color));
+export const hsvToXYZ = (color: HSVColor): XYZColor => rgbToXYZ(hsvToRGB(color));
 
 /**
  * Converts an HSV color to the CIE Lab color space.
@@ -169,7 +169,7 @@ export const hsvToXYZ = (color: HSVColor): XYZColor => srgbToXYZ(hsvToRGB(color)
  * @param {HSVColor} color - The HSV color to convert
  * @returns {LabColor} The color in Lab space
  */
-export const hsvToLab = (color: HSVColor): LabColor => srgbToLab(hsvToRGB(color));
+export const hsvToLab = (color: HSVColor): LabColor => rgbToLab(hsvToRGB(color));
 
 /**
  * Converts an HSV color to the CIE LCh color space.
@@ -181,7 +181,7 @@ export const hsvToLab = (color: HSVColor): LabColor => srgbToLab(hsvToRGB(color)
  * @param {HSVColor} color - The HSV color to convert
  * @returns {LChColor} The color in LCh space
  */
-export const hsvToLCh = (color: HSVColor): LChColor => srgbToLCH(hsvToRGB(color));
+export const hsvToLCh = (color: HSVColor): LChColor => rgbToLCH(hsvToRGB(color));
 
 /**
  * Converts an HSV color to the OKLab color space.
@@ -195,7 +195,7 @@ export const hsvToLCh = (color: HSVColor): LChColor => srgbToLCH(hsvToRGB(color)
  * @returns {OKLabColor} The color in OKLab space
  */
 export const hsvToOKLab = (color: HSVColor, useChromaticAdaptation: boolean = false): OKLabColor =>
-  srgbToOKLab(hsvToRGB(color), useChromaticAdaptation);
+  rgbToOKLab(hsvToRGB(color), useChromaticAdaptation);
 
 /**
  * Converts an HSV color to the OKLCh color space.
@@ -209,7 +209,7 @@ export const hsvToOKLab = (color: HSVColor, useChromaticAdaptation: boolean = fa
  * @returns {OKLChColor} The color in OKLCh space
  */
 export const hsvToOKLCh = (color: HSVColor, useChromaticAdaptation: boolean = false): OKLChColor =>
-  srgbToOKLCh(hsvToRGB(color), useChromaticAdaptation);
+  rgbToOKLCh(hsvToRGB(color), useChromaticAdaptation);
 
 /**
  * Converts an HSV color to the JzAzBz color space.
@@ -222,7 +222,7 @@ export const hsvToOKLCh = (color: HSVColor, useChromaticAdaptation: boolean = fa
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
 export const hsvToJzAzBz = (color: HSVColor, peakLuminance: number = 10000): JzAzBzColor =>
-  srgbToJzAzBz(hsvToRGB(color), peakLuminance);
+  rgbToJzAzBz(hsvToRGB(color), peakLuminance);
 
 /**
  * Converts an HSV color to the JzCzHz color space.
@@ -237,4 +237,4 @@ export const hsvToJzAzBz = (color: HSVColor, peakLuminance: number = 10000): JzA
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
 export const hsvToJzCzHz = (color: HSVColor, peakLuminance: number = 10000): JzCzHzColor =>
-  srgbToJzCzHz(hsvToRGB(color), peakLuminance);
+  rgbToJzCzHz(hsvToRGB(color), peakLuminance);

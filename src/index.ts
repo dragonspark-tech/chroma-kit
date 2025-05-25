@@ -2,8 +2,8 @@
 import './semantics/register-all-parsers';
 
 export {
-  srgb,
-  srgbFromVector,
+  rgb,
+  rgbFromVector,
   hsl,
   hslFromVector,
   hsv,

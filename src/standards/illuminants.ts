@@ -52,7 +52,7 @@ export const IlluminantD50: Illuminant = {
  * Illuminant D65 should be used in all colorimetric calculations requiring representative outdoor daylight,
  * unless there are specific reasons for using a different spectral power distribution.
  *
- * It's the illuminant used in the sRGB color space.
+ * It's the illuminant used in the RGB color space.
  *
  * @see https://cie.co.at/publications/colorimetry-part-2-cie-standard-illuminants-0
  */

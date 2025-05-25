@@ -4,7 +4,7 @@
  * with the conversion system, enabling automatic path finding between color spaces.
  *
  * The registered conversions form a graph where:
- * - Nodes are color spaces (srgb, xyz, lab, etc.)
+ * - Nodes are color spaces (rgb, xyz, lab, etc.)
  * - Edges are direct conversion functions between spaces
  *
  * This graph structure allows the conversion system to find paths between any two
@@ -12,7 +12,7 @@
  */
 
 import { registerConversion, buildConversionGraph } from './conversion';
-import { srgbToHSL, srgbToHSV, srgbToHWB, srgbToXYZ } from '../models/srgb';
+import { rgbToHSL, rgbToHSV, rgbToHWB, rgbToXYZ } from '../models/rgb';
 import {
   xyzToJzAzBz,
   xyzToJzCzHz,
@@ -46,25 +46,25 @@ import { hwbToRGB } from '../models/hwb';
  */
 export function registerAllConversions(): void {
   // RGB color space conversions
-  registerConversion('srgb', 'xyz', srgbToXYZ);
-  registerConversion('srgb', 'hsl', srgbToHSL);
-  registerConversion('srgb', 'hsv', srgbToHSV);
-  registerConversion('srgb', 'hwb', srgbToHWB);
+  registerConversion('rgb', 'xyz', rgbToXYZ);
+  registerConversion('rgb', 'hsl', rgbToHSL);
+  registerConversion('rgb', 'hsv', rgbToHSV);
+  registerConversion('rgb', 'hwb', rgbToHWB);
 
   // HSL color space conversions
-  registerConversion('hsl', 'srgb', hslToRGB);
+  registerConversion('hsl', 'rgb', hslToRGB);
   registerConversion('hsl', 'hsv', hslToHSV);
 
   // HSV color space conversions
-  registerConversion('hsv', 'srgb', hsvToRGB);
+  registerConversion('hsv', 'rgb', hsvToRGB);
   registerConversion('hsv', 'hsl', hsvToHSL);
   registerConversion('hsv', 'hwb', hsvToHWB);
 
   // HWB color space conversions
-  registerConversion('hwb', 'srgb', hwbToRGB);
+  registerConversion('hwb', 'rgb', hwbToRGB);
 
   // XYZ color space conversions (central hub for many conversions)
-  registerConversion('xyz', 'srgb', xyzToRGB);
+  registerConversion('xyz', 'rgb', xyzToRGB);
   registerConversion('xyz', 'lab', xyzToLab);
   registerConversion('xyz', 'lch', xyzToLCh);
   registerConversion('xyz', 'oklab', xyzToOKLab);

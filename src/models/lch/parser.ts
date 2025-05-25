@@ -12,7 +12,7 @@ import { ColorStringParser } from '../../semantics/colorParser';
  *
  * The function handles:
  * - Lightness as a percentage (0-100%)
- * - Chroma as a number (no specific range, but typically 0-230 for sRGB gamut)
+ * - Chroma as a number (no specific range, but typically 0-230 for RGB gamut)
  * - Hue as an angle in degrees (0-360)
  * - Optional alpha value (0-1 or 0-100%)
  * - Both comma-separated and space-separated formats

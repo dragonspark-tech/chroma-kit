@@ -21,7 +21,7 @@ import {
 } from '../../models/jzazbz';
 import { jzazbzFromCSSString } from '../../models/jzazbz/parser';
 import { IlluminantD65 } from '../../standards/illuminants';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 import { xyz } from '../../models/xyz';
 
 describe('JzAzBz Color Model', () => {
@@ -237,8 +237,8 @@ describe('JzAzBz Color Model', () => {
 
     describe('fluent conversion', () => {
       it('should convert dynamically into the target color space', () => {
-        const rgb = testColor.to('srgb');
-        expect(rgb.space).toBe('srgb');
+        const rgb = testColor.to('rgb');
+        expect(rgb.space).toBe('rgb');
         expect(typeof rgb.r).toBe('number');
         expect(typeof rgb.g).toBe('number');
         expect(typeof rgb.b).toBe('number');
@@ -248,7 +248,7 @@ describe('JzAzBz Color Model', () => {
     describe('jzazbzToRGB', () => {
       it('should convert JzAzBz to RGB with default peak luminance', () => {
         const rgb = jzazbzToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);
@@ -259,7 +259,7 @@ describe('JzAzBz Color Model', () => {
 
       it('should convert JzAzBz to RGB with custom peak luminance', () => {
         const rgb = jzazbzToRGB(testColor, 1000);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
       });
 
       it('should preserve alpha', () => {
@@ -530,21 +530,21 @@ describe('JzAzBz Color Model', () => {
       expect(white.bz).toBeCloseTo(0, 2);
     });
 
-    it('should convert sRGB primaries correctly', () => {
-      // Red in sRGB
-      const red = srgb(1, 0, 0).to('jzazbz') as JzAzBzColor;
+    it('should convert RGB primaries correctly', () => {
+      // Red in RGB
+      const red = rgb(1, 0, 0).to('jzazbz') as JzAzBzColor;
       expect(red.jz).toBeGreaterThan(0);
       expect(red.az).toBeGreaterThan(0);
       expect(red.bz).toBeGreaterThan(0);
 
-      // Green in sRGB
-      const green = srgb(0, 1, 0).to('jzazbz') as JzAzBzColor;
+      // Green in RGB
+      const green = rgb(0, 1, 0).to('jzazbz') as JzAzBzColor;
       expect(green.jz).toBeGreaterThan(0);
       expect(green.az).toBeLessThan(0);
       expect(green.bz).toBeGreaterThan(0);
 
-      // Blue in sRGB
-      const blue = srgb(0, 0, 1).to('jzazbz') as JzAzBzColor;
+      // Blue in RGB
+      const blue = rgb(0, 0, 1).to('jzazbz') as JzAzBzColor;
       expect(blue.jz).toBeGreaterThan(0);
       // In the JzAzBz color space, blue has a negative az value
       expect(blue.az).toBeLessThan(0);

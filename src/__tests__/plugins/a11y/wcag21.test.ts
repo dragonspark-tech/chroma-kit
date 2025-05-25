@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { checkWCAG21Contrast, isContrastWCAG21Compliant, WCAG21ContentType } from '../../../plugins/a11y/src/checks/wcag21';
-import { srgb } from '../../../models/srgb';
+import { rgb } from '../../../models/rgb';
 import {
   WCAG21_AA_NORMAL_MIN_RATIO,
   WCAG21_AA_LARGE_MIN_RATIO,
@@ -62,8 +62,8 @@ describe('A11y Plugin - WCAG 2.1 Checks', () => {
 
   describe('checkWCAG21Contrast', () => {
     it('should correctly check contrast for high contrast colors', () => {
-      const black = srgb(0, 0, 0);
-      const white = srgb(1, 1, 1);
+      const black = rgb(0, 0, 0);
+      const white = rgb(1, 1, 1);
 
       // Black/white contrast should pass all levels
       expect(checkWCAG21Contrast(black, white, 'AANormal')).toBe(true);
@@ -80,8 +80,8 @@ describe('A11y Plugin - WCAG 2.1 Checks', () => {
 
     it('should correctly identify medium contrast colors', () => {
       // Create colors with medium contrast (around 4.5:1)
-      const darkGray = srgb(0.2, 0.2, 0.2);
-      const lightGray = srgb(0.7, 0.7, 0.7);
+      const darkGray = rgb(0.2, 0.2, 0.2);
+      const lightGray = rgb(0.7, 0.7, 0.7);
 
       // These should pass AA Large and AAA Large but might fail AAA Normal
       // Let's test and see
@@ -94,8 +94,8 @@ describe('A11y Plugin - WCAG 2.1 Checks', () => {
 
     it('should correctly identify insufficient contrast', () => {
       // Create colors with low contrast
-      const mediumGray = srgb(0.5, 0.5, 0.5);
-      const slightlyLighterGray = srgb(0.6, 0.6, 0.6);
+      const mediumGray = rgb(0.5, 0.5, 0.5);
+      const slightlyLighterGray = rgb(0.6, 0.6, 0.6);
 
       // These colors should fail all content types due to low contrast
       expect(checkWCAG21Contrast(mediumGray, slightlyLighterGray, 'AANormal')).toBe(false);
@@ -115,22 +115,22 @@ describe('A11y Plugin - WCAG 2.1 Checks', () => {
 
     it('should handle edge cases', () => {
       // Same color should always fail (contrast = 1)
-      const gray = srgb(0.5, 0.5, 0.5);
+      const gray = rgb(0.5, 0.5, 0.5);
       expect(checkWCAG21Contrast(gray, gray, 'AANormal')).toBe(false);
       expect(checkWCAG21Contrast(gray, gray, 'AALarge')).toBe(false);
       expect(checkWCAG21Contrast(gray, gray, 'AAANormal')).toBe(false);
       expect(checkWCAG21Contrast(gray, gray, 'AAALarge')).toBe(false);
 
       // Test with colors that have very small difference
-      const barelyDifferentGray = srgb(0.51, 0.51, 0.51);
+      const barelyDifferentGray = rgb(0.51, 0.51, 0.51);
       expect(checkWCAG21Contrast(gray, barelyDifferentGray, 'AANormal')).toBe(false);
     });
 
     it('should handle colors with different RGB components', () => {
       // Test with colors that have different RGB values
-      const red = srgb(1, 0, 0);
-      const green = srgb(0, 1, 0);
-      const blue = srgb(0, 0, 1);
+      const red = rgb(1, 0, 0);
+      const green = rgb(0, 1, 0);
+      const blue = rgb(0, 0, 1);
 
       // Test various combinations
       expect(checkWCAG21Contrast(red, green, 'AANormal')).not.toBeUndefined();

@@ -63,8 +63,8 @@ export const contrast = (
   algorithm: ContrastAlgorithm = 'APCA'
 ): number => {
   // Parse the colors to their appropriate color spaces
-  const fgSRGB = parseColor(foreground, 'srgb');
-  const bgSRGB = parseColor(background, 'srgb');
+  const fgSRGB = parseColor(foreground, 'rgb');
+  const bgSRGB = parseColor(background, 'rgb');
 
   // Check if colors are identical (comparing RGB values)
   const colorsAreIdentical =

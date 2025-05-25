@@ -19,7 +19,7 @@ import {
 } from '../../models/lch';
 import { lchFromCSSString } from '../../models/lch/parser';
 import { lab } from '../../models/lab';
-import { srgb, srgbToXYZ } from '../../models/srgb';
+import { rgb, rgbToXYZ } from '../../models/rgb';
 
 describe('LCh Color Model', () => {
   // Test lch factory function
@@ -214,7 +214,7 @@ describe('LCh Color Model', () => {
     describe('lchToRGB', () => {
       it('should convert LCh to RGB with gamut mapping by default', () => {
         const rgb = lchToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);
@@ -225,7 +225,7 @@ describe('LCh Color Model', () => {
 
       it('should convert LCh to RGB without gamut mapping when specified', () => {
         const rgb = lchToRGB(testColor, false);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
       });
 
       it('should preserve alpha', () => {
@@ -430,7 +430,7 @@ describe('LCh Color Model', () => {
     });
 
     it('should convert primary RGB colors to LCh correctly with illuminant D65', () => {
-      const red = srgb(1, 0, 0).to('lch');
+      const red = rgb(1, 0, 0).to('lch');
 
       expect(red.l).toBeCloseTo(53.2371);
       expect(red.c).toBeCloseTo(104.5500);
@@ -440,8 +440,8 @@ describe('LCh Color Model', () => {
 
     it('should convert primary RGB colors to LCh correctly with illuminant D50', () => {
       // Red
-      const rgbRed = srgb(1, 0, 0);
-      const red = srgbToXYZ(rgbRed, true).to('lch');
+      const rgbRed = rgb(1, 0, 0);
+      const red = rgbToXYZ(rgbRed, true).to('lch');
 
       expect(red.l).toBeCloseTo(54.2905);
       expect(red.c).toBeCloseTo(106.8371);
@@ -449,8 +449,8 @@ describe('LCh Color Model', () => {
       expect(red.illuminant?.name).toBe('D50');
 
       // Green
-      const rgbGreen = srgb(0, 1, 0);
-      const green = srgbToXYZ(rgbGreen, true).to('lch');
+      const rgbGreen = rgb(0, 1, 0);
+      const green = rgbToXYZ(rgbGreen, true).to('lch');
 
       expect(green.l).toBeCloseTo(87.8185);
       expect(green.c).toBeCloseTo(113.3314);
@@ -458,8 +458,8 @@ describe('LCh Color Model', () => {
       expect(green.illuminant?.name).toBe('D50');
 
       // Blue
-      const rgbBlue = srgb(0, 0, 1);
-      const blue = srgbToXYZ(rgbBlue, true).to('lch');
+      const rgbBlue = rgb(0, 0, 1);
+      const blue = rgbToXYZ(rgbBlue, true).to('lch');
 
       expect(blue.l).toBeCloseTo(29.5683);
       expect(blue.c).toBeCloseTo(131.2014);

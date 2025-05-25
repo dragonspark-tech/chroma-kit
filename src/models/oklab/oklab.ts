@@ -1,7 +1,7 @@
 import { OKLAB_LMS_MATRIX, OKLCH_THROUGH_LMS_XYZ_MATRIX } from './constants';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { XYZColor, xyzFromVector, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz';
-import { sRGBColor, srgbToHSL, srgbToHSV, srgbToHWB } from '../srgb';
+import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { JzAzBzColor } from '../jzazbz';
@@ -109,13 +109,13 @@ export const oklabFromVector = (v: number[], alpha?: number): OKLabColor => {
  *
  * This function first converts the OKLab color to XYZ, then from XYZ to RGB.
  * Gamut mapping is performed during the conversion to ensure the resulting
- * color is within the valid sRGB gamut.
+ * color is within the valid RGB gamut.
  *
  * @param {OKLabColor} color - The OKLab color to convert
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
- * @returns {sRGBColor} The color in RGB space
+ * @returns {RGBColor} The color in RGB space
  */
-export const oklabToRGB = (color: OKLabColor, performGamutMapping: boolean = true): sRGBColor =>
+export const oklabToRGB = (color: OKLabColor, performGamutMapping: boolean = true): RGBColor =>
   xyzToRGB(oklabToXYZ(color), performGamutMapping);
 
 /**
@@ -124,14 +124,14 @@ export const oklabToRGB = (color: OKLabColor, performGamutMapping: boolean = tru
  * This function first converts the OKLab color to RGB, then from RGB to HSL.
  * The HSL color space is a cylindrical representation of RGB, using hue,
  * saturation, and lightness components. Gamut mapping is performed during
- * the conversion to ensure the resulting color is within the valid sRGB gamut.
+ * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLabColor} color - The OKLab color to convert
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
 export const oklabToHSL = (color: OKLabColor, performGamutMapping: boolean = true): HSLColor =>
-  srgbToHSL(oklabToRGB(color, performGamutMapping));
+  rgbToHSL(oklabToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from OKLab to HSV color space.
@@ -139,14 +139,14 @@ export const oklabToHSL = (color: OKLabColor, performGamutMapping: boolean = tru
  * This function first converts the OKLab color to RGB, then from RGB to HSV.
  * The HSV color space is a cylindrical representation of RGB, using hue,
  * saturation, and value components. Gamut mapping is performed during
- * the conversion to ensure the resulting color is within the valid sRGB gamut.
+ * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLabColor} color - The OKLab color to convert
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
 export const oklabToHSV = (color: OKLabColor, performGamutMapping: boolean = true): HSVColor =>
-  srgbToHSV(oklabToRGB(color, performGamutMapping));
+  rgbToHSV(oklabToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from OKLab to HWB color space.
@@ -154,14 +154,14 @@ export const oklabToHSV = (color: OKLabColor, performGamutMapping: boolean = tru
  * This function first converts the OKLab color to RGB, then from RGB to HWB.
  * The HWB color space is a cylindrical representation of RGB, using hue,
  * whiteness, and blackness components. Gamut mapping is performed during
- * the conversion to ensure the resulting color is within the valid sRGB gamut.
+ * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLabColor} color - The OKLab color to convert
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
 export const oklabToHWB = (color: OKLabColor, performGamutMapping: boolean = true): HWBColor =>
-  srgbToHWB(oklabToRGB(color, performGamutMapping));
+  rgbToHWB(oklabToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from OKLab to CIE XYZ color space.

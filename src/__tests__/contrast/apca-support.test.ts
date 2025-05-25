@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
-  alphaBlendsRGBColor,
+  alphaBlendRGBColor,
   applyBlackSoftClamp,
   deriveYFromRGBColor,
   inputConformsToClamp
 } from '../../contrast/apca/support';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 import {
   APCA_INPUT_CLAMP_MAX,
   APCA_INPUT_CLAMP_MIN,
@@ -40,9 +40,9 @@ describe('APCA Support Functions', () => {
 
   describe('deriveYFromRGBColor', () => {
     it('should calculate luminance from RGB values', () => {
-      const white = srgb(1, 1, 1);
-      const black = srgb(0, 0, 0);
-      const gray = srgb(0.5, 0.5, 0.5);
+      const white = rgb(1, 1, 1);
+      const black = rgb(0, 0, 0);
+      const gray = rgb(0.5, 0.5, 0.5);
 
       expect(deriveYFromRGBColor(white)).toBeCloseTo(1);
       expect(deriveYFromRGBColor(black)).toBeCloseTo(0);
@@ -51,9 +51,9 @@ describe('APCA Support Functions', () => {
     });
 
     it('should weight RGB channels according to their luminance contribution', () => {
-      const red = srgb(1, 0, 0);
-      const green = srgb(0, 1, 0);
-      const blue = srgb(0, 0, 1);
+      const red = rgb(1, 0, 0);
+      const green = rgb(0, 1, 0);
+      const blue = rgb(0, 0, 1);
 
       // Green should have the highest luminance contribution
       expect(deriveYFromRGBColor(green)).toBeGreaterThan(deriveYFromRGBColor(red));
@@ -61,13 +61,13 @@ describe('APCA Support Functions', () => {
     });
   });
 
-  describe('alphaBlendsRGBColor', () => {
+  describe('alphaBlendRGBColor', () => {
     it('should blend colors based on alpha value', () => {
-      const white = srgb(1, 1, 1);
-      const black = srgb(0, 0, 0);
-      const transparentWhite = srgb(1, 1, 1, 0.5);
+      const white = rgb(1, 1, 1);
+      const black = rgb(0, 0, 0);
+      const transparentWhite = rgb(1, 1, 1, 0.5);
 
-      const result = alphaBlendsRGBColor(transparentWhite, black);
+      const result = alphaBlendRGBColor(transparentWhite, black);
 
       // Should be a gray color (50% blend)
       expect(result.r).toBeCloseTo(0.5);
@@ -76,10 +76,10 @@ describe('APCA Support Functions', () => {
     });
 
     it('should handle undefined alpha value by defaulting to 1.0', () => {
-      const white = srgb(1, 1, 1); // No alpha specified
-      const black = srgb(0, 0, 0);
+      const white = rgb(1, 1, 1); // No alpha specified
+      const black = rgb(0, 0, 0);
 
-      const result = alphaBlendsRGBColor(white, black);
+      const result = alphaBlendRGBColor(white, black);
 
       // Should be fully opaque white (alpha defaulted to 1.0)
       expect(result.r).toBeCloseTo(1);
@@ -88,19 +88,19 @@ describe('APCA Support Functions', () => {
     });
 
     it('should clamp alpha values to the range [0, 1]', () => {
-      const white = srgb(1, 1, 1);
-      const black = srgb(0, 0, 0);
+      const white = rgb(1, 1, 1);
+      const black = rgb(0, 0, 0);
 
       // Test with alpha > 1
-      const overAlpha = srgb(1, 1, 1, 1.5);
-      const overResult = alphaBlendsRGBColor(overAlpha, black);
+      const overAlpha = rgb(1, 1, 1, 1.5);
+      const overResult = alphaBlendRGBColor(overAlpha, black);
 
       // Should be treated as alpha = 1 (fully opaque)
       expect(overResult.r).toBeCloseTo(1);
 
       // Test with alpha < 0
-      const underAlpha = srgb(1, 1, 1, -0.5);
-      const underResult = alphaBlendsRGBColor(underAlpha, black);
+      const underAlpha = rgb(1, 1, 1, -0.5);
+      const underResult = alphaBlendRGBColor(underAlpha, black);
 
       // Should be treated as alpha = 0 (fully transparent, so background shows through)
       expect(underResult.r).toBeCloseTo(0);
@@ -108,10 +108,10 @@ describe('APCA Support Functions', () => {
 
     it('should clamp resulting RGB values to the range [0, 1]', () => {
       // Create colors that might result in out-of-range values when blended
-      const superWhite = srgb(1.5, 1.5, 1.5, 0.5);
-      const superBlack = srgb(-0.5, -0.5, -0.5);
+      const superWhite = rgb(1.5, 1.5, 1.5, 0.5);
+      const superBlack = rgb(-0.5, -0.5, -0.5);
 
-      const result = alphaBlendsRGBColor(superWhite, superBlack);
+      const result = alphaBlendRGBColor(superWhite, superBlack);
 
       // Results should be clamped to [0, 1]
       expect(result.r).toBeGreaterThanOrEqual(0);

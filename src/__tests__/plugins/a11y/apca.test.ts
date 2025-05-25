@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { checkAPCAContrast, isContrastAPCACompliant, APCAContentType } from '../../../plugins/a11y/src/checks/apca';
-import { srgb } from '../../../models/srgb';
+import { rgb } from '../../../models/rgb';
 import { APCA_BODY_MIN_RATIO, APCA_LARGE_MIN_RATIO, APCA_PLACEHOLDER_MIN_RATIO } from '../../../plugins/a11y/src/constants';
 
 describe('A11y Plugin - APCA Checks', () => {
@@ -58,8 +58,8 @@ describe('A11y Plugin - APCA Checks', () => {
 
   describe('checkAPCAContrast', () => {
     it('should correctly check contrast for dark text on light background', () => {
-      const black = srgb(0, 0, 0);
-      const white = srgb(1, 1, 1);
+      const black = rgb(0, 0, 0);
+      const white = rgb(1, 1, 1);
 
       // Black text on white background should pass all content types
       expect(checkAPCAContrast(black, white, 'BodyText')).toBe(true);
@@ -69,8 +69,8 @@ describe('A11y Plugin - APCA Checks', () => {
     });
 
     it('should correctly check contrast for light text on dark background', () => {
-      const black = srgb(0, 0, 0);
-      const white = srgb(1, 1, 1);
+      const black = rgb(0, 0, 0);
+      const white = rgb(1, 1, 1);
 
       // White text on black background should pass all content types
       expect(checkAPCAContrast(white, black, 'BodyText')).toBe(true);
@@ -81,8 +81,8 @@ describe('A11y Plugin - APCA Checks', () => {
 
     it('should correctly identify insufficient contrast', () => {
       // Create colors with low contrast
-      const lightGray = srgb(0.8, 0.8, 0.8);
-      const slightlyDarkerGray = srgb(0.7, 0.7, 0.7);
+      const lightGray = rgb(0.8, 0.8, 0.8);
+      const slightlyDarkerGray = rgb(0.7, 0.7, 0.7);
 
       // These colors should fail all content types due to low contrast
       expect(checkAPCAContrast(lightGray, slightlyDarkerGray, 'BodyText')).toBe(false);
@@ -91,7 +91,7 @@ describe('A11y Plugin - APCA Checks', () => {
 
       // Might pass for NonEssentialText which has lower requirements
       // Let's test with even lower contrast to ensure it fails
-      const barelyDifferentGray = srgb(0.79, 0.79, 0.79);
+      const barelyDifferentGray = rgb(0.79, 0.79, 0.79);
       expect(checkAPCAContrast(lightGray, barelyDifferentGray, 'NonEssentialText')).toBe(false);
     });
 
@@ -103,14 +103,14 @@ describe('A11y Plugin - APCA Checks', () => {
 
     it('should handle edge cases', () => {
       // Same color should always fail (contrast = 0)
-      const gray = srgb(0.5, 0.5, 0.5);
+      const gray = rgb(0.5, 0.5, 0.5);
       expect(checkAPCAContrast(gray, gray, 'BodyText')).toBe(false);
       expect(checkAPCAContrast(gray, gray, 'LargeText')).toBe(false);
       expect(checkAPCAContrast(gray, gray, 'NonEssentialText')).toBe(false);
       expect(checkAPCAContrast(gray, gray, 'UIControls')).toBe(false);
 
       // Test with colors that have very small difference
-      const barelyDifferentGray = srgb(0.51, 0.51, 0.51);
+      const barelyDifferentGray = rgb(0.51, 0.51, 0.51);
       expect(checkAPCAContrast(gray, barelyDifferentGray, 'BodyText')).toBe(false);
     });
   });

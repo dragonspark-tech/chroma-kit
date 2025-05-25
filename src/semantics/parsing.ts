@@ -11,7 +11,7 @@
 
 import { Color, ColorSpace, CreatedColor } from '../foundation';
 import { parseV1 } from './serialization';
-import { hexTosRGB } from '../models/srgb';
+import { hexToRGB } from '../models/rgb';
 
 /**
  * Type for a color parser function that converts a string to a Color object.
@@ -253,7 +253,7 @@ export function parseColor<T extends ColorSpace>(
       if (!isValidHexColor(trimmedInput)) {
         throw new SyntaxError(`Invalid hex color format: ${trimmedInput}`);
       }
-      parsedColor = hexTosRGB(trimmedInput);
+      parsedColor = hexToRGB(trimmedInput);
     }
     // Fast path for ChromaKit v1 format
     else if (trimmedInput.startsWith('ChromaKit|v1')) {

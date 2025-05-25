@@ -42,7 +42,7 @@ export class ColorStringParser {
    * Creates a new parser for the given CSS color string.
    *
    * @param src The CSS color string to parse
-   * @param prefixLength The length of the prefix to skip (e.g., 4 for "srgb(")
+   * @param prefixLength The length of the prefix to skip (e.g., 4 for "rgb(")
    *                     This positions the parser cursor just after the prefix
    */
   constructor(src: string, prefixLength: number) {
@@ -147,8 +147,8 @@ export class ColorStringParser {
    * Determines and consumes the delimiter style (comma or space).
    *
    * CSS color formats support two delimiter styles:
-   * 1. Comma syntax (e.g., "srgb(255, 0, 0)")
-   * 2. Space syntax (e.g., "srgb(255 0 0)")
+   * 1. Comma syntax (e.g., "rgb(255, 0, 0)")
+   * 2. Space syntax (e.g., "rgb(255 0 0)")
    *
    * This method consumes delimiters after the first component and determines
    * which syntax is being used, setting internal state accordingly.
@@ -191,7 +191,7 @@ export class ColorStringParser {
   /**
    * Consumes a comma if using comma syntax.
    *
-   * When parsing a color string that uses comma syntax (e.g., "srgb(255, 0, 0)"),
+   * When parsing a color string that uses comma syntax (e.g., "rgb(255, 0, 0)"),
    * this method ensures that commas are present between components and advances
    * the parser position past the comma.
    *
@@ -210,7 +210,7 @@ export class ColorStringParser {
    *
    * This method handles two different alpha syntax formats:
    * 1. Legacy comma syntax (e.g., "rgba(255, 0, 0, 0.5)")
-   * 2. CSS Color Level 4 slash syntax (e.g., "srgb(255 0 0 / 0.5)")
+   * 2. CSS Color Level 4 slash syntax (e.g., "rgb(255 0 0 / 0.5)")
    *
    * @returns The parsed alpha value (0-1) or undefined if no alpha component is present
    */

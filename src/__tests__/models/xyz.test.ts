@@ -19,7 +19,7 @@ import {
 } from '../../models/xyz';
 import { xyzFromCSSString } from '../../models/xyz/parser';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 
 describe('XYZ Color Model', () => {
   // Test xyz factory function
@@ -177,8 +177,8 @@ describe('XYZ Color Model', () => {
 
     describe('fluent conversion', () => {
       it('should convert dynamically into the target color space', () => {
-        const rgb = testColor.to('srgb');
-        expect(rgb.space).toBe('srgb');
+        const rgb = testColor.to('rgb');
+        expect(rgb.space).toBe('rgb');
         expect(typeof rgb.r).toBe('number');
         expect(typeof rgb.g).toBe('number');
         expect(typeof rgb.b).toBe('number');
@@ -188,7 +188,7 @@ describe('XYZ Color Model', () => {
     describe('xyzToRGB', () => {
       it('should convert XYZ to RGB', () => {
         const rgb = xyzToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);
@@ -198,7 +198,7 @@ describe('XYZ Color Model', () => {
       });
 
       it('should perform gamut mapping by default', () => {
-        // Create an XYZ color that is out of the sRGB gamut
+        // Create an XYZ color that is out of the RGB gamut
         const outOfGamutColor = xyz(2.0, 0.0, 0.0);
         const rgb = xyzToRGB(outOfGamutColor);
 
@@ -225,7 +225,7 @@ describe('XYZ Color Model', () => {
       })
 
       it('should not perform gamut mapping when disabled', () => {
-        // Create an XYZ color that is out of the sRGB gamut
+        // Create an XYZ color that is out of the RGB gamut
         const outOfGamutColor = xyz(2.0, 0.0, 0.0);
         const rgb = xyzToRGB(outOfGamutColor, false);
 
@@ -495,21 +495,21 @@ describe('XYZ Color Model', () => {
       expect(rgb.b).toBeCloseTo(1, 1);
     });
 
-    it('should convert sRGB primaries correctly', () => {
-      // Red in sRGB
-      const red = srgb(1, 0, 0).to('xyz') as XYZColor;
+    it('should convert RGB primaries correctly', () => {
+      // Red in RGB
+      const red = rgb(1, 0, 0).to('xyz') as XYZColor;
       expect(red.x).toBeCloseTo(0.4124, 3);
       expect(red.y).toBeCloseTo(0.2126, 3);
       expect(red.z).toBeCloseTo(0.0193, 3);
 
-      // Green in sRGB
-      const green = srgb(0, 1, 0).to('xyz') as XYZColor;
+      // Green in RGB
+      const green = rgb(0, 1, 0).to('xyz') as XYZColor;
       expect(green.x).toBeCloseTo(0.3576, 3);
       expect(green.y).toBeCloseTo(0.7152, 3);
       expect(green.z).toBeCloseTo(0.1192, 3);
 
-      // Blue in sRGB
-      const blue = srgb(0, 0, 1).to('xyz') as XYZColor;
+      // Blue in RGB
+      const blue = rgb(0, 0, 1).to('xyz') as XYZColor;
       expect(blue.x).toBeCloseTo(0.1805, 3);
       expect(blue.y).toBeCloseTo(0.0722, 3);
       expect(blue.z).toBeCloseTo(0.9505, 3);

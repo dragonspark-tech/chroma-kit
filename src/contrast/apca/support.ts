@@ -6,7 +6,7 @@ import {
   SA98G_MONITOR_GAMMA,
   SA98G_SRGB_LUMINANCE
 } from './constants';
-import { srgb, sRGBColor } from '../../models/srgb';
+import { rgb, RGBColor } from '../../models/rgb';
 
 /**
  * Checks if a luminance value is within the acceptable range for APCA calculations.
@@ -33,16 +33,16 @@ export const applyBlackSoftClamp = (inputY: number) =>
     : inputY + (SA98G_BLACK_THRESHOLD - inputY) ** SA98G_BLACK_CLAMP;
 
 /**
- * Calculates the luminance (Y) value from an sRGB color.
+ * Calculates the luminance (Y) value from an RGB color.
  *
  * This function applies the standard monitor gamma correction to each RGB channel,
  * then combines them using the SRGB luminance coefficients to produce a perceptually
  * accurate luminance value for use in contrast calculations.
  *
- * @param {sRGBColor} color - The sRGB color to calculate luminance from
+ * @param {RGBColor} color - The RGB color to calculate luminance from
  * @returns {number} The calculated luminance value
  */
-export const deriveYFromRGBColor = (color: sRGBColor): number => {
+export const deriveYFromRGBColor = (color: RGBColor): number => {
   const { RED_COEFFICIENT, GREEN_COEFFICIENT, BLUE_COEFFICIENT } = SA98G_SRGB_LUMINANCE;
   const { r, g, b } = color;
 
@@ -54,21 +54,21 @@ export const deriveYFromRGBColor = (color: sRGBColor): number => {
 };
 
 /**
- * Performs alpha blending of two sRGB colors and returns the resulting blended color.
+ * Performs alpha blending of two RGB colors and returns the resulting blended color.
  *
  * This function calculates the blended color by factoring in the alpha value of the foreground color
  * and compositing it over the background color.
  *
- * @param {sRGBColor} foreground - The foreground color, which may include an alpha channel to determine its opacity.
- * @param {sRGBColor} background - The background color over which the foreground color is blended.
+ * @param {RGBColor} foreground - The foreground color, which may include an alpha channel to determine its opacity.
+ * @param {RGBColor} background - The background color over which the foreground color is blended.
  * @param {boolean} [round=true] - Determines whether the resulting RGB values should be rounded to
  *                                 the nearest integer.
- * @returns {sRGBColor} The resulting blended color as an RGBColor object.
+ * @returns {RGBColor} The resulting blended color as an RGBColor object.
  */
-export const alphaBlendsRGBColor = (
-  foreground: sRGBColor,
-  background: sRGBColor
-): sRGBColor => {
+export const alphaBlendRGBColor = (
+  foreground: RGBColor,
+  background: RGBColor
+): RGBColor => {
   const fgAlpha = Math.max(Math.min(foreground.alpha ?? 1.0, 1.0), 0.0);
   const compositionBlend = 1 - fgAlpha;
 
@@ -78,5 +78,5 @@ export const alphaBlendsRGBColor = (
   const newG = clamp(background.g * compositionBlend + foreground.g * fgAlpha);
   const newB = clamp(background.b * compositionBlend + foreground.b * fgAlpha);
 
-  return srgb(newR, newG, newB, 1);
+  return rgb(newR, newG, newB, 1);
 };

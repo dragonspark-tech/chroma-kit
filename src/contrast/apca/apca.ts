@@ -11,8 +11,8 @@ import {
   SA98G_MIN_DELTA_Y
 } from './constants';
 
-import { alphaBlendsRGBColor, applyBlackSoftClamp, deriveYFromRGBColor, inputConformsToClamp } from './support';
-import { sRGBColor } from '../../models/srgb';
+import { alphaBlendRGBColor, applyBlackSoftClamp, deriveYFromRGBColor, inputConformsToClamp } from './support';
+import { RGBColor } from '../../models/rgb';
 
 /**
  * Calculates the contrast between two colors using the APCA (Accessible Perceptual Contrast Algorithm).
@@ -42,17 +42,17 @@ import { sRGBColor } from '../../models/srgb';
  * - Not yet officially adopted in accessibility standards
  * - Requires conversion to specific color spaces for accurate results
  *
- * @param {sRGBColor} foreground - The foreground (typically text) color in sRGB color space
- * @param {sRGBColor} background - The background color in sRGB color space
+ * @param {RGBColor} foreground - The foreground (typically text) color in RGB color space
+ * @param {RGBColor} background - The background color in RGB color space
  * @returns {number} The APCA contrast value, with positive values for dark-on-light and negative values for light-on-dark
  *
  * @see https://github.com/Myndex/SAPC-APCA
  * @see https://www.myndex.com/APCA/
  */
-export const contrastAPCA = (foreground: sRGBColor, background: sRGBColor): number => {
+export const contrastAPCA = (foreground: RGBColor, background: RGBColor): number => {
   // Handle alpha blending for foreground colors with transparency
   if ((foreground.alpha ?? 1) < 1) {
-    foreground = alphaBlendsRGBColor(foreground, background);
+    foreground = alphaBlendRGBColor(foreground, background);
   }
 
   // Calculate luminance values for both colors

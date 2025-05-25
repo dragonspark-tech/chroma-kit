@@ -1,4 +1,4 @@
-import { sRGBColor, srgbToHSL, srgbToXYZ } from '../../../../models/srgb';
+import { RGBColor, rgbToHSL, rgbToXYZ } from '../../../../models/rgb';
 import { hsl, hslToRGB } from '../../../../models/hsl';
 import { contrastAPCA, contrastWCAG21 } from '../../../../contrast';
 import { parseColor } from '../../../../semantics/parsing';
@@ -14,18 +14,18 @@ type OptimalContrastMethod = 'APCA' | "WCAG21";
 /**
  * Function type for calculating contrast between two colors
  *
- * @param foreground - The foreground color in sRGB color space
- * @param background - The background color in sRGB color space
+ * @param foreground - The foreground color in RGB color space
+ * @param background - The background color in RGB color space
  * @returns The contrast value between the two colors
  */
-type ContrastFunction = (foreground: sRGBColor, background: sRGBColor) => number;
+type ContrastFunction = (foreground: RGBColor, background: RGBColor) => number;
 
 /**
  * Generic function to find an optimal color for contrast by adjusting lightness
  * Uses binary search to find a color with the closest contrast to the target
  *
- * @param foreground - The foreground color in sRGB color space
- * @param background - The background color in sRGB color space
+ * @param foreground - The foreground color in RGB color space
+ * @param background - The background color in RGB color space
  * @param targetContrast - The desired contrast value
  * @param contrastFn - The function to use for calculating contrast
  * @param maxIterations - Maximum number of iterations for the binary search (default: 32)
@@ -33,14 +33,14 @@ type ContrastFunction = (foreground: sRGBColor, background: sRGBColor) => number
  * @returns A new color with optimal contrast while preserving hue and saturation
  */
 const getOptimalColorForContrastGeneric = (
-  foreground: sRGBColor,
-  background: sRGBColor,
+  foreground: RGBColor,
+  background: RGBColor,
   targetContrast: number,
   contrastFn: ContrastFunction,
   maxIterations = 32,
   epsilon = 0.001
 ) => {
-  const fgHSL = srgbToHSL(foreground);
+  const fgHSL = rgbToHSL(foreground);
 
   const hue = fgHSL.h;
   const saturation = fgHSL.s;
@@ -88,35 +88,35 @@ const getOptimalColorForContrastGeneric = (
 /**
  * Finds an optimal color for APCA contrast by adjusting lightness
  *
- * @param foreground - The foreground color in sRGB color space
- * @param background - The background color in sRGB color space
+ * @param foreground - The foreground color in RGB color space
+ * @param background - The background color in RGB color space
  * @param targetContrast - The desired APCA contrast value
  * @returns A new color with optimal APCA contrast while preserving hue and saturation
  */
-export const getOptimalColorForContrastAPCA = (foreground: sRGBColor, background: sRGBColor, targetContrast: number) => {
+export const getOptimalColorForContrastAPCA = (foreground: RGBColor, background: RGBColor, targetContrast: number) => {
   return getOptimalColorForContrastGeneric(foreground, background, targetContrast, contrastAPCA);
 }
 
 /**
- * Wrapper function for WCAG 2.1 contrast calculation that works with sRGB colors
- * Converts sRGB colors to XYZ before calculating contrast
+ * Wrapper function for WCAG 2.1 contrast calculation that works with RGB colors
+ * Converts RGB colors to XYZ before calculating contrast
  *
- * @param foreground - The foreground color in sRGB color space
- * @param background - The background color in sRGB color space
+ * @param foreground - The foreground color in RGB color space
+ * @param background - The background color in RGB color space
  * @returns The WCAG 2.1 contrast ratio between the two colors
  */
-const wcagContrastWrapper = (foreground: sRGBColor, background: sRGBColor) =>
-  contrastWCAG21(srgbToXYZ(foreground), srgbToXYZ(background));
+const wcagContrastWrapper = (foreground: RGBColor, background: RGBColor) =>
+  contrastWCAG21(rgbToXYZ(foreground), rgbToXYZ(background));
 
 /**
  * Finds an optimal color for WCAG 2.1 contrast by adjusting lightness
  *
- * @param foreground - The foreground color in sRGB color space
- * @param background - The background color in sRGB color space
+ * @param foreground - The foreground color in RGB color space
+ * @param background - The background color in RGB color space
  * @param targetContrast - The desired WCAG 2.1 contrast ratio
  * @returns A new color with optimal WCAG 2.1 contrast while preserving hue and saturation
  */
-export const getOptimalColorForContrastWCAG21 = (foreground: sRGBColor, background: sRGBColor, targetContrast: number) => {
+export const getOptimalColorForContrastWCAG21 = (foreground: RGBColor, background: RGBColor, targetContrast: number) => {
   return getOptimalColorForContrastGeneric(foreground, background, targetContrast, wcagContrastWrapper);
 }
 
@@ -131,8 +131,8 @@ export const getOptimalColorForContrastWCAG21 = (foreground: sRGBColor, backgrou
  * @returns A new color with optimal contrast while preserving hue and saturation
  */
 export const getOptimalColorForContrast = (foreground: Color | string, background: Color | string, targetContrast: number, method: OptimalContrastMethod = 'APCA') => {
-  const fgRGB = parseColor(foreground, 'srgb');
-  const bgRGB = parseColor(background, 'srgb');
+  const fgRGB = parseColor(foreground, 'rgb');
+  const bgRGB = parseColor(background, 'rgb');
 
   switch (method) {
     case 'APCA':

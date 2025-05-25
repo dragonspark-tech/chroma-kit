@@ -18,7 +18,7 @@ import {
   hwbToXYZ
 } from '../../models/hwb';
 import { hwbFromCSSString } from '../../models/hwb/parser';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 import { hsl } from '../../models/hsl';
 import { hsv } from '../../models/hsv';
 
@@ -197,8 +197,8 @@ describe('HWB Color Model', () => {
 
     describe('fluent conversion', () => {
       it('should convert dynamically into the target color space', () => {
-        const rgb = testColor.to('srgb');
-        expect(rgb.space).toBe('srgb');
+        const rgb = testColor.to('rgb');
+        expect(rgb.space).toBe('rgb');
         expect(typeof rgb.r).toBe('number');
         expect(typeof rgb.g).toBe('number');
         expect(typeof rgb.b).toBe('number');
@@ -208,7 +208,7 @@ describe('HWB Color Model', () => {
     describe('hwbToRGB', () => {
       it('should convert HWB to RGB', () => {
         const rgb = hwbToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);
@@ -220,7 +220,7 @@ describe('HWB Color Model', () => {
       it('should handle the case where whiteness + blackness >= 1', () => {
         const grayColor = hwb(120, 0.6, 0.6);
         const rgb = hwbToRGB(grayColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         // Should be a shade of gray (r = g = b)
         expect(rgb.r).toBeCloseTo(rgb.g, 5);
         expect(rgb.g).toBeCloseTo(rgb.b, 5);
@@ -479,21 +479,21 @@ describe('HWB Color Model', () => {
 
     it('should convert RGB to HWB correctly', () => {
       // Red in RGB
-      const rgbRed = srgb(1, 0, 0);
+      const rgbRed = rgb(1, 0, 0);
       const hwbRed = rgbRed.to('hwb') as HWBColor;
       expect(hwbRed.h).toBeCloseTo(0, 0);
       expect(hwbRed.w).toBeCloseTo(0, 5);
       expect(hwbRed.b).toBeCloseTo(0, 5);
 
       // Green in RGB
-      const rgbGreen = srgb(0, 1, 0);
+      const rgbGreen = rgb(0, 1, 0);
       const hwbGreen = rgbGreen.to('hwb') as HWBColor;
       expect(hwbGreen.h).toBeCloseTo(120, 0);
       expect(hwbGreen.w).toBeCloseTo(0, 5);
       expect(hwbGreen.b).toBeCloseTo(0, 5);
 
       // Blue in RGB
-      const rgbBlue = srgb(0, 0, 1);
+      const rgbBlue = rgb(0, 0, 1);
       const hwbBlue = rgbBlue.to('hwb') as HWBColor;
       expect(hwbBlue.h).toBeCloseTo(240, 0);
       expect(hwbBlue.w).toBeCloseTo(0, 5);

@@ -18,7 +18,7 @@ import {
   hslToXYZ
 } from '../../models/hsl';
 import { hslFromCSSString } from '../../models/hsl/parser';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 
 describe('HSL Color Model', () => {
   // Test hsl factory function
@@ -232,8 +232,8 @@ describe('HSL Color Model', () => {
 
     describe('fluent conversion', () => {
       it('should convert dynamically into the target color space', () => {
-        const rgb = testColor.to('srgb');
-        expect(rgb.space).toBe('srgb');
+        const rgb = testColor.to('rgb');
+        expect(rgb.space).toBe('rgb');
         expect(typeof rgb.r).toBe('number');
         expect(typeof rgb.g).toBe('number');
         expect(typeof rgb.b).toBe('number');
@@ -243,7 +243,7 @@ describe('HSL Color Model', () => {
     describe('hslToRGB', () => {
       it('should convert HSL to RGB', () => {
         const rgb = hslToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);
@@ -530,21 +530,21 @@ describe('HSL Color Model', () => {
 
     it('should convert RGB primaries to HSL correctly', () => {
       // Red in RGB
-      const rgbRed = srgb(1, 0, 0);
+      const rgbRed = rgb(1, 0, 0);
       const hslRed = rgbRed.to('hsl') as HSLColor;
       expect(hslRed.h).toBeCloseTo(0, 0);
       expect(hslRed.s).toBeCloseTo(1, 5);
       expect(hslRed.l).toBeCloseTo(0.5, 5);
 
       // Green in RGB
-      const rgbGreen = srgb(0, 1, 0);
+      const rgbGreen = rgb(0, 1, 0);
       const hslGreen = rgbGreen.to('hsl') as HSLColor;
       expect(hslGreen.h).toBeCloseTo(120, 0);
       expect(hslGreen.s).toBeCloseTo(1, 5);
       expect(hslGreen.l).toBeCloseTo(0.5, 5);
 
       // Blue in RGB
-      const rgbBlue = srgb(0, 0, 1);
+      const rgbBlue = rgb(0, 0, 1);
       const hslBlue = rgbBlue.to('hsl') as HSLColor;
       expect(hslBlue.h).toBeCloseTo(240, 0);
       expect(hslBlue.s).toBeCloseTo(1, 5);

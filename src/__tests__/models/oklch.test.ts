@@ -18,7 +18,7 @@ import {
   oklchToXYZ
 } from '../../models/oklch';
 import { oklchFromCSSString } from '../../models/oklch/parser';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 
 describe('OKLCh Color Model', () => {
   // Test oklch factory function
@@ -161,8 +161,8 @@ describe('OKLCh Color Model', () => {
 
     describe('fluent conversion', () => {
       it('should convert dynamically into the target color space', () => {
-        const rgb = testColor.to('srgb');
-        expect(rgb.space).toBe('srgb');
+        const rgb = testColor.to('rgb');
+        expect(rgb.space).toBe('rgb');
         expect(typeof rgb.r).toBe('number');
         expect(typeof rgb.g).toBe('number');
         expect(typeof rgb.b).toBe('number');
@@ -172,7 +172,7 @@ describe('OKLCh Color Model', () => {
     describe('oklchToRGB', () => {
       it('should convert OKLCh to RGB', () => {
         const rgb = oklchToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);
@@ -182,7 +182,7 @@ describe('OKLCh Color Model', () => {
       });
 
       it('should perform gamut mapping by default', () => {
-        // Create an OKLCh color that is out of the sRGB gamut
+        // Create an OKLCh color that is out of the RGB gamut
         const outOfGamutColor = oklch(0.5, 0.5, 270);
         const rgb = oklchToRGB(outOfGamutColor);
 
@@ -196,7 +196,7 @@ describe('OKLCh Color Model', () => {
       });
 
       it('should not perform gamut mapping when disabled', () => {
-        // Create an OKLCh color that is out of the sRGB gamut
+        // Create an OKLCh color that is out of the RGB gamut
         const outOfGamutColor = oklch(0.5, 0.5, 270);
         const rgb = oklchToRGB(outOfGamutColor, false);
 
@@ -441,8 +441,8 @@ describe('OKLCh Color Model', () => {
 
     it('should convert pure green in OKLCh correctly', () => {
       // First convert from RGB to OKLCh to get accurate values
-      const rgb = srgb(0, 1, 0);
-      const green = rgb.to('oklch') as OKLChColor;
+      const rgb1 = rgb(0, 1, 0);
+      const green = rgb1.to('oklch') as OKLChColor;
       // Then convert back to RGB
       const result = oklchToRGB(green);
       expect(result.r).toBeCloseTo(0, 1);
@@ -452,8 +452,8 @@ describe('OKLCh Color Model', () => {
 
     it('should convert pure blue in OKLCh correctly', () => {
       // First convert from RGB to OKLCh to get accurate values
-      const rgb = srgb(0, 0, 1);
-      const blue = rgb.to('oklch') as OKLChColor;
+      const rgb1 = rgb(0, 0, 1);
+      const blue = rgb1.to('oklch') as OKLChColor;
       // Then convert back to RGB
       const result = oklchToRGB(blue);
       expect(result.r).toBeCloseTo(0, 1);

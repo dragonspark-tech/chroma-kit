@@ -4,9 +4,9 @@ export { registerConversion, type ColorConversionFn } from './conversion/convers
 export { registerParser } from './semantics/parsing';
 export * from './semantics/default-parsers';
 
-export * from './models/srgb/srgb';
-export * from './models/srgb/parser';
-export * from './models/srgb/transform';
+export * from './models/rgb/rgb';
+export * from './models/rgb/parser';
+export * from './models/rgb/transform';
 
 export * from './models/xyz/xyz';
 export * from './models/xyz/parser';

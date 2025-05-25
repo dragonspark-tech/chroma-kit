@@ -3,9 +3,9 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { parseColor, clearColorCache, getCacheStats, clearParserRegistry, registerParser } from '../../semantics/parsing';
 import { __TEST_ONLY } from '../../semantics/parsing';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 import * as serialization from '../../semantics/serialization';
-import { srgbFromCSSString } from '../../models/srgb';
+import { rgbFromCSSString } from '../../models/rgb';
 import { hslFromCSSString } from '../../models/hsl';
 import { registerAllParsers } from '../../semantics/register-all-parsers';
 
@@ -20,7 +20,7 @@ describe('parseColor', () => {
   // Test parsing Color objects
   describe('parsing Color objects', () => {
     it('should convert a Color object to the target space', () => {
-      const color = srgb(1, 0, 0);
+      const color = rgb(1, 0, 0);
       const result = parseColor(color, 'xyz');
       expect(result.space).toBe('xyz');
     });
@@ -29,16 +29,16 @@ describe('parseColor', () => {
   // Test parsing hex strings
   describe('parsing hex strings', () => {
     it('should parse a hex string and convert to the target space', () => {
-      const result = parseColor('#ff0000', 'srgb');
-      expect(result.space).toBe('srgb');
+      const result = parseColor('#ff0000', 'rgb');
+      expect(result.space).toBe('rgb');
       expect(result.r).toBe(1);
       expect(result.g).toBe(0);
       expect(result.b).toBe(0);
     });
 
     it('should parse a hex string with alpha and convert to the target space', () => {
-      const result = parseColor('#ff0000aa', 'srgb');
-      expect(result.space).toBe('srgb');
+      const result = parseColor('#ff0000aa', 'rgb');
+      expect(result.space).toBe('rgb');
       expect(result.r).toBe(1);
       expect(result.g).toBe(0);
       expect(result.b).toBe(0);
@@ -46,19 +46,19 @@ describe('parseColor', () => {
     });
 
     it('should parse a short hex string and convert to the target space', () => {
-      const result = parseColor('#f00', 'srgb');
-      expect(result.space).toBe('srgb');
+      const result = parseColor('#f00', 'rgb');
+      expect(result.space).toBe('rgb');
       expect(result.r).toBe(1);
       expect(result.g).toBe(0);
       expect(result.b).toBe(0);
     });
 
     it('should throw for invalid hex length', () => {
-      expect(() => parseColor('#12345', 'srgb')).toThrow('Invalid hex color format');
+      expect(() => parseColor('#12345', 'rgb')).toThrow('Invalid hex color format');
     });
 
     it('should throw for invalid hex characters', () => {
-      expect(() => parseColor('#12345g', 'srgb')).toThrow('Invalid hex color format');
+      expect(() => parseColor('#12345g', 'rgb')).toThrow('Invalid hex color format');
     });
   });
 
@@ -66,21 +66,21 @@ describe('parseColor', () => {
   describe('parsing ChromaKit|v1 format', () => {
     it('should parse a ChromaKit|v1 string and convert to the target space', () => {
       const parseV1Spy = vi.spyOn(serialization, 'parseV1');
-      const result = parseColor('ChromaKit|v1 srgb 1 0 0', 'xyz');
-      expect(parseV1Spy).toHaveBeenCalledWith('ChromaKit|v1 srgb 1 0 0');
+      const result = parseColor('ChromaKit|v1 rgb 1 0 0', 'xyz');
+      expect(parseV1Spy).toHaveBeenCalledWith('ChromaKit|v1 rgb 1 0 0');
       expect(result.space).toBe('xyz');
     });
 
     it('should throw for invalid ChromaKit|v1 format', () => {
-      expect(() => parseColor('ChromaKit|v1 srgb', 'srgb')).toThrow('Invalid ChromaKit v1 format');
+      expect(() => parseColor('ChromaKit|v1 rgb', 'rgb')).toThrow('Invalid ChromaKit v1 format');
     });
 
     it('should throw for invalid alpha value in ChromaKit|v1 format', () => {
-      expect(() => parseColor('ChromaKit|v1 srgb 1 0 0 / 1.5', 'srgb')).toThrow('Invalid ChromaKit v1 format');
+      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0 / 1.5', 'rgb')).toThrow('Invalid ChromaKit v1 format');
     });
 
     it('should throw for negative alpha value in ChromaKit|v1 format', () => {
-      expect(() => parseColor('ChromaKit|v1 srgb 1 0 0 / -0.5', 'srgb')).toThrow('Invalid ChromaKit v1 format');
+      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0 / -0.5', 'rgb')).toThrow('Invalid ChromaKit v1 format');
     });
   });
 
@@ -88,14 +88,14 @@ describe('parseColor', () => {
   describe('isValidChromaKitV1', () => {
     it('should return false for input with less than 3 coordinates', () => {
       // This test targets line 127: if (coords.length < 3) return false;
-      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0')).toBe(false);
+      expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0')).toBe(false);
 
       // Test with a mocked match object to directly test the code path
       const originalMatch = String.prototype.match;
       try {
         // @ts-ignore - Mocking for testing
         String.prototype.match = () => {
-          return ['match', 'srgb', ' 1 0', undefined];
+          return ['match', 'rgb', ' 1 0', undefined];
         };
         expect(isValidChromaKitV1('mock')).toBe(false);
       } finally {
@@ -105,14 +105,14 @@ describe('parseColor', () => {
 
     it('should return false for input with non-numeric coordinates', () => {
       // This test targets line 128: if (!coords.every(s => !isNaN(Number(s)))) return false;
-      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 abc')).toBe(false);
+      expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 abc')).toBe(false);
 
       // Test with a mocked match object to directly test the code path
       const originalMatch = String.prototype.match;
       try {
         // @ts-ignore - Mocking for testing
         String.prototype.match = () => {
-          return ['match', 'srgb', ' 1 0 abc', undefined];
+          return ['match', 'rgb', ' 1 0 abc', undefined];
         };
         expect(isValidChromaKitV1('mock')).toBe(false);
       } finally {
@@ -122,15 +122,15 @@ describe('parseColor', () => {
 
     it('should return false for input with alpha outside [0,1] range', () => {
       // This test targets line 133: if (!(alpha >= 0 && alpha <= 1)) return false;
-      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / 1.5')).toBe(false);
-      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / -0.5')).toBe(false);
+      expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 0 / 1.5')).toBe(false);
+      expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 0 / -0.5')).toBe(false);
 
       // Test with a mocked match object to directly test the code path
       const originalMatch = String.prototype.match;
       try {
         // @ts-ignore - Mocking for testing
         String.prototype.match = () => {
-          return ['match', 'srgb', ' 1 0 0', '1.5'];
+          return ['match', 'rgb', ' 1 0 0', '1.5'];
         };
         expect(isValidChromaKitV1('mock')).toBe(false);
       } finally {
@@ -144,7 +144,7 @@ describe('parseColor', () => {
       try {
         // @ts-ignore - Mocking for testing
         String.prototype.match = () => {
-          return ['match', 'srgb', ' 1 0 0', '0.5'];
+          return ['match', 'rgb', ' 1 0 0', '0.5'];
         };
         expect(isValidChromaKitV1('mock')).toBe(true);
       } finally {
@@ -152,29 +152,29 @@ describe('parseColor', () => {
       }
 
       // Test with actual valid input
-      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / 0.5')).toBe(true);
-      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / 0')).toBe(true);
-      expect(isValidChromaKitV1('ChromaKit|v1 srgb 1 0 0 / 1')).toBe(true);
+      expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 0 / 0.5')).toBe(true);
+      expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 0 / 0')).toBe(true);
+      expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 0 / 1')).toBe(true);
     });
   });
 
   // Test parsing CSS color strings
   describe('parsing CSS color strings', () => {
     it('should throw for color strings that are too short', () => {
-      expect(() => parseColor('rgb', 'srgb')).toThrow('Unsupported color format: rgb');
+      expect(() => parseColor('rgb', 'rgb')).toThrow('Unsupported color format: rgb');
     });
 
     it('should parse rgb() format', () => {
-      const result = parseColor('rgb(255, 0, 0)', 'srgb');
-      expect(result.space).toBe('srgb');
+      const result = parseColor('rgb(255, 0, 0)', 'rgb');
+      expect(result.space).toBe('rgb');
       expect(result.r).toBe(1);
       expect(result.g).toBe(0);
       expect(result.b).toBe(0);
     });
 
     it('should parse rgba() format', () => {
-      const result = parseColor('rgba(255, 0, 0, 0.5)', 'srgb');
-      expect(result.space).toBe('srgb');
+      const result = parseColor('rgba(255, 0, 0, 0.5)', 'rgb');
+      expect(result.space).toBe('rgb');
       expect(result.r).toBe(1);
       expect(result.g).toBe(0);
       expect(result.b).toBe(0);
@@ -255,11 +255,11 @@ describe('parseColor', () => {
     });
 
     it('should throw for unsupported color() formats', () => {
-      expect(() => parseColor('color(display-p3 1 0 0)', 'srgb')).toThrow('Generic CSS Color 4 parsing not implemented yet');
+      expect(() => parseColor('color(display-p3 1 0 0)', 'rgb')).toThrow('Generic CSS Color 4 parsing not implemented yet');
     });
 
     it('should throw for unsupported color formats', () => {
-      expect(() => parseColor('unknown(1, 2, 3)', 'srgb')).toThrow('Unsupported color format: unknown(1, 2, 3)');
+      expect(() => parseColor('unknown(1, 2, 3)', 'rgb')).toThrow('Unsupported color format: unknown(1, 2, 3)');
     });
   });
 
@@ -274,12 +274,12 @@ describe('parseColor', () => {
       const hexToSRGBSpy = vi.spyOn(serialization, 'parseV1');
 
       // First call should parse
-      parseColor('ChromaKit|v1 srgb 1 0 0', 'srgb');
+      parseColor('ChromaKit|v1 rgb 1 0 0', 'rgb');
       expect(hexToSRGBSpy).toHaveBeenCalledTimes(1);
 
       // Second call with same input should use cache
       hexToSRGBSpy.mockClear();
-      parseColor('ChromaKit|v1 srgb 1 0 0', 'srgb');
+      parseColor('ChromaKit|v1 rgb 1 0 0', 'rgb');
       expect(hexToSRGBSpy).not.toHaveBeenCalled();
     });
 
@@ -287,46 +287,46 @@ describe('parseColor', () => {
       // Fill the cache with colors to reach the cache limit
       const cacheLimit = getCacheStats().maxSize;
       for (let i = 0; i < cacheLimit; i++) {
-        parseColor(`#${i.toString(16).padStart(6, '0')}`, 'srgb');
+        parseColor(`#${i.toString(16).padStart(6, '0')}`, 'rgb');
       }
 
       // Verify the cache is full
       expect(getCacheStats().size).toBe(cacheLimit);
 
       // Add one more color to trigger eviction
-      parseColor('#ffffff', 'srgb');
+      parseColor('#ffffff', 'rgb');
 
       // The first color should now be evicted from the cache
       const parseV1Spy = vi.spyOn(serialization, 'parseV1');
       parseV1Spy.mockClear();
 
       // This should use the cache (not the first one)
-      parseColor('#000001', 'srgb');
+      parseColor('#000001', 'rgb');
       expect(parseV1Spy).not.toHaveBeenCalled();
 
       // This should not use the cache (it was the first one we added and should be evicted)
-      parseColor('#000000', 'srgb');
+      parseColor('#000000', 'rgb');
       // This should call the parser since the color was evicted
       expect(parseV1Spy).not.toHaveBeenCalled(); // It's a hex color, not a ChromaKit format
     });
 
     it('should update access order when accessing an existing cache entry', () => {
       // Add a few colors to the cache
-      parseColor('#ff0000', 'srgb'); // Red
-      parseColor('#00ff00', 'srgb'); // Green
-      parseColor('#0000ff', 'srgb'); // Blue
+      parseColor('#ff0000', 'rgb'); // Red
+      parseColor('#00ff00', 'rgb'); // Green
+      parseColor('#0000ff', 'rgb'); // Blue
 
       // Access the first color again to move it to the end of the access order
-      parseColor('#ff0000', 'srgb');
+      parseColor('#ff0000', 'rgb');
 
       // Fill the cache to trigger eviction
       const cacheLimit = getCacheStats().maxSize;
       for (let i = 3; i < cacheLimit; i++) {
-        parseColor(`#${i.toString(16).padStart(6, '0')}`, 'srgb');
+        parseColor(`#${i.toString(16).padStart(6, '0')}`, 'rgb');
       }
 
       // Add one more color to trigger eviction
-      parseColor('#ffffff', 'srgb');
+      parseColor('#ffffff', 'rgb');
 
       // Green should be evicted, but Red and Blue should still be in the cache
       // because Red was accessed more recently
@@ -334,16 +334,16 @@ describe('parseColor', () => {
       hexToSRGBSpy.mockClear();
 
       // Red should still be in the cache
-      parseColor('#ff0000', 'srgb');
+      parseColor('#ff0000', 'rgb');
       expect(hexToSRGBSpy).not.toHaveBeenCalled();
 
       // Blue should still be in the cache
-      parseColor('#0000ff', 'srgb');
+      parseColor('#0000ff', 'rgb');
       expect(hexToSRGBSpy).not.toHaveBeenCalled();
 
       // Green should have been evicted
       hexToSRGBSpy.mockClear();
-      parseColor('#00ff00', 'srgb');
+      parseColor('#00ff00', 'rgb');
       // This should not call parseV1 since it's a hex color
       expect(hexToSRGBSpy).not.toHaveBeenCalled();
     });
@@ -357,9 +357,9 @@ describe('parseColor', () => {
       const mockAccessOrder = ['key1', 'key2', 'key3'];
       // @ts-ignore - Accessing private variables for testing
       const mockCache = new Map([
-        ['key1', { to: () => ({ space: 'srgb' }) }],
-        ['key2', { to: () => ({ space: 'srgb' }) }],
-        ['key3', { to: () => ({ space: 'srgb' }) }]
+        ['key1', { to: () => ({ space: 'rgb' }) }],
+        ['key2', { to: () => ({ space: 'rgb' }) }],
+        ['key3', { to: () => ({ space: 'rgb' }) }]
       ]);
 
       // Create a direct reference to the cacheSet function
@@ -378,7 +378,7 @@ describe('parseColor', () => {
       };
 
       // Call cacheSet with an existing key
-      cacheSetFn('key2', { to: () => ({ space: 'srgb' }) });
+      cacheSetFn('key2', { to: () => ({ space: 'rgb' }) });
 
       // Verify that the key was moved to the end of the access order
       expect(mockAccessOrder).toEqual(['key1', 'key3', 'key2']);
@@ -387,21 +387,21 @@ describe('parseColor', () => {
       clearColorCache();
 
       // Add several colors to the cache in a specific order
-      parseColor('#ff0000', 'srgb'); // Red
-      parseColor('#00ff00', 'srgb'); // Green
-      parseColor('#0000ff', 'srgb'); // Blue
+      parseColor('#ff0000', 'rgb'); // Red
+      parseColor('#00ff00', 'rgb'); // Green
+      parseColor('#0000ff', 'rgb'); // Blue
 
       // Access the first color again to move it to the end of the access order
-      parseColor('#ff0000', 'srgb');
+      parseColor('#ff0000', 'rgb');
 
       // Fill the cache to trigger eviction
       const cacheLimit = getCacheStats().maxSize;
       for (let i = 3; i < cacheLimit; i++) {
-        parseColor(`#${i.toString(16).padStart(6, '0')}`, 'srgb');
+        parseColor(`#${i.toString(16).padStart(6, '0')}`, 'rgb');
       }
 
       // Add one more color to trigger eviction
-      parseColor('#ffffff', 'srgb');
+      parseColor('#ffffff', 'rgb');
 
       // Green should be evicted, but Red and Blue should still be in the cache
       // because Red was accessed more recently
@@ -409,16 +409,16 @@ describe('parseColor', () => {
       hexToSRGBSpy.mockClear();
 
       // Red should still be in the cache
-      parseColor('#ff0000', 'srgb');
+      parseColor('#ff0000', 'rgb');
       expect(hexToSRGBSpy).not.toHaveBeenCalled();
 
       // Blue should still be in the cache
-      parseColor('#0000ff', 'srgb');
+      parseColor('#0000ff', 'rgb');
       expect(hexToSRGBSpy).not.toHaveBeenCalled();
 
       // Green should have been evicted
       hexToSRGBSpy.mockClear();
-      parseColor('#00ff00', 'srgb');
+      parseColor('#00ff00', 'rgb');
       // This should not call parseV1 since it's a hex color
       expect(hexToSRGBSpy).not.toHaveBeenCalled();
     });
@@ -431,9 +431,9 @@ describe('parseColor', () => {
       clearColorCache();
 
       // Fill the cache with a few colors
-      parseColor('#ff0000', 'srgb');
-      parseColor('#00ff00', 'srgb');
-      parseColor('#0000ff', 'srgb');
+      parseColor('#ff0000', 'rgb');
+      parseColor('#00ff00', 'rgb');
+      parseColor('#0000ff', 'rgb');
     });
 
     it('should clear the cache', () => {
@@ -472,7 +472,7 @@ describe('parseColor', () => {
 
     it('should handle cacheGet for existing key', () => {
       // Setup: Add a color to the cache
-      const color = srgb(1, 0, 0);
+      const color = rgb(1, 0, 0);
       const key = 'test-key';
       cacheSet(key, color);
 
@@ -488,7 +488,7 @@ describe('parseColor', () => {
       // This test specifically targets the branch where index === -1 in cacheGet
 
       // Setup: Manually add a color to the cache without updating accessOrder
-      const color = srgb(1, 0, 0);
+      const color = rgb(1, 0, 0);
       const key = 'test-key-not-in-order';
       cache.set(key, color);
 
@@ -509,7 +509,7 @@ describe('parseColor', () => {
       // Fill the cache to capacity
       const cacheLimit = getCacheStats().maxSize;
       for (let i = 0; i < cacheLimit; i++) {
-        cacheSet(`key-${i}`, srgb(i/cacheLimit, 0, 0));
+        cacheSet(`key-${i}`, rgb(i/cacheLimit, 0, 0));
       }
 
       // Verify the cache is full
@@ -517,7 +517,7 @@ describe('parseColor', () => {
 
       // Add one more item to trigger eviction
       const newKey = 'new-key';
-      const newColor = srgb(1, 1, 1);
+      const newColor = rgb(1, 1, 1);
       cacheSet(newKey, newColor);
 
       // Verify the first item was evicted
@@ -535,7 +535,7 @@ describe('parseColor', () => {
       // Manually set the cache size to the limit without adding to accessOrder
       const cacheLimit = getCacheStats().maxSize;
       for (let i = 0; i < cacheLimit; i++) {
-        cache.set(`key-${i}`, srgb(i/cacheLimit, 0, 0));
+        cache.set(`key-${i}`, rgb(i/cacheLimit, 0, 0));
       }
 
       // Verify the cache is full but accessOrder is empty
@@ -544,7 +544,7 @@ describe('parseColor', () => {
 
       // Add one more item to trigger eviction logic
       const newKey = 'new-key';
-      const newColor = srgb(1, 1, 1);
+      const newColor = rgb(1, 1, 1);
       cacheSet(newKey, newColor);
 
       // Verify the new item was added
@@ -555,7 +555,7 @@ describe('parseColor', () => {
     it('should handle cacheSet when cache is not full', () => {
       // Add an item to a non-full cache
       const key = 'test-key';
-      const color = srgb(1, 0, 0);
+      const color = rgb(1, 0, 0);
       cacheSet(key, color);
 
       // Verify the item was added
@@ -566,11 +566,11 @@ describe('parseColor', () => {
     it('should handle cacheSet when key already exists in cache', () => {
       // Add an item to the cache
       const key = 'test-key';
-      const color1 = srgb(1, 0, 0);
+      const color1 = rgb(1, 0, 0);
       cacheSet(key, color1);
 
       // Replace it with a new color
-      const color2 = srgb(0, 1, 0);
+      const color2 = rgb(0, 1, 0);
       cacheSet(key, color2);
 
       // Verify the item was updated
@@ -588,19 +588,19 @@ describe('parseColor', () => {
       const red  = '#ff0000';
       const blue = '#0000ff';
 
-      parseColor(red,  'srgb');               // seed 1
-      parseColor(blue, 'srgb');               // seed 2
-      expect(accessOrder).toEqual([`${red}:srgb`, `${blue}:srgb`]);
+      parseColor(red,  'rgb');               // seed 1
+      parseColor(blue, 'rgb');               // seed 2
+      expect(accessOrder).toEqual([`${red}:rgb`, `${blue}:rgb`]);
 
       // cache hit → splice should run
-      parseColor(red, 'srgb');
+      parseColor(red, 'rgb');
 
-      expect(accessOrder).toEqual([`${blue}:srgb`, `${red}:srgb`]);
+      expect(accessOrder).toEqual([`${blue}:rgb`, `${red}:rgb`]);
     });
 
     it('removes the old position and appends the key', () => {
       const keyString = '#ff0000';
-      const target    = 'srgb';
+      const target    = 'rgb';
       const cacheKey  = `${keyString}:${target}`;
 
       // 1️⃣  prime the cache so the key is in accessOrder
@@ -624,7 +624,7 @@ describe('parseColor', () => {
         throw new Error('Generic error');
       });
 
-      expect(() => parseColor('ChromaKit|v1 srgb 1 0 0', 'srgb')).toThrow('Failed to parse color');
+      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0', 'rgb')).toThrow('Failed to parse color');
     });
 
     it('should handle errors without a message property', () => {
@@ -633,30 +633,30 @@ describe('parseColor', () => {
         throw { toString: () => 'Custom error object' };
       });
 
-      expect(() => parseColor('ChromaKit|v1 srgb 1 0 0', 'srgb')).toThrow('Failed to parse color "ChromaKit|v1 srgb 1 0 0": Custom error object');
+      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0', 'rgb')).toThrow('Failed to parse color "ChromaKit|v1 rgb 1 0 0": Custom error object');
     });
 
     it('should throw for null input', () => {
       // @ts-ignore - Testing runtime behavior with invalid input
-      expect(() => parseColor(null, 'srgb')).toThrow('Color input cannot be null or undefined');
+      expect(() => parseColor(null, 'rgb')).toThrow('Color input cannot be null or undefined');
     });
 
     it('should throw for undefined input', () => {
       // @ts-ignore - Testing runtime behavior with invalid input
-      expect(() => parseColor(undefined, 'srgb')).toThrow('Color input cannot be null or undefined');
+      expect(() => parseColor(undefined, 'rgb')).toThrow('Color input cannot be null or undefined');
     });
 
     it('should throw for non-string, non-Color input', () => {
       // @ts-ignore - Testing runtime behavior with invalid input
-      expect(() => parseColor(123, 'srgb')).toThrow('Input must be a string or Color object');
+      expect(() => parseColor(123, 'rgb')).toThrow('Input must be a string or Color object');
     });
 
     it('should throw for empty string input', () => {
-      expect(() => parseColor('', 'srgb')).toThrow('Color string cannot be empty');
+      expect(() => parseColor('', 'rgb')).toThrow('Color string cannot be empty');
     });
 
     it('should throw for whitespace-only string input', () => {
-      expect(() => parseColor('   ', 'srgb')).toThrow('Color string cannot be empty');
+      expect(() => parseColor('   ', 'rgb')).toThrow('Color string cannot be empty');
     });
   });
 });
@@ -669,33 +669,33 @@ describe('parser registration', () => {
   });
 
   it('should register a parser and use it for parsing', () => {
-    // Register the sRGB parser
-    registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+    // Register the RGB parser
+    registerParser(/^rgba?\s*\(/i, rgbFromCSSString);
 
     // Verify the parser was registered
     expect(parserRegistry.length).toBe(1);
     expect(parserRegistry[0].pattern).toEqual(/^rgba?\s*\(/i);
-    expect(parserRegistry[0].parse).toBe(srgbFromCSSString);
+    expect(parserRegistry[0].parse).toBe(rgbFromCSSString);
 
     // Use the parser to parse a color
-    const result = parseColor('rgb(255, 0, 0)', 'srgb');
-    expect(result.space).toBe('srgb');
+    const result = parseColor('rgb(255, 0, 0)', 'rgb');
+    expect(result.space).toBe('rgb');
     expect(result.r).toBe(1);
     expect(result.g).toBe(0);
     expect(result.b).toBe(0);
   });
 
   it('should register multiple parsers and use them for parsing', () => {
-    // Register the sRGB and HSL parsers
-    registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+    // Register the RGB and HSL parsers
+    registerParser(/^rgba?\s*\(/i, rgbFromCSSString);
     registerParser(/^hsla?\s*\(/i, hslFromCSSString);
 
     // Verify the parsers were registered
     expect(parserRegistry.length).toBe(2);
 
-    // Use the sRGB parser to parse a color
-    const rgbResult = parseColor('rgb(255, 0, 0)', 'srgb');
-    expect(rgbResult.space).toBe('srgb');
+    // Use the RGB parser to parse a color
+    const rgbResult = parseColor('rgb(255, 0, 0)', 'rgb');
+    expect(rgbResult.space).toBe('rgb');
     expect(rgbResult.r).toBe(1);
     expect(rgbResult.g).toBe(0);
     expect(rgbResult.b).toBe(0);
@@ -710,7 +710,7 @@ describe('parser registration', () => {
 
   it('should clear the parser registry', () => {
     // Register a parser
-    registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+    registerParser(/^rgba?\s*\(/i, rgbFromCSSString);
     expect(parserRegistry.length).toBe(1);
 
     // Clear the registry
@@ -721,21 +721,21 @@ describe('parser registration', () => {
   it('should throw an error when no parsers are registered', () => {
     // Try to parse a CSS color string without registering any parsers
     clearParserRegistry();
-    expect(() => parseColor('lab(1, 0, 0)', 'srgb')).toThrow();
+    expect(() => parseColor('lab(1, 0, 0)', 'rgb')).toThrow();
   });
 
   it('should throw an error when no matching parser is found', () => {
-    // Register only the sRGB parser
-    registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+    // Register only the RGB parser
+    registerParser(/^rgba?\s*\(/i, rgbFromCSSString);
 
     // Try to parse an HSL color string
-    expect(() => parseColor('hsl(0, 100%, 50%)', 'srgb')).toThrow('Unsupported color format');
+    expect(() => parseColor('hsl(0, 100%, 50%)', 'rgb')).toThrow('Unsupported color format');
   });
 
   it('should still parse hex colors without registering parsers', () => {
     // Try to parse a hex color string without registering any parsers
-    const result = parseColor('#ff0000', 'srgb');
-    expect(result.space).toBe('srgb');
+    const result = parseColor('#ff0000', 'rgb');
+    expect(result.space).toBe('rgb');
     expect(result.r).toBe(1);
     expect(result.g).toBe(0);
     expect(result.b).toBe(0);
@@ -743,8 +743,8 @@ describe('parser registration', () => {
 
   it('should still parse ChromaKit|v1 format without registering parsers', () => {
     // Try to parse a ChromaKit|v1 string without registering any parsers
-    const result = parseColor('ChromaKit|v1 srgb 1 0 0', 'srgb');
-    expect(result.space).toBe('srgb');
+    const result = parseColor('ChromaKit|v1 rgb 1 0 0', 'rgb');
+    expect(result.space).toBe('rgb');
     expect(result.r).toBe(1);
     expect(result.g).toBe(0);
     expect(result.b).toBe(0);

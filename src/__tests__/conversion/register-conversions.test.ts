@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { registerAllConversions } from '../../conversion/register-all-conversions';
 import * as conversionModule from '../../conversion/conversion';
 import { clearConversionRegistry } from '../../conversion/conversion';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 import { lab } from '../../models/lab';
 import { hsl } from '../../models/hsl';
 import { hsv } from '../../models/hsv';
@@ -36,8 +36,8 @@ describe('Register Conversions', () => {
       expect(registerConversionSpy).toHaveBeenCalled();
 
       // Check a few specific conversions to ensure they were registered
-      expect(registerConversionSpy).toHaveBeenCalledWith('srgb', 'xyz', expect.any(Function));
-      expect(registerConversionSpy).toHaveBeenCalledWith('srgb', 'hsl', expect.any(Function));
+      expect(registerConversionSpy).toHaveBeenCalledWith('rgb', 'xyz', expect.any(Function));
+      expect(registerConversionSpy).toHaveBeenCalledWith('rgb', 'hsl', expect.any(Function));
       expect(registerConversionSpy).toHaveBeenCalledWith('xyz', 'lab', expect.any(Function));
       expect(registerConversionSpy).toHaveBeenCalledWith('lab', 'lch', expect.any(Function));
       expect(registerConversionSpy).toHaveBeenCalledWith('oklab', 'oklch', expect.any(Function));
@@ -52,8 +52,8 @@ describe('Register Conversions', () => {
 
   describe('Conversion Functionality', () => {
     it('should enable conversion between any two registered color spaces', () => {
-      // Test conversion from sRGB to Lab
-      const rgbColor = srgb(1, 0, 0); // Red in sRGB
+      // Test conversion from RGB to Lab
+      const rgbColor = rgb(1, 0, 0); // Red in RGB
       const labColor = rgbColor.to('lab');
 
       expect(labColor.space).toBe('lab');
@@ -61,10 +61,10 @@ describe('Register Conversions', () => {
       expect(typeof labColor.a).toBe('number');
       expect(typeof labColor.b).toBe('number');
 
-      // Test conversion from Lab back to sRGB
-      const roundTripRgb = labColor.to('srgb');
+      // Test conversion from Lab back to RGB
+      const roundTripRgb = labColor.to('rgb');
 
-      expect(roundTripRgb.space).toBe('srgb');
+      expect(roundTripRgb.space).toBe('rgb');
       expect(roundTripRgb.r).toBeCloseTo(1, 1);
       expect(roundTripRgb.g).toBeCloseTo(0, 1);
       expect(roundTripRgb.b).toBeCloseTo(0, 1);
@@ -91,37 +91,37 @@ describe('Register Conversions', () => {
 
     it('should preserve alpha values during conversions', () => {
       // Test with alpha value
-      const rgbColor = srgb(1, 0, 0, 0.5); // Red in sRGB with 50% opacity
+      const rgbColor = rgb(1, 0, 0, 0.5); // Red in RGB with 50% opacity
       const labColor = rgbColor.to('lab');
 
       expect(labColor.alpha).toBe(0.5);
 
       // Test round trip
-      const roundTripRgb = labColor.to('srgb');
+      const roundTripRgb = labColor.to('rgb');
       expect(roundTripRgb.alpha).toBe(0.5);
     });
   });
 
   describe('Specific Color Space Conversions', () => {
-    it('should correctly convert between sRGB and HSL', () => {
-      // Red in sRGB
-      const red = srgb(1, 0, 0);
+    it('should correctly convert between RGB and HSL', () => {
+      // Red in RGB
+      const red = rgb(1, 0, 0);
       const redHsl = red.to('hsl');
 
       expect(redHsl.h).toBeCloseTo(0, 0);
       expect(redHsl.s).toBeCloseTo(1, 5);
       expect(redHsl.l).toBeCloseTo(0.5, 5);
 
-      // Green in sRGB
-      const green = srgb(0, 1, 0);
+      // Green in RGB
+      const green = rgb(0, 1, 0);
       const greenHsl = green.to('hsl');
 
       expect(greenHsl.h).toBeCloseTo(120, 0);
       expect(greenHsl.s).toBeCloseTo(1, 5);
       expect(greenHsl.l).toBeCloseTo(0.5, 5);
 
-      // Blue in sRGB
-      const blue = srgb(0, 0, 1);
+      // Blue in RGB
+      const blue = rgb(0, 0, 1);
       const blueHsl = blue.to('hsl');
 
       expect(blueHsl.h).toBeCloseTo(240, 0);
@@ -129,25 +129,25 @@ describe('Register Conversions', () => {
       expect(blueHsl.l).toBeCloseTo(0.5, 5);
     });
 
-    it('should correctly convert between sRGB and HSV', () => {
-      // Red in sRGB
-      const red = srgb(1, 0, 0);
+    it('should correctly convert between RGB and HSV', () => {
+      // Red in RGB
+      const red = rgb(1, 0, 0);
       const redHsv = red.to('hsv');
 
       expect(redHsv.h).toBeCloseTo(0, 0);
       expect(redHsv.s).toBeCloseTo(1, 5);
       expect(redHsv.v).toBeCloseTo(1, 5);
 
-      // Green in sRGB
-      const green = srgb(0, 1, 0);
+      // Green in RGB
+      const green = rgb(0, 1, 0);
       const greenHsv = green.to('hsv');
 
       expect(greenHsv.h).toBeCloseTo(120, 0);
       expect(greenHsv.s).toBeCloseTo(1, 5);
       expect(greenHsv.v).toBeCloseTo(1, 5);
 
-      // Blue in sRGB
-      const blue = srgb(0, 0, 1);
+      // Blue in RGB
+      const blue = rgb(0, 0, 1);
       const blueHsv = blue.to('hsv');
 
       expect(blueHsv.h).toBeCloseTo(240, 0);

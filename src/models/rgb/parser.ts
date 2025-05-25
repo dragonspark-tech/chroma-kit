@@ -1,10 +1,10 @@
-import { srgb, sRGBColor } from './srgb';
-import { normalizesRGBColor } from './transform';
+import { rgb, RGBColor } from './rgb';
+import { normalizeRGBColor } from './transform';
 
 /**
  * Parses a CSS RGB color string into an RGBColor object.
  *
- * Supports both comma and space syntax, as well as both srgb() and rgba() formats:
+ * Supports both comma and space syntax, as well as both rgb() and rgba() formats:
  * - rgb(255, 128, 0)
  * - rgba(255, 128, 0, 0.5)
  * - rgb(255 128 0)
@@ -19,10 +19,10 @@ import { normalizesRGBColor } from './transform';
  * - Whitespace flexibility according to CSS specifications
  *
  * @param {string} src - The CSS RGB color string to parse
- * @returns {sRGBColor} The parsed RGB color object, with values normalized to 0-1 range
+ * @returns {RGBColor} The parsed RGB color object, with values normalized to 0-1 range
  * @throws {SyntaxError} If the string format is invalid
  */
-export function srgbFromCSSString(src: string): sRGBColor {
+export function rgbFromCSSString(src: string): RGBColor {
   // Determine starting index based on whether it's rgb or rgba
   let i = src.toLowerCase().startsWith('rgba') ? 5 : 4;
   const N = src.length;
@@ -62,7 +62,7 @@ export function srgbFromCSSString(src: string): sRGBColor {
       return v;
     } else {
       if (pct) v *= 2.55;
-      if (v > 255) throw new SyntaxError('srgb() out of range');
+      if (v > 255) throw new SyntaxError('rgb() out of range');
       return v;
     }
   };
@@ -115,5 +115,5 @@ export function srgbFromCSSString(src: string): sRGBColor {
   if (src[i] !== ')') throw new SyntaxError('missing ")"');
   if (++i !== N) throw new SyntaxError('unexpected text after ")"');
 
-  return normalizesRGBColor(srgb(r, g, b, a));
+  return normalizeRGBColor(rgb(r, g, b, a));
 }

@@ -3,7 +3,7 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import { deltaE76 } from '../../deltae/deltae-76';
 import { lab, type LabColor } from '../../models/lab';
-import { srgb, type sRGBColor } from '../../models/srgb';
+import { rgb, type RGBColor } from '../../models/rgb';
 import { hsl, type HSLColor } from '../../models/hsl';
 
 describe('Delta E 76', () => {
@@ -24,9 +24,9 @@ describe('Delta E 76', () => {
       expect(deltaE76(color, color)).toBe(0);
     });
 
-    it('should work with sRGB colors', () => {
-      const color1 = srgb(1, 0, 0);
-      const color2 = srgb(0, 1, 0);
+    it('should work with RGB colors', () => {
+      const color1 = rgb(1, 0, 0);
+      const color2 = rgb(0, 1, 0);
 
       // Calculate expected result: sqrt((1-0)^2 + (0-1)^2 + (0-0)^2)
       // = sqrt(1 + 1 + 0) = sqrt(2) ≈ 1.4142
@@ -94,8 +94,8 @@ describe('Delta E 76', () => {
   describe('Implementation details', () => {
     it('should use the colorVectorMappings to determine which properties to compare', () => {
       // Create colors with extra properties that should be ignored
-      const color1 = Object.assign(srgb(1, 0, 0), { extra: 5 });
-      const color2 = Object.assign(srgb(0, 1, 0), { extra: 10 });
+      const color1 = Object.assign(rgb(1, 0, 0), { extra: 5 });
+      const color2 = Object.assign(rgb(0, 1, 0), { extra: 10 });
 
       // Only r, g, b should be compared, extra should be ignored
       // sqrt((1-0)^2 + (0-1)^2 + (0-0)^2) = sqrt(2) ≈ 1.4142
@@ -105,7 +105,7 @@ describe('Delta E 76', () => {
     });
 
     it('should handle colors with different spaces correctly', () => {
-      const color1: sRGBColor = srgb(1, 0, 0);
+      const color1: RGBColor = rgb(1, 0, 0);
       const color2: LabColor = lab(0.5, 0.1, 0.1);
 
       expect(deltaE76(color1, color2)).toBe(0.1);

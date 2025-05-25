@@ -45,11 +45,11 @@ pnpm add @dragonspark/chroma-kit
 ```
 
 ```js
-import { srgb, deltaE } from '@dragonspark/chromakit';
+import { rgb, deltaE } from '@dragonspark/chromakit';
 
 // Create colors
-const red = srgb(1, 0, 0);
-const blue = srgb(0, 0, 1);
+const red = rgb(1, 0, 0);
+const blue = rgb(0, 0, 1);
 
 // Convert between color spaces
 const redInLab = red.to('lab');
@@ -66,7 +66,7 @@ console.log(red.toCSSString()); // "#ff0000"
 
 ChromaKit embraces the full spectrum of color science with support for a comprehensive range of color models, from the familiar to the cutting-edge:
 
-- **RGB**: The standard RGB color space (sRGB) that powers digital displays
+- **RGB**: The standard RGB color space (RGB) that powers digital displays
 - **HSL**: Hue, Saturation, Lightness - an intuitive cylindrical-coordinate representation
 - **HSV**: Hue, Saturation, Value - another artist-friendly model for color selection
 - **HWB**: Hue, Whiteness, Blackness - a human-friendly alternative to HSL/HSV
@@ -85,10 +85,10 @@ Each color space is implemented with meticulous attention to the underlying math
 ### Color Creation
 
 ```js
-import { srgb, hsl, lab } from '@dragonspark/chromakit';
+import { rgb, hsl, lab } from '@dragonspark/chromakit';
 
 // Create colors in different spaces
-const redRGB = srgb(1, 0, 0);
+const redRGB = rgb(1, 0, 0);
 const greenHSL = hsl(120, 1, 0.5);
 const blueLab = lab(30, 20, -80);
 ```
@@ -109,17 +109,17 @@ registerHSLParser();
 // registerParsers();
 
 // Parse colors from strings
-const red = parseColor('#ff0000', 'srgb');           // Hex colors work without registration
-const blue = parseColor('rgb(0, 0, 255)', 'srgb');   // Requires sRGB parser registration
+const red = parseColor('#ff0000', 'rgb');           // Hex colors work without registration
+const blue = parseColor('rgb(0, 0, 255)', 'rgb');   // Requires RGB parser registration
 const green = parseColor('hsl(120, 100%, 50%)', 'hsl'); // Requires HSL parser registration
 ```
 
 ### Color Conversion
 
 ```js
-import { srgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chromakit';
 
-const color = srgb(1, 0, 0);
+const color = rgb(1, 0, 0);
 
 // Convert to different color spaces
 const hslColor = color.to('hsl');
@@ -132,10 +132,10 @@ const lchColor = color.to('lch');
 The perception of color difference is a fascinating and complex area of color science. ChromaKit implements six different Delta E algorithms, each with its own strengths and applications:
 
 ```js
-import { srgb, deltaE } from '@dragonspark/chromakit';
+import { rgb, deltaE } from '@dragonspark/chromakit';
 
-const burgundy = srgb(0.5, 0.1, 0.2);
-const maroon = srgb(0.4, 0.1, 0.15);
+const burgundy = rgb(0.5, 0.1, 0.2);
+const maroon = rgb(0.4, 0.1, 0.15);
 
 // Calculate color difference using different algorithms
 const diff1 = deltaE(burgundy, maroon, 'Euclidean'); // Classic Delta E76 - simple but less perceptually accurate
@@ -155,10 +155,10 @@ Each algorithm has been implemented with careful attention to the original resea
 Contrast is crucial for accessibility, readability, and visual design. ChromaKit offers six different contrast algorithms, each providing unique insights:
 
 ```js
-import { srgb, contrast } from '@dragonspark/chromakit';
+import { rgb, contrast } from '@dragonspark/chromakit';
 
-const navy = srgb(0.05, 0.05, 0.3);
-const cream = srgb(0.98, 0.96, 0.86);
+const navy = rgb(0.05, 0.05, 0.3);
+const cream = rgb(0.98, 0.96, 0.86);
 
 // Calculate contrast using different algorithms
 const contrast1 = contrast(navy, cream, 'APCA');      // APCA - modern algorithm for text readability
@@ -179,12 +179,12 @@ These algorithms allow you to evaluate contrast not just for accessibility compl
 ChromaKit implements precise color science standards including CIE standard illuminants:
 
 ```js
-import { srgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chromakit';
 
 // Convert a color to XYZ under different illuminants
-const color = srgb(0.8, 0.4, 0.2);
+const color = rgb(0.8, 0.4, 0.2);
 
-// D65 (standard daylight) - default for sRGB
+// D65 (standard daylight) - default for RGB
 const xyzD65 = color.to('xyz');
 
 // D50 (horizon light) - common in printing
@@ -199,15 +199,15 @@ The library includes precise implementations of standard illuminants like D65 (d
 ### String Serialization
 
 ```js
-import { srgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chromakit';
 
-const color = srgb(1, 0, 0);
+const color = rgb(1, 0, 0);
 
 // Convert to CSS string
 console.log(color.toCSSString()); // "#ff0000"
 
 // With alpha
-const transparentColor = srgb(1, 0, 0, 0.5);
+const transparentColor = rgb(1, 0, 0, 0.5);
 console.log(transparentColor.toCSSString()); // "rgba(255, 0, 0, 0.5)"
 ```
 
@@ -220,10 +220,10 @@ ChromaKit goes beyond basic color manipulation to offer advanced features for pr
 Colors appear differently under different lighting conditions. ChromaKit implements precise chromatic adaptation algorithms to simulate how colors transform across different illuminants:
 
 ```js
-import { srgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chromakit';
 
 // A warm orange color under standard daylight (D65)
-const orange = srgb(0.9, 0.6, 0.1);
+const orange = rgb(0.9, 0.6, 0.1);
 
 // See how it would appear under warm indoor lighting (D50)
 // using the Bradford cone response model
@@ -235,8 +235,8 @@ const orangeUnderIndoorLighting = orange.to('xyz', {
   // coneResponseModel: BradfordConeModel
 });
 
-// Convert back to sRGB for display
-const adaptedColor = orangeUnderIndoorLighting.to('srgb');
+// Convert back to RGB for display
+const adaptedColor = orangeUnderIndoorLighting.to('rgb');
 console.log(`The color appears more ${adaptedColor.r > orange.r ? 'reddish' : 'yellowish'} indoors`);
 ```
 
@@ -245,10 +245,10 @@ console.log(`The color appears more ${adaptedColor.r > orange.r ? 'reddish' : 'y
 As displays evolve to support higher brightness levels and wider color gamuts, ChromaKit is ready with support for HDR color spaces:
 
 ```js
-import { srgb } from '@dragonspark/chromakit';
+import { rgb } from '@dragonspark/chromakit';
 
 // A vibrant red in standard dynamic range
-const sdrRed = srgb(1, 0, 0);
+const sdrRed = rgb(1, 0, 0);
 
 // Convert to JzAzBz for HDR processing with 1000 nits peak brightness
 const hdrRed = sdrRed.to('jzazbz', { peakLuminance: 1000 });
@@ -265,15 +265,15 @@ console.log('Perceptual lightness increases with display capability');
 ChromaKit's perceptually uniform color spaces allow for sophisticated color appearance modeling:
 
 ```js
-import { srgb, deltaE } from '@dragonspark/chromakit';
+import { rgb, deltaE } from '@dragonspark/chromakit';
 
 // Create a palette of colors
-const baseColor = srgb(0.2, 0.4, 0.6);
+const baseColor = rgb(0.2, 0.4, 0.6);
 const variations = [
   baseColor,
-  srgb(0.22, 0.38, 0.58), // Subtle variation
-  srgb(0.25, 0.45, 0.65), // More noticeable variation
-  srgb(0.15, 0.35, 0.55)  // Darker variation
+  rgb(0.22, 0.38, 0.58), // Subtle variation
+  rgb(0.25, 0.45, 0.65), // More noticeable variation
+  rgb(0.15, 0.35, 0.55)  // Darker variation
 ];
 
 // Analyze perceptual differences in OKLab space

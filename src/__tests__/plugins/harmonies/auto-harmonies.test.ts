@@ -34,9 +34,9 @@ describe('Auto Harmonies', () => {
     });
 
     it('should convert colors to the requested output space', () => {
-      const result = harmony(testColor, 'Complementary', 'srgb');
-      expect(result[0].space).toBe('srgb');
-      expect(result[1].space).toBe('srgb');
+      const result = harmony(testColor, 'Complementary', 'rgb');
+      expect(result[0].space).toBe('rgb');
+      expect(result[1].space).toBe('rgb');
     });
 
     it('should throw an error for unknown harmony type', () => {
@@ -98,7 +98,7 @@ describe('Auto Harmonies', () => {
     });
 
     // Test with different output color spaces
-    const colorSpaces: ColorSpace[] = ['hsl', 'srgb', 'lab', 'lch', 'oklab', 'oklch'];
+    const colorSpaces: ColorSpace[] = ['hsl', 'rgb', 'lab', 'lch', 'oklab', 'oklch'];
     colorSpaces.forEach(space => {
       it(`should output colors in ${space} color space`, () => {
         const result = harmony(testColor, 'Complementary', space);

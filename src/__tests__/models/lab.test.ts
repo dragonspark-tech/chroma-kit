@@ -19,7 +19,7 @@ import {
 } from '../../models/lab';
 import { labFromCSSString } from '../../models/lab/parser';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
-import { srgb, srgbToXYZ } from '../../models/srgb';
+import { rgb, rgbToXYZ } from '../../models/rgb';
 import { xyz } from '../../models/xyz';
 
 describe('Lab Color Model', () => {
@@ -145,8 +145,8 @@ describe('Lab Color Model', () => {
 
     describe('fluent conversion', () => {
       it('should convert dynamically into the target color space', () => {
-        const rgb = testColor.to('srgb');
-        expect(rgb.space).toBe('srgb');
+        const rgb = testColor.to('rgb');
+        expect(rgb.space).toBe('rgb');
         expect(typeof rgb.r).toBe('number');
         expect(typeof rgb.g).toBe('number');
         expect(typeof rgb.b).toBe('number');
@@ -195,7 +195,7 @@ describe('Lab Color Model', () => {
     describe('labToRGB', () => {
       it('should convert Lab to RGB', () => {
         const rgb = labToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);
@@ -205,7 +205,7 @@ describe('Lab Color Model', () => {
       });
 
       it('should perform gamut mapping by default', () => {
-        // Create a Lab color that is out of the sRGB gamut
+        // Create a Lab color that is out of the RGB gamut
         const outOfGamutColor = lab(0.5, 100, -100);
         const rgb = labToRGB(outOfGamutColor);
 
@@ -219,7 +219,7 @@ describe('Lab Color Model', () => {
       });
 
       it('should not perform gamut mapping when disabled', () => {
-        // Create a Lab color that is out of the sRGB gamut
+        // Create a Lab color that is out of the RGB gamut
         const outOfGamutColor = lab(0.5, 100, -100);
         const rgb = labToRGB(outOfGamutColor, false);
 
@@ -444,29 +444,29 @@ describe('Lab Color Model', () => {
       expect(rgb.b).toBeCloseTo(0, 1);
     });
 
-    it('should convert sRGB primaries correctly through D65 Illuminant', () => {
-      // Red in sRGB
-      const red = srgb(1, 0, 0).to('lab');
+    it('should convert RGB primaries correctly through D65 Illuminant', () => {
+      // Red in RGB
+      const red = rgb(1, 0, 0).to('lab');
       expect(red.l).toBeCloseTo(53.2371);
       expect(red.a).toBeCloseTo(80.0901);
       expect(red.b).toBeCloseTo(67.2032);
 
-      // Green in sRGB
-      const green = srgb(0, 1, 0).to('lab');
+      // Green in RGB
+      const green = rgb(0, 1, 0).to('lab');
       expect(green.l).toBeCloseTo(87.7355)
       expect(green.a).toBeCloseTo(-86.1815);
       expect(green.b).toBeCloseTo(83.1866);
 
-      // Blue in sRGB
-      const blue = srgb(0, 0, 1).to('lab');
+      // Blue in RGB
+      const blue = rgb(0, 0, 1).to('lab');
       expect(blue.l).toBeCloseTo(32.3008);
       expect(blue.a).toBeCloseTo(79.1952);
       expect(blue.b).toBeCloseTo(-107.8554);
     });
 
-    it('should convert sRGB primaries correctly through D50 Illuminant', () => {
-      const rgbRed = srgb(1, 0, 0);
-      const red = srgbToXYZ(rgbRed, true).to('lab');
+    it('should convert RGB primaries correctly through D50 Illuminant', () => {
+      const rgbRed = rgb(1, 0, 0);
+      const red = rgbToXYZ(rgbRed, true).to('lab');
       expect(red.l).toBeCloseTo(54.2905);
       expect(red.a).toBeCloseTo(80.8049);
       expect(red.b).toBeCloseTo(69.8909);

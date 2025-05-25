@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { contrastAPCA } from '../../contrast/apca';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 
 describe('APCA Contrast', () => {
   describe('Basic functionality', () => {
     it('should calculate contrast between black and white', () => {
-      const black = srgb(0, 0, 0);
-      const white = srgb(1, 1, 1);
+      const black = rgb(0, 0, 0);
+      const white = rgb(1, 1, 1);
 
       // APCA contrast between black and white should be a high positive value
       const result = contrastAPCA(black, white);
@@ -14,8 +14,8 @@ describe('APCA Contrast', () => {
     });
 
     it('should calculate contrast between white and black', () => {
-      const black = srgb(0, 0, 0);
-      const white = srgb(1, 1, 1);
+      const black = rgb(0, 0, 0);
+      const white = rgb(1, 1, 1);
 
       // APCA contrast between white and black should be a high negative value
       const result = contrastAPCA(white, black);
@@ -23,8 +23,8 @@ describe('APCA Contrast', () => {
     });
 
     it('should calculate contrast between gray values', () => {
-      const darkGray = srgb(0.2, 0.2, 0.2);
-      const lightGray = srgb(0.8, 0.8, 0.8);
+      const darkGray = rgb(0.2, 0.2, 0.2);
+      const lightGray = rgb(0.8, 0.8, 0.8);
 
       // APCA contrast between dark gray and light gray should be positive but less than black/white
       const result = contrastAPCA(darkGray, lightGray);
@@ -35,16 +35,16 @@ describe('APCA Contrast', () => {
 
   describe('Polarity', () => {
     it('should return positive values for dark text on light background', () => {
-      const darkText = srgb(0.1, 0.1, 0.1);
-      const lightBg = srgb(0.9, 0.9, 0.9);
+      const darkText = rgb(0.1, 0.1, 0.1);
+      const lightBg = rgb(0.9, 0.9, 0.9);
 
       const result = contrastAPCA(darkText, lightBg);
       expect(result).toBeGreaterThan(0);
     });
 
     it('should return negative values for light text on dark background', () => {
-      const lightText = srgb(0.9, 0.9, 0.9);
-      const darkBg = srgb(0.1, 0.1, 0.1);
+      const lightText = rgb(0.9, 0.9, 0.9);
+      const darkBg = rgb(0.1, 0.1, 0.1);
 
       const result = contrastAPCA(lightText, darkBg);
       expect(result).toBeLessThan(0);
@@ -53,9 +53,9 @@ describe('APCA Contrast', () => {
 
   describe('Alpha handling', () => {
     it('should handle foreground colors with alpha transparency', () => {
-      const black = srgb(0, 0, 0);
-      const transparentWhite = srgb(1, 1, 1, 0.5);
-      const semiTransparentWhite = srgb(1, 1, 1, 0.8);
+      const black = rgb(0, 0, 0);
+      const transparentWhite = rgb(1, 1, 1, 0.5);
+      const semiTransparentWhite = rgb(1, 1, 1, 0.8);
 
       // Test that alpha is properly handled
       const result1 = contrastAPCA(transparentWhite, black);
@@ -66,8 +66,8 @@ describe('APCA Contrast', () => {
     });
 
     it('should ignore alpha on background colors', () => {
-      const white = srgb(1, 1, 1);
-      const transparentBlack = srgb(0, 0, 0, 0.5);
+      const white = rgb(1, 1, 1);
+      const transparentBlack = rgb(0, 0, 0, 0.5);
 
       // Alpha on background should be ignored
       const result = contrastAPCA(white, transparentBlack);
@@ -77,13 +77,13 @@ describe('APCA Contrast', () => {
 
   describe('Edge cases', () => {
     it('should return 0 for identical colors', () => {
-      const gray = srgb(0.5, 0.5, 0.5);
+      const gray = rgb(0.5, 0.5, 0.5);
       expect(contrastAPCA(gray, gray)).toBe(0);
     });
 
     it('should return 0 for very small differences', () => {
-      const gray1 = srgb(0.5, 0.5, 0.5);
-      const gray2 = srgb(0.501, 0.501, 0.501);
+      const gray1 = rgb(0.5, 0.5, 0.5);
+      const gray2 = rgb(0.501, 0.501, 0.501);
 
       // Very small differences should return 0
       expect(contrastAPCA(gray1, gray2)).toBe(0);
@@ -92,8 +92,8 @@ describe('APCA Contrast', () => {
     it('should return 0 for low contrast in white-on-black scenario', () => {
       // Create colors that will produce a very small negative contrast
       // that will be clipped to 0 due to being above -SA98G_G4G_LOW_CLIP
-      const almostBlack = srgb(0.1, 0.1, 0.1);
-      const veryDarkGray = srgb(0.12, 0.12, 0.12);
+      const almostBlack = rgb(0.1, 0.1, 0.1);
+      const veryDarkGray = rgb(0.12, 0.12, 0.12);
 
       // This should produce a small negative contrast that gets clipped to 0
       const result = contrastAPCA(veryDarkGray, almostBlack);
@@ -101,8 +101,8 @@ describe('APCA Contrast', () => {
     });
 
     it('should handle extreme values', () => {
-      const superBlack = srgb(-0.1, -0.1, -0.1); // Out of range values
-      const superWhite = srgb(1.1, 1.1, 1.1); // Out of range values
+      const superBlack = rgb(-0.1, -0.1, -0.1); // Out of range values
+      const superWhite = rgb(1.1, 1.1, 1.1); // Out of range values
 
       // Should clamp values and still produce a result
       expect(contrastAPCA(superBlack, superWhite)).not.toBeNaN();
@@ -111,9 +111,9 @@ describe('APCA Contrast', () => {
 
   describe('Color variations', () => {
     it('should handle different colors with similar luminance', () => {
-      const red = srgb(1, 0, 0);
-      const green = srgb(0, 1, 0);
-      const blue = srgb(0, 0, 1);
+      const red = rgb(1, 0, 0);
+      const green = rgb(0, 1, 0);
+      const blue = rgb(0, 0, 1);
 
       // These colors have different RGB values but may have similar luminance
       // The contrast should be based on luminance, not RGB differences

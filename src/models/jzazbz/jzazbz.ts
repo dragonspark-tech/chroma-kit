@@ -1,7 +1,7 @@
 import { b, c1, c2, c3, d, d0, g, JZAZBZ_XYZ_LMS_IABZ, JZAZBZ_XYZ_LMS_MATRIX, m1, m2p } from './constants';
 import { xyz, XYZColor, xyzToLab, xyzToLCh, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { sRGBColor, srgbToHSL, srgbToHSV, srgbToHWB } from '../srgb';
+import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { LabColor } from '../lab';
 import { LChColor } from '../lch';
 import { OKLabColor } from '../oklab';
@@ -113,9 +113,9 @@ export const jzazbzFromVector = (v: number[], alpha?: number): JzAzBzColor => {
  *
  * @param {JzAzBzColor} color - The JzAzBz color to convert
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
- * @returns {sRGBColor} The color in RGB space
+ * @returns {RGBColor} The color in RGB space
  */
-export const jzazbzToRGB = (color: JzAzBzColor, peakLuminance: number = 10000): sRGBColor =>
+export const jzazbzToRGB = (color: JzAzBzColor, peakLuminance: number = 10000): RGBColor =>
   xyzToRGB(jzazbzToXYZ(color, peakLuminance));
 
 /**
@@ -130,7 +130,7 @@ export const jzazbzToRGB = (color: JzAzBzColor, peakLuminance: number = 10000): 
  * @returns {HSLColor} The color in HSL space
  */
 export const jzazbzToHSL = (color: JzAzBzColor, peakLuminance: number = 10000): HSLColor =>
-  srgbToHSL(jzazbzToRGB(color, peakLuminance));
+  rgbToHSL(jzazbzToRGB(color, peakLuminance));
 
 /**
  * Converts a color from JzAzBz to HSV color space.
@@ -144,7 +144,7 @@ export const jzazbzToHSL = (color: JzAzBzColor, peakLuminance: number = 10000): 
  * @returns {HSVColor} The color in HSV space
  */
 export const jzazbzToHSV = (color: JzAzBzColor, peakLuminance: number = 10000): HSVColor =>
-  srgbToHSV(jzazbzToRGB(color, peakLuminance));
+  rgbToHSV(jzazbzToRGB(color, peakLuminance));
 
 /**
  * Converts a color from JzAzBz to HWB color space.
@@ -158,7 +158,7 @@ export const jzazbzToHSV = (color: JzAzBzColor, peakLuminance: number = 10000): 
  * @returns {HSVColor} The color in HWB space
  */
 export const jzazbzToHWB = (color: JzAzBzColor, peakLuminance: number = 10000): HWBColor =>
-  srgbToHWB(jzazbzToRGB(color, peakLuminance));
+  rgbToHWB(jzazbzToRGB(color, peakLuminance));
 
 /**
  * Converts a color from JzAzBz to CIE XYZ color space.

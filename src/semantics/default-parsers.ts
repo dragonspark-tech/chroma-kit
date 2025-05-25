@@ -1,5 +1,5 @@
 import { registerParser } from './parsing';
-import { srgbFromCSSString } from '../models/srgb';
+import { rgbFromCSSString } from '../models/rgb';
 import { hslFromCSSString } from '../models/hsl';
 import { hsvFromCSSString } from '../models/hsv';
 import { hwbFromCSSString } from '../models/hwb';
@@ -10,10 +10,10 @@ import { oklchFromCSSString } from '../models/oklch';
 import { xyzFromCSSString } from '../models/xyz';
 
 /**
- * Registers the sRGB color parser.
+ * Registers the RGB color parser.
  */
 export function registerSRGBParser(): void {
-  registerParser(/^rgba?\s*\(/i, srgbFromCSSString);
+  registerParser(/^rgba?\s*\(/i, rgbFromCSSString);
 }
 
 /**

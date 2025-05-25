@@ -18,7 +18,7 @@ import {
   hsvToXYZ
 } from '../../models/hsv';
 import { hsvFromCSSString } from '../../models/hsv/parser';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 
 describe('HSV Color Model', () => {
   // Test hsv factory function
@@ -151,8 +151,8 @@ describe('HSV Color Model', () => {
 
     describe('fluent conversion', () => {
       it('should convert dynamically into the target color space', () => {
-        const rgb = testColor.to('srgb');
-        expect(rgb.space).toBe('srgb');
+        const rgb = testColor.to('rgb');
+        expect(rgb.space).toBe('rgb');
         expect(typeof rgb.r).toBe('number');
         expect(typeof rgb.g).toBe('number');
         expect(typeof rgb.b).toBe('number');
@@ -162,7 +162,7 @@ describe('HSV Color Model', () => {
     describe('hsvToRGB', () => {
       it('should convert HSV to RGB', () => {
         const rgb = hsvToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);

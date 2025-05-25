@@ -4,7 +4,7 @@ import type { OKLChColor } from './models/oklch';
 import type { JzAzBzColor } from './models/jzazbz';
 import type { JzCzHzColor } from './models/jzczhz';
 import type { LabColor } from './models/lab';
-import type { sRGBColor } from './models/srgb';
+import type { RGBColor } from './models/rgb';
 import type { XYZColor } from './models/xyz';
 import type { HSLColor } from './models/hsl';
 import type { HSVColor } from './models/hsv';
@@ -12,7 +12,7 @@ import { HWBColor } from './models/hwb';
 
 /**
  * A type representing a color in various color spaces. Color can be expressed in one of the following formats:
- * - sRGBColor: Standard Red Green Blue color space.
+ * - RGBColor: Standard Red Green Blue color space.
  * - HSLColor: Hue, Saturation, Lightness color representation.
  * - HSVColor: Hue, Saturation, Value color representation.
  * - HWBColor: Hue, Whiteness, Blackness color model.
@@ -27,7 +27,7 @@ import { HWBColor } from './models/hwb';
  * This type provides flexibility to handle multiple color formats depending on application requirements.
  */
 export type Color =
-  | sRGBColor
+  | RGBColor
   | HSLColor
   | HSVColor
   | HWBColor
@@ -81,14 +81,14 @@ export interface ColorBase {
  *
  * This type alias allows for conditional extraction of a specific color model
  * based on the provided `ColorSpace` type parameter. Supported color spaces
- * include 'srgb', 'xyz', 'hsl', 'hsv', 'hwb', 'lab', 'lch', 'oklab',
+ * include 'rgb', 'xyz', 'hsl', 'hsv', 'hwb', 'lab', 'lch', 'oklab',
  * 'oklch', 'jzazbz', and 'jzczhz'. If a provided color space does not match
  * one of these, the type resolves to `never`.
  *
  * @template T Extends the `ColorSpace` defining the color space to retrieve.
  */
-export type CreatedColor<T extends ColorSpace> = T extends 'srgb'
-  ? sRGBColor
+export type CreatedColor<T extends ColorSpace> = T extends 'rgb'
+  ? RGBColor
   : T extends 'xyz'
     ? XYZColor
     : T extends 'hsl'
@@ -124,7 +124,7 @@ export type CreatedColor<T extends ColorSpace> = T extends 'srgb'
  * `ColorSpace` and the associated values are readonly arrays of strings.
  */
 export const colorVectorMappings: Record<ColorSpace, readonly string[]> = {
-  srgb: ['r', 'g', 'b'],
+  rgb: ['r', 'g', 'b'],
   xyz: ['x', 'y', 'z'],
   hsl: ['h', 's', 'l'],
   hsv: ['h', 's', 'v'],

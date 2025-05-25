@@ -16,7 +16,7 @@
 
 /**
  * Standard monitor gamma value used in the APCA algorithm.
- * This represents the power function applied to linearize sRGB values.
+ * This represents the power function applied to linearize RGB values.
  */
 export const SA98G_MONITOR_GAMMA = 2.4;
 
@@ -27,7 +27,7 @@ export const SA98G_MONITOR_GAMMA = 2.4;
 export const SA98G_MONITOR_GAMMA_INV = 0.4166666666666667;
 
 /**
- * Coefficients for calculating luminance from sRGB color channels.
+ * Coefficients for calculating luminance from RGB color channels.
  * These values represent the relative contribution of each color channel
  * to the perceived brightness, based on human vision sensitivity.
  */

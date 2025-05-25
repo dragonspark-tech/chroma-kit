@@ -19,7 +19,7 @@ import {
 } from '../../models/oklab';
 import { oklabFromCSSString } from '../../models/oklab/parser';
 import { IlluminantD65 } from '../../standards/illuminants';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 import { xyz } from '../../models/xyz';
 
 describe('OKLab Color Model', () => {
@@ -163,8 +163,8 @@ describe('OKLab Color Model', () => {
 
     describe('fluent conversion', () => {
       it('should convert dynamically into the target color space', () => {
-        const rgb = testColor.to('srgb');
-        expect(rgb.space).toBe('srgb');
+        const rgb = testColor.to('rgb');
+        expect(rgb.space).toBe('rgb');
         expect(typeof rgb.r).toBe('number');
         expect(typeof rgb.g).toBe('number');
         expect(typeof rgb.b).toBe('number');
@@ -174,7 +174,7 @@ describe('OKLab Color Model', () => {
     describe('oklabToRGB', () => {
       it('should convert OKLab to RGB', () => {
         const rgb = oklabToRGB(testColor);
-        expect(rgb.space).toBe('srgb');
+        expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
         expect(rgb.g).toBeGreaterThanOrEqual(0);
@@ -184,7 +184,7 @@ describe('OKLab Color Model', () => {
       });
 
       it('should perform gamut mapping by default', () => {
-        // Create an OKLab color that is out of the sRGB gamut
+        // Create an OKLab color that is out of the RGB gamut
         const outOfGamutColor = oklab(1.0, 0.5, 0.5);
         const rgb = oklabToRGB(outOfGamutColor);
 
@@ -198,7 +198,7 @@ describe('OKLab Color Model', () => {
       });
 
       it('should not perform gamut mapping when disabled', () => {
-        // Create an OKLab color that is out of the sRGB gamut
+        // Create an OKLab color that is out of the RGB gamut
         const outOfGamutColor = oklab(1.0, 0.5, 0.5);
         const rgb = oklabToRGB(outOfGamutColor, false);
 
@@ -438,21 +438,21 @@ describe('OKLab Color Model', () => {
       expect(rgb.b).toBeCloseTo(1, 1);
     });
 
-    it('should convert sRGB primaries correctly', () => {
-      // Red in sRGB
-      const red = srgb(1, 0, 0).to('oklab') as OKLabColor;
+    it('should convert RGB primaries correctly', () => {
+      // Red in RGB
+      const red = rgb(1, 0, 0).to('oklab') as OKLabColor;
       expect(red.l).toBeCloseTo(0.627986, 4);
       expect(red.a).toBeCloseTo(0.2248, 4);
       expect(red.b).toBeCloseTo(0.1258, 4);
 
-      // Green in sRGB
-      const green = srgb(0, 1, 0).to('oklab') as OKLabColor;
+      // Green in RGB
+      const green = rgb(0, 1, 0).to('oklab') as OKLabColor;
       expect(green.l).toBeCloseTo(0.86644, 4);
       expect(green.a).toBeCloseTo(-0.2339, 4);
       expect(green.b).toBeCloseTo(0.1794, 4);
 
-      // Blue in sRGB
-      const blue = srgb(0, 0, 1).to('oklab') as OKLabColor;
+      // Blue in RGB
+      const blue = rgb(0, 0, 1).to('oklab') as OKLabColor;
       expect(blue.l).toBeCloseTo(0.4520, 4);
       expect(blue.a).toBeCloseTo(-0.0324, 4);
       expect(blue.b).toBeCloseTo(-0.3116, 4);

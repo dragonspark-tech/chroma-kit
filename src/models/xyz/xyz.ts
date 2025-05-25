@@ -1,7 +1,7 @@
 ﻿import { lab, LabColor, labToLCH } from '../lab';
 import { ϵ, κ } from '../lab/constants';
 import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { delinearizesRGBColor, sRGBColor, srgbFromVector, srgbToHSL, srgbToHSV, srgbToHWB } from '../srgb';
+import { delinearizeRGBColor, RGBColor, rgbFromVector, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
 import { OKLabColor, oklabFromVector, oklabToOKLCh } from '../oklab';
@@ -121,21 +121,21 @@ export const xyzFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  *
  * This function applies the XYZ to RGB transformation matrix to convert the color,
  * then delinearizes the RGB values (applies gamma correction) to get standard RGB values.
- * It also performs gamut mapping to ensure the resulting RGB values are within the valid sRGB gamut.
+ * It also performs gamut mapping to ensure the resulting RGB values are within the valid RGB gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
- * @returns {sRGBColor} The color in RGB space
+ * @returns {RGBColor} The color in RGB space
  */
-export const xyzToRGB = (color: XYZColor, performGamutMapping: boolean = true): sRGBColor => {
+export const xyzToRGB = (color: XYZColor, performGamutMapping: boolean = true): RGBColor => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
 
-  // Check if the color is within the sRGB gamut
+  // Check if the color is within the RGB gamut
   const isInGamut = lRGB.every((value) => value >= 0 && value <= 1);
 
   // If the color is already in gamut or gamut mapping is disabled, return it directly
   if (isInGamut || !performGamutMapping) {
-    return delinearizesRGBColor(srgbFromVector(lRGB, color.alpha));
+    return delinearizeRGBColor(rgbFromVector(lRGB, color.alpha));
   }
 
   // Perform gamut mapping by scaling the color to fit within the gamut
@@ -155,7 +155,7 @@ export const xyzToRGB = (color: XYZColor, performGamutMapping: boolean = true): 
     lRGB[2] /= maxValue;
   }
 
-  return delinearizesRGBColor(srgbFromVector(lRGB, color.alpha));
+  return delinearizeRGBColor(rgbFromVector(lRGB, color.alpha));
 };
 
 /**
@@ -164,14 +164,14 @@ export const xyzToRGB = (color: XYZColor, performGamutMapping: boolean = true): 
  * This function first converts the XYZ color to RGB, then from RGB to HSL.
  * The HSL color space is a cylindrical representation of RGB, using hue,
  * saturation, and lightness components. Gamut mapping is performed during
- * the conversion to ensure the resulting color is within the valid sRGB gamut.
+ * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
 export const xyzToHSL = (color: XYZColor, performGamutMapping: boolean = true): HSLColor =>
-  srgbToHSL(xyzToRGB(color, performGamutMapping));
+  rgbToHSL(xyzToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE XYZ to HSV color space.
@@ -179,14 +179,14 @@ export const xyzToHSL = (color: XYZColor, performGamutMapping: boolean = true): 
  * This function first converts the XYZ color to RGB, then from RGB to HSV.
  * The HSV color space is a cylindrical representation of RGB, using hue,
  * saturation, and value components. Gamut mapping is performed during
- * the conversion to ensure the resulting color is within the valid sRGB gamut.
+ * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
 export const xyzToHSV = (color: XYZColor, performGamutMapping: boolean = true): HSVColor =>
-  srgbToHSV(xyzToRGB(color, performGamutMapping));
+  rgbToHSV(xyzToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE XYZ to HWB color space.
@@ -194,14 +194,14 @@ export const xyzToHSV = (color: XYZColor, performGamutMapping: boolean = true): 
  * This function first converts the XYZ color to RGB, then from RGB to HWB.
  * The HWB color space is a cylindrical representation of RGB, using hue,
  * whiteness, and blackness components. Gamut mapping is performed during
- * the conversion to ensure the resulting color is within the valid sRGB gamut.
+ * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
 export const xyzToHWB = (color: XYZColor, performGamutMapping: boolean = true): HWBColor =>
-  srgbToHWB(xyzToRGB(color, performGamutMapping));
+  rgbToHWB(xyzToRGB(color, performGamutMapping));
 
 /**
  * Converts a color from CIE XYZ to CIE Lab color space.

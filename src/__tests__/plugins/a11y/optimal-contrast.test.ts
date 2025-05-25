@@ -4,22 +4,22 @@ import {
   getOptimalColorForContrastAPCA,
   getOptimalColorForContrastWCAG21
 } from '../../../plugins/a11y/src/utils/optimal-contrast';
-import { hexTosRGB, srgb } from '../../../models/srgb';
+import { hexToRGB, rgb } from '../../../models/rgb';
 import { contrastAPCA } from '../../../contrast/apca';
 import { contrastWCAG21 } from '../../../contrast/wcag21';
-import { srgbToXYZ } from '../../../models/srgb';
+import { rgbToXYZ } from '../../../models/rgb';
 
 describe('A11y Plugin - Optimal Contrast Utils', () => {
   describe('getOptimalColorForContrastAPCA', () => {
     it('should find a color with the target APCA contrast', () => {
-      const background = srgb(1, 1, 1); // White background
-      const foreground = srgb(0.5, 0.5, 0.5); // Gray foreground
+      const background = rgb(1, 1, 1); // White background
+      const foreground = rgb(0.5, 0.5, 0.5); // Gray foreground
       const targetContrast = 60; // Target APCA contrast
 
       const result = getOptimalColorForContrastAPCA(foreground, background, targetContrast);
 
-      // Check that the result is a valid sRGB color
-      expect(result.space).toBe('srgb');
+      // Check that the result is a valid RGB color
+      expect(result.space).toBe('rgb');
       expect(result.r).toBeGreaterThanOrEqual(0);
       expect(result.r).toBeLessThanOrEqual(1);
       expect(result.g).toBeGreaterThanOrEqual(0);
@@ -33,8 +33,8 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
     });
 
     it('should preserve hue and saturation', () => {
-      const background = srgb(1, 1, 1); // White background
-      const foreground = srgb(1, 0, 0); // Red foreground
+      const background = rgb(1, 1, 1); // White background
+      const foreground = rgb(1, 0, 0); // Red foreground
       const targetContrast = 60; // Target APCA contrast
 
       const result = getOptimalColorForContrastAPCA(foreground, background, targetContrast);
@@ -45,8 +45,8 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
     });
 
     it('should handle negative contrast targets', () => {
-      const background = srgb(0, 0, 0); // Black background
-      const foreground = srgb(0.5, 0.5, 0.5); // Gray foreground
+      const background = rgb(0, 0, 0); // Black background
+      const foreground = rgb(0.5, 0.5, 0.5); // Gray foreground
       const targetContrast = -60; // Negative target APCA contrast
 
       const result = getOptimalColorForContrastAPCA(foreground, background, targetContrast);
@@ -57,22 +57,22 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
     });
 
     it('should handle cases where very low contrasts are present, such as dark-on-dark (WCAG21)', () => {
-      const background = srgb(0.02, 0.02, 0.02);
-      const foreground = srgb(0.10, 0.10, 0.10);
+      const background = rgb(0.02, 0.02, 0.02);
+      const foreground = rgb(0.10, 0.10, 0.10);
       const targetContrast = 4.5;
 
       const result = getOptimalColorForContrastWCAG21(foreground, background, targetContrast);
 
-      const originalContrast = contrastWCAG21(srgbToXYZ(foreground), srgbToXYZ(background));
-      const newContrast = contrastWCAG21(srgbToXYZ(result), srgbToXYZ(background));
+      const originalContrast = contrastWCAG21(rgbToXYZ(foreground), rgbToXYZ(background));
+      const newContrast = contrastWCAG21(rgbToXYZ(result), rgbToXYZ(background));
       expect(newContrast).toBeGreaterThan(originalContrast);
       expect(newContrast).toBeCloseTo(targetContrast, 0);
     });
 
     // Additional test with more extreme values to try to cover line 70
     it('should handle extreme cases for increasing contrast', () => {
-      const background = srgb(0.95, 0.95, 0.95); // Very light background
-      const foreground = srgb(0.94, 0.94, 0.94); // Almost identical to background (very low contrast)
+      const background = rgb(0.95, 0.95, 0.95); // Very light background
+      const foreground = rgb(0.94, 0.94, 0.94); // Almost identical to background (very low contrast)
       const targetContrast = 90; // Very high target contrast
 
       const result = getOptimalColorForContrastAPCA(foreground, background, targetContrast);
@@ -85,8 +85,8 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
 
     // Additional test with more extreme values to try to cover line 78
     it('should handle extreme cases for decreasing contrast', () => {
-      const background = srgb(0, 0, 0); // Black background
-      const foreground = srgb(1, 1, 1); // White foreground (maximum contrast)
+      const background = rgb(0, 0, 0); // Black background
+      const foreground = rgb(1, 1, 1); // White foreground (maximum contrast)
       const targetContrast = -30; // Low target contrast
 
       const result = getOptimalColorForContrastAPCA(foreground, background, targetContrast);
@@ -100,14 +100,14 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
 
   describe('getOptimalColorForContrastWCAG21', () => {
     it('should find a color with the target WCAG 2.1 contrast', () => {
-      const background = srgb(1, 1, 1); // White background
-      const foreground = srgb(0.5, 0.5, 0.5); // Gray foreground
+      const background = rgb(1, 1, 1); // White background
+      const foreground = rgb(0.5, 0.5, 0.5); // Gray foreground
       const targetContrast = 4.5; // Target WCAG 2.1 contrast
 
       const result = getOptimalColorForContrastWCAG21(foreground, background, targetContrast);
 
-      // Check that the result is a valid sRGB color
-      expect(result.space).toBe('srgb');
+      // Check that the result is a valid RGB color
+      expect(result.space).toBe('rgb');
       expect(result.r).toBeGreaterThanOrEqual(0);
       expect(result.r).toBeLessThanOrEqual(1);
       expect(result.g).toBeGreaterThanOrEqual(0);
@@ -116,13 +116,13 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
       expect(result.b).toBeLessThanOrEqual(1);
 
       // Check that the contrast is close to the target
-      const actualContrast = contrastWCAG21(srgbToXYZ(result), srgbToXYZ(background));
+      const actualContrast = contrastWCAG21(rgbToXYZ(result), rgbToXYZ(background));
       expect(Math.abs(actualContrast - targetContrast)).toBeLessThan(0.5); // Allow some tolerance
     });
 
     it('should preserve hue and saturation', () => {
-      const background = srgb(1, 1, 1); // White background
-      const foreground = srgb(1, 0, 0); // Red foreground
+      const background = rgb(1, 1, 1); // White background
+      const foreground = rgb(1, 0, 0); // Red foreground
       const targetContrast = 4.5; // Target WCAG 2.1 contrast
 
       const result = getOptimalColorForContrastWCAG21(foreground, background, targetContrast);
@@ -135,8 +135,8 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
 
   describe('getOptimalColorForContrast', () => {
     it('should use APCA by default', () => {
-      const background = srgb(1, 1, 1); // White background
-      const foreground = srgb(0.5, 0.5, 0.5); // Gray foreground
+      const background = rgb(1, 1, 1); // White background
+      const foreground = rgb(0.5, 0.5, 0.5); // Gray foreground
       const targetContrast = 60; // Target contrast
 
       const result = getOptimalColorForContrast(foreground, background, targetContrast);
@@ -149,8 +149,8 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
     });
 
     it('should use WCAG 2.1 when specified', () => {
-      const background = srgb(1, 1, 1); // White background
-      const foreground = srgb(0.5, 0.5, 0.5); // Gray foreground
+      const background = rgb(1, 1, 1); // White background
+      const foreground = rgb(0.5, 0.5, 0.5); // Gray foreground
       const targetContrast = 4.5; // Target contrast
 
       const result = getOptimalColorForContrast(foreground, background, targetContrast, 'WCAG21');
@@ -165,7 +165,7 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
     it('should work with string color values', () => {
       // Test with hex strings
       const result1 = getOptimalColorForContrast('#808080', '#FFFFFF', 60);
-      expect(result1.space).toBe('srgb');
+      expect(result1.space).toBe('rgb');
     });
 
     it('should throw an error for unknown method', () => {

@@ -9,7 +9,7 @@ import * as deltaEJZModule from '../../deltae/deltae-jz';
 import * as deltaEOKModule from '../../deltae/deltae-ok';
 import * as deltaEOKScaledModule from '../../deltae/deltae-ok-scaled';
 import * as parsingModule from '../../semantics/parsing';
-import { srgb } from '../../models/srgb';
+import { rgb } from '../../models/rgb';
 
 describe('Auto Delta E', () => {
   describe('Basic functionality', () => {
@@ -30,8 +30,8 @@ describe('Auto Delta E', () => {
       const parseSpy = vi.spyOn(parsingModule, 'parseColor');
 
       // Create mock Color objects
-      const color1 = srgb(1, 0, 0);
-      const color2 = srgb(0, 1, 0);
+      const color1 = rgb(1, 0, 0);
+      const color2 = rgb(0, 1, 0);
 
       deltaE(color1, color2);
 

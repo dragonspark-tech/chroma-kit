@@ -4,7 +4,7 @@ import { type Matrix3x3 } from '../../utils/linear';
  * Transformation matrix for converting CIE XYZ values to linear RGB color space.
  *
  * This matrix is the inverse of the RGB_XYZ_MATRIX and is used to convert from
- * XYZ color space back to linear RGB values. It's based on the standard sRGB
+ * XYZ color space back to linear RGB values. It's based on the standard RGB
  * color space with D65 white point.
  *
  * The matrix represents the following transformation:
