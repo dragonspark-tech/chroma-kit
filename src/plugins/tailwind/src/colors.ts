@@ -584,7 +584,7 @@ export const TW_ROSE: TailwindPalette = {
  * @example
  * TailwindColors.Slate[500] // -> OKLChColor for Slate 500
  */
-export const TailwindColors: TailwindPalettes = {
+export const TailwindColors = {
   Slate: TW_SLATE,
   Gray: TW_GRAY,
   Zinc: TW_ZINC,
