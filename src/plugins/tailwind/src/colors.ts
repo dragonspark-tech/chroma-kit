@@ -1,4 +1,5 @@
 import type { TailwindPalette, TailwindPalettes } from './tailwind.types';
+import type { OKLChColor } from '../../../models/oklch';
 import { oklch } from '../../../models/oklch';
 
 /**
@@ -584,7 +585,7 @@ export const TW_ROSE: TailwindPalette = {
  * @example
  * TailwindColors.Slate[500] // -> OKLChColor for Slate 500
  */
-export const TailwindColors = {
+export const TailwindColors: TailwindPalettes = {
   Slate: TW_SLATE,
   Gray: TW_GRAY,
   Zinc: TW_ZINC,
