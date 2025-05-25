@@ -1,6 +1,20 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["./src/index.ts", "./src/fn.ts"],
-  "out": "doc",
+  "entryPoints": [
+    "./src/index.ts",
+    "./src/fn.ts",
+
+    "./src/plugins/a11y/index.ts",
+    "./src/plugins/a11y/fn.ts",
+
+    "./src/plugins/harmonies/index.ts",
+    "./src/plugins/harmonies/fn.ts",
+
+    "./src/plugins/palettes/index.ts",
+    "./src/plugins/palettes/fn.ts",
+
+    "./src/plugins/tailwind/index.ts"
+  ],
+  "out": "docs",
   "exclude": ["./src/__tests__/**.*"]
 }
