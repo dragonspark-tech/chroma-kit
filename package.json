@@ -67,6 +67,16 @@
       "import": "./dist/plugins/harmonies/fn.js",
       "require": "./dist/plugins/harmonies/fn.js"
     },
+    "./plugins/palettes": {
+      "types": "./dist/plugins/palettes/index.d.ts",
+      "import": "./dist/plugins/palettes/index.js",
+      "require": "./dist/plugins/palettes/index.js"
+    },
+    "./plugins/palettes/fn": {
+      "types": "./dist/plugins/palettes/fn.d.ts",
+      "import": "./dist/plugins/palettes/fn.js",
+      "require": "./dist/plugins/palettes/fn.js"
+    },
     "./plugins/tailwind": {
       "types": "./dist/plugins/tailwind/index.d.ts",
       "import": "./dist/plugins/tailwind/index.js",
@@ -81,10 +91,15 @@
     "dist/index.js",
     "src/conversion/register-all-conversions.ts",
     "src/semantics/register-all-parsers.ts",
+
+    "dist/plugins/a11y/index.js",
+    "src/plugins/a11y/index.ts",
+
     "dist/plugins/harmonies/index.js",
     "src/plugins/harmonies/index.ts",
-    "dist/plugins/a11y/index.js",
-    "src/plugins/a11y/index.ts"
+
+    "dist/plugins/palettes/index.js",
+    "src/plugins/palettes/index.ts"
   ],
   "scripts": {
     "build": "rimraf ./dist ./tsup && tsup --config tsup.config.ts && rimraf .tsup",

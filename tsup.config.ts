@@ -13,6 +13,9 @@ export default defineConfig({
     'src/plugins/harmonies/index.ts',
     'src/plugins/harmonies/fn.ts',
 
+    'src/plugins/palettes/index.ts',
+    'src/plugins/palettes/fn.ts',
+
     'src/plugins/tailwind/index.ts'
   ],
   format: ['esm'],

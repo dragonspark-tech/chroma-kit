@@ -43,6 +43,9 @@ function averageShadeContrasts(): ShadeContrasts[] {
   const shadeSums: { [shade: number]: { totalOnWhite: number, totalOnBlack: number, count: number } } = {};
 
   for (const color in contrastMap) {
+    const bannedColors = ['Slate', 'Gray', 'Zinc', 'Neutral', 'Stone'];
+    if (bannedColors.includes(color)) continue;
+
     for (const shadeContrast of contrastMap[color]) {
       const { shade, colorOnWhite, colorOnBlack } = shadeContrast;
       if (!shadeSums[shade]) {
