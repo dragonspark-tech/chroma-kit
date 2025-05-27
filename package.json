@@ -91,13 +91,10 @@
     "dist/index.js",
     "src/conversion/register-all-conversions.ts",
     "src/semantics/register-all-parsers.ts",
-
     "dist/plugins/a11y/index.js",
     "src/plugins/a11y/index.ts",
-
     "dist/plugins/harmonies/index.js",
     "src/plugins/harmonies/index.ts",
-
     "dist/plugins/palettes/index.js",
     "src/plugins/palettes/index.ts"
   ],
@@ -105,20 +102,26 @@
     "build": "rimraf ./dist ./tsup && tsup --config tsup.config.ts && rimraf .tsup",
     "build:precomputed": "jiti ./toolchain/build.ts",
     "build:docs": "typedoc --options typedoc.json",
-    "test": "vitest run --config vitest.config.ts",
-    "coverage": "vitest run --config vitest.config.ts --coverage"
+    "coverage": "vitest run --config vitest.config.ts --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "vitest run --config vitest.config.ts"
   },
   "devDependencies": {
+    "@eslint/js": "^9.27.0",
     "@microsoft/api-extractor": "^7.52.8",
     "@types/node": "^22.15.18",
     "@vitest/coverage-istanbul": "3.1.4",
     "@vitest/ui": "^3.1.4",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
     "jiti": "^2.4.2",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "tsup": "^8.5.0",
     "typedoc": "^0.28.4",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1",
     "vitest": "^3.1.4"
   },
   "pnpm": {
