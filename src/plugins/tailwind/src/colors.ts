@@ -1,5 +1,4 @@
-import type { TailwindPalette, TailwindPalettes } from './tailwind.types';
-import type { OKLChColor } from '../../../models/oklch';
+import type { TailwindPalette } from './tailwind.types';
 import { oklch } from '../../../models/oklch';
 
 /**
@@ -44,7 +43,7 @@ export const TW_SLATE: TailwindPalette = {
   700: oklch(0.372, 0.044, 257.287),
   800: oklch(0.279, 0.041, 260.031),
   900: oklch(0.208, 0.042, 265.755),
-  950: oklch(0.129, 0.042, 264.695),
+  950: oklch(0.129, 0.042, 264.695)
 };
 
 /**
@@ -69,7 +68,7 @@ export const TW_GRAY: TailwindPalette = {
   700: oklch(0.373, 0.034, 259.733),
   800: oklch(0.278, 0.033, 256.848),
   900: oklch(0.21, 0.034, 264.665),
-  950: oklch(0.13, 0.028, 261.692),
+  950: oklch(0.13, 0.028, 261.692)
 };
 
 /**
@@ -94,7 +93,7 @@ export const TW_ZINC: TailwindPalette = {
   700: oklch(0.37, 0.013, 285.805),
   800: oklch(0.274, 0.006, 286.033),
   900: oklch(0.21, 0.006, 285.885),
-  950: oklch(0.141, 0.005, 285.823),
+  950: oklch(0.141, 0.005, 285.823)
 };
 
 /**
@@ -119,7 +118,7 @@ export const TW_NEUTRAL: TailwindPalette = {
   700: oklch(0.371, 0, 0),
   800: oklch(0.269, 0, 0),
   900: oklch(0.205, 0, 0),
-  950: oklch(0.145, 0, 0),
+  950: oklch(0.145, 0, 0)
 };
 
 /**
@@ -144,7 +143,7 @@ export const TW_STONE: TailwindPalette = {
   700: oklch(0.374, 0.01, 67.558),
   800: oklch(0.268, 0.007, 34.298),
   900: oklch(0.216, 0.006, 56.043),
-  950: oklch(0.147, 0.004, 49.25),
+  950: oklch(0.147, 0.004, 49.25)
 };
 
 /**
@@ -169,7 +168,7 @@ export const TW_RED: TailwindPalette = {
   700: oklch(0.505, 0.213, 27.518),
   800: oklch(0.444, 0.177, 26.899),
   900: oklch(0.396, 0.141, 25.723),
-  950: oklch(0.258, 0.092, 26.042),
+  950: oklch(0.258, 0.092, 26.042)
 };
 
 /**
@@ -194,7 +193,7 @@ export const TW_ORANGE: TailwindPalette = {
   700: oklch(0.553, 0.195, 38.402),
   800: oklch(0.47, 0.157, 37.304),
   900: oklch(0.408, 0.123, 38.172),
-  950: oklch(0.266, 0.079, 36.259),
+  950: oklch(0.266, 0.079, 36.259)
 };
 
 /**
@@ -219,7 +218,7 @@ export const TW_AMBER: TailwindPalette = {
   700: oklch(0.555, 0.163, 48.998),
   800: oklch(0.473, 0.137, 46.201),
   900: oklch(0.414, 0.112, 45.904),
-  950: oklch(0.279, 0.077, 45.635),
+  950: oklch(0.279, 0.077, 45.635)
 };
 
 /**
@@ -244,7 +243,7 @@ export const TW_YELLOW: TailwindPalette = {
   700: oklch(0.554, 0.135, 66.442),
   800: oklch(0.476, 0.114, 61.907),
   900: oklch(0.421, 0.095, 57.708),
-  950: oklch(0.286, 0.066, 53.813),
+  950: oklch(0.286, 0.066, 53.813)
 };
 
 /**
@@ -269,7 +268,7 @@ export const TW_LIME: TailwindPalette = {
   700: oklch(0.532, 0.157, 131.589),
   800: oklch(0.453, 0.124, 130.933),
   900: oklch(0.405, 0.101, 131.063),
-  950: oklch(0.274, 0.072, 132.109),
+  950: oklch(0.274, 0.072, 132.109)
 };
 
 /**
@@ -294,7 +293,7 @@ export const TW_GREEN: TailwindPalette = {
   700: oklch(0.527, 0.154, 150.069),
   800: oklch(0.448, 0.119, 151.328),
   900: oklch(0.393, 0.095, 152.535),
-  950: oklch(0.266, 0.065, 152.934),
+  950: oklch(0.266, 0.065, 152.934)
 };
 
 /**
@@ -319,7 +318,7 @@ export const TW_EMERALD: TailwindPalette = {
   700: oklch(0.508, 0.118, 165.612),
   800: oklch(0.432, 0.095, 166.913),
   900: oklch(0.378, 0.077, 168.94),
-  950: oklch(0.262, 0.051, 172.552),
+  950: oklch(0.262, 0.051, 172.552)
 };
 
 /**
@@ -344,7 +343,7 @@ export const TW_TEAL: TailwindPalette = {
   700: oklch(0.511, 0.096, 186.391),
   800: oklch(0.437, 0.078, 188.216),
   900: oklch(0.386, 0.063, 188.416),
-  950: oklch(0.277, 0.046, 192.524),
+  950: oklch(0.277, 0.046, 192.524)
 };
 
 /**
@@ -369,7 +368,7 @@ export const TW_CYAN: TailwindPalette = {
   700: oklch(0.52, 0.105, 223.128),
   800: oklch(0.45, 0.085, 224.283),
   900: oklch(0.398, 0.07, 227.392),
-  950: oklch(0.302, 0.056, 229.695),
+  950: oklch(0.302, 0.056, 229.695)
 };
 
 /**
@@ -394,7 +393,7 @@ export const TW_SKY: TailwindPalette = {
   700: oklch(0.5, 0.134, 242.749),
   800: oklch(0.443, 0.11, 240.79),
   900: oklch(0.391, 0.09, 240.876),
-  950: oklch(0.293, 0.066, 243.157),
+  950: oklch(0.293, 0.066, 243.157)
 };
 
 /**
@@ -419,7 +418,7 @@ export const TW_BLUE: TailwindPalette = {
   700: oklch(0.488, 0.243, 264.376),
   800: oklch(0.424, 0.199, 265.638),
   900: oklch(0.379, 0.146, 265.522),
-  950: oklch(0.282, 0.091, 267.935),
+  950: oklch(0.282, 0.091, 267.935)
 };
 
 /**
@@ -444,7 +443,7 @@ export const TW_INDIGO: TailwindPalette = {
   700: oklch(0.457, 0.24, 277.023),
   800: oklch(0.398, 0.195, 277.366),
   900: oklch(0.359, 0.144, 278.697),
-  950: oklch(0.257, 0.09, 281.288),
+  950: oklch(0.257, 0.09, 281.288)
 };
 
 /**
@@ -469,7 +468,7 @@ export const TW_VIOLET: TailwindPalette = {
   700: oklch(0.491, 0.27, 292.581),
   800: oklch(0.432, 0.232, 292.759),
   900: oklch(0.38, 0.189, 293.745),
-  950: oklch(0.283, 0.141, 291.089),
+  950: oklch(0.283, 0.141, 291.089)
 };
 
 /**
@@ -494,7 +493,7 @@ export const TW_PURPLE: TailwindPalette = {
   700: oklch(0.496, 0.265, 301.924),
   800: oklch(0.438, 0.218, 303.724),
   900: oklch(0.381, 0.176, 304.987),
-  950: oklch(0.291, 0.149, 302.717),
+  950: oklch(0.291, 0.149, 302.717)
 };
 
 /**
@@ -519,7 +518,7 @@ export const TW_FUCHSIA: TailwindPalette = {
   700: oklch(0.518, 0.253, 323.949),
   800: oklch(0.452, 0.211, 324.591),
   900: oklch(0.401, 0.17, 325.612),
-  950: oklch(0.293, 0.136, 325.661),
+  950: oklch(0.293, 0.136, 325.661)
 };
 
 /**
@@ -544,7 +543,7 @@ export const TW_PINK: TailwindPalette = {
   700: oklch(0.525, 0.223, 3.958),
   800: oklch(0.459, 0.187, 3.815),
   900: oklch(0.408, 0.153, 2.432),
-  950: oklch(0.284, 0.109, 3.907),
+  950: oklch(0.284, 0.109, 3.907)
 };
 
 /**
@@ -569,7 +568,7 @@ export const TW_ROSE: TailwindPalette = {
   700: oklch(0.514, 0.222, 16.935),
   800: oklch(0.455, 0.188, 13.697),
   900: oklch(0.41, 0.159, 10.272),
-  950: oklch(0.271, 0.105, 12.094),
+  950: oklch(0.271, 0.105, 12.094)
 };
 
 /**
@@ -607,5 +606,5 @@ export const TailwindColors = {
   Purple: TW_PURPLE,
   Fuchsia: TW_FUCHSIA,
   Pink: TW_PINK,
-  Rose: TW_ROSE,
+  Rose: TW_ROSE
 };

@@ -8,13 +8,9 @@ import {
   VonKriesConeModel,
   XYZScalingConeModel
 } from '../../adaptation/cone-response';
-import {
-  IlluminantA,
-  IlluminantD50,
-  IlluminantD65
-} from '../../standards/illuminants';
+import { IlluminantA, IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
 import { coneMatrixes } from '../../adaptation/_cone-matrixes';
-import { multiplyMatrixByVector } from '../../utils/linear';
+import { multiplyMatrixByVector, type Matrix3x3 } from '../../utils/linear';
 
 describe('Chromatic Adaptation', () => {
   describe('computeAdaptationMatrix', () => {
@@ -23,13 +19,13 @@ describe('Chromatic Adaptation', () => {
 
       // Check that the matrix is a 3x3 matrix
       expect(matrix.length).toBe(3);
-      matrix.forEach(row => {
+      matrix.forEach((row) => {
         expect(row.length).toBe(3);
       });
 
       // Check that all values are numbers
-      matrix.forEach(row => {
-        row.forEach(value => {
+      matrix.forEach((row) => {
+        row.forEach((value) => {
           expect(typeof value).toBe('number');
           expect(isNaN(value)).toBe(false);
         });
@@ -60,7 +56,11 @@ describe('Chromatic Adaptation', () => {
       expect(matrixXYZ.length).toBe(3);
 
       // Test with Von Kries model
-      const matrixVonKries = computeAdaptationMatrix(IlluminantD50, IlluminantD65, VonKriesConeModel);
+      const matrixVonKries = computeAdaptationMatrix(
+        IlluminantD50,
+        IlluminantD65,
+        VonKriesConeModel
+      );
       expect(matrixVonKries.length).toBe(3);
 
       // The matrices should be different
@@ -84,7 +84,7 @@ describe('Chromatic Adaptation', () => {
   describe('getAdaptationMatrix', () => {
     it('should return a precomputed matrix if available', () => {
       // Add a mock precomputed matrix to coneMatrixes
-      const mockMatrix = [
+      const mockMatrix: Matrix3x3 = [
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9]
@@ -101,11 +101,7 @@ describe('Chromatic Adaptation', () => {
       const result = getAdaptationMatrix(IlluminantD50, IlluminantD65, BradfordConeModel);
 
       // Restore the original matrix
-      if (originalMatrix) {
-        coneMatrixes[tempKey] = originalMatrix;
-      } else {
-        delete coneMatrixes[tempKey];
-      }
+      coneMatrixes[tempKey] = originalMatrix;
 
       // Check that the mock matrix was returned
       expect(result).toBe(mockMatrix);
@@ -123,7 +119,7 @@ describe('Chromatic Adaptation', () => {
 
       // Check that a valid matrix was returned
       expect(result.length).toBe(3);
-      result.forEach(row => {
+      result.forEach((row) => {
         expect(row.length).toBe(3);
       });
     });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ColorStringParser, ComponentParseOptions } from '../../semantics/colorParser';
+import { ColorStringParser } from '../../semantics/colorParser';
 
 describe('ColorStringParser', () => {
   describe('constructor', () => {
@@ -132,7 +132,9 @@ describe('ColorStringParser', () => {
     it('should throw if no delimiter is found', () => {
       const parser = new ColorStringParser('rgb(2550)', 4);
       parser.readComponent();
-      expect(() => parser.determineDelimiterStyle()).toThrow("expected ',' or <whitespace> after first value");
+      expect(() => {
+        parser.determineDelimiterStyle();
+      }).toThrow("expected ',' or <whitespace> after first value");
     });
   });
 
@@ -143,7 +145,8 @@ describe('ColorStringParser', () => {
       // Verify we're at the comma
       expect(parser.getCurrentChar()).toBe(',');
       // Set commaSyntax manually since we know it's comma syntax
-      parser['commaSyntax'] = true;
+      // @ts-expect-error - force override for the test
+      parser.commaSyntax = true;
       const posBeforeComma = parser.getPosition();
       parser.consumeCommaIfNeeded();
       // Should have moved past the comma and space (1 position)
@@ -155,7 +158,8 @@ describe('ColorStringParser', () => {
       // Read the first component
       parser.readComponent();
       // Set commaSyntax manually to false since we know it's space syntax
-      parser['commaSyntax'] = false;
+      // @ts-expect-error - force override for the test
+      parser.commaSyntax = false;
       const posBeforeSpace = parser.getPosition();
       parser.consumeCommaIfNeeded();
       // Should not have moved
@@ -167,8 +171,11 @@ describe('ColorStringParser', () => {
       // Read the first component
       parser.readComponent();
       // Set commaSyntax manually to true to force it to look for a comma
-      parser['commaSyntax'] = true;
-      expect(() => parser.consumeCommaIfNeeded()).toThrow("expected ','");
+      // @ts-expect-error - force override for the test
+      parser.commaSyntax = true;
+      expect(() => {
+        parser.consumeCommaIfNeeded();
+      }).toThrow("expected ','");
     });
   });
 
@@ -179,7 +186,8 @@ describe('ColorStringParser', () => {
       // Verify we're at the comma
       expect(parser.getCurrentChar()).toBe(',');
       // Set commaSyntax manually
-      parser['commaSyntax'] = true;
+      // @ts-expect-error - force override for the test
+      parser.commaSyntax = true;
       const alpha = parser.parseOptionalAlpha();
       expect(alpha).toBe(0.5);
     });
@@ -209,7 +217,9 @@ describe('ColorStringParser', () => {
       const parser = new ColorStringParser('rgb(0, 0, 0)', 10);
       // Verify we're at the closing parenthesis
       expect(parser.getCurrentChar()).toBe('0');
-      expect(() => parser.checkEnd()).toThrow();
+      expect(() => {
+        parser.checkEnd();
+      }).toThrow();
     });
 
     it('should throw if closing parenthesis is missing', () => {
@@ -217,7 +227,9 @@ describe('ColorStringParser', () => {
       const parser = new ColorStringParser('rgb(0, 0, 0', 10);
       // Verify we're at the end of the string
       expect(parser.getPosition()).toBe(10);
-      expect(() => parser.checkEnd()).toThrow('missing ")"');
+      expect(() => {
+        parser.checkEnd();
+      }).toThrow('missing ")"');
     });
 
     it('should throw if there is text after closing parenthesis', () => {
@@ -226,8 +238,11 @@ describe('ColorStringParser', () => {
       // Verify we're at the closing parenthesis
       expect(parser.getCurrentChar()).toBe('0');
       // Manually increment the position to simulate having consumed the closing parenthesis
-      parser['i'] = 11;
-      expect(() => parser.checkEnd()).toThrow('unexpected text after ")"');
+      // @ts-expect-error - force override for the test
+      parser.i = 11;
+      expect(() => {
+        parser.checkEnd();
+      }).toThrow('unexpected text after ")"');
     });
   });
 

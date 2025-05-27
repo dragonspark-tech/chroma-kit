@@ -1,8 +1,9 @@
 import {
   jzazbz,
-  JzAzBzColor,
+  type JzAzBzColor,
   jzazbzToHSL,
-  jzazbzToHSV, jzazbzToHWB,
+  jzazbzToHSV,
+  jzazbzToHWB,
   jzazbzToLab,
   jzazbzToLCh,
   jzazbzToOKLab,
@@ -10,18 +11,18 @@ import {
   jzazbzToRGB,
   jzazbzToXYZ
 } from '../jzazbz';
-import { XYZColor } from '../xyz';
-import { RGBColor } from '../rgb';
-import { LabColor } from '../lab';
-import { LChColor } from '../lch';
-import { OKLabColor } from '../oklab';
-import { OKLChColor } from '../oklch';
-import { HSLColor } from '../hsl';
-import { HSVColor } from '../hsv';
-import { ColorBase } from '../../foundation';
+import type { XYZColor } from '../xyz';
+import type { RGBColor } from '../rgb';
+import type { LabColor } from '../lab';
+import type { LChColor } from '../lch';
+import type { OKLabColor } from '../oklab';
+import type { OKLChColor } from '../oklch';
+import type { HSLColor } from '../hsl';
+import type { HSVColor } from '../hsv';
+import type { ColorBase } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
 import { serializeV1 } from '../../semantics/serialization';
-import { HWBColor } from '../hwb';
+import type { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the JzCzHz color space.
@@ -117,7 +118,7 @@ export const jzczhzFromVector = (v: number[], alpha?: number): JzCzHzColor => {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {RGBColor} The color in RGB space
  */
-export const jzczhzToRGB = (color: JzCzHzColor, peakLuminance: number = 10000): RGBColor =>
+export const jzczhzToRGB = (color: JzCzHzColor, peakLuminance = 10000): RGBColor =>
   jzazbzToRGB(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
@@ -131,7 +132,7 @@ export const jzczhzToRGB = (color: JzCzHzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {HSLColor} The color in HSL space
  */
-export const jzczhzToHSL = (color: JzCzHzColor, peakLuminance: number = 10000): HSLColor =>
+export const jzczhzToHSL = (color: JzCzHzColor, peakLuminance = 10000): HSLColor =>
   jzazbzToHSL(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
@@ -145,7 +146,7 @@ export const jzczhzToHSL = (color: JzCzHzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {HSVColor} The color in HSV space
  */
-export const jzczhzToHSV = (color: JzCzHzColor, peakLuminance: number = 10000): HSVColor =>
+export const jzczhzToHSV = (color: JzCzHzColor, peakLuminance = 10000): HSVColor =>
   jzazbzToHSV(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
@@ -159,7 +160,7 @@ export const jzczhzToHSV = (color: JzCzHzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {HWBColor} The color in HWB space
  */
-export const jzczhzToHWB = (color: JzCzHzColor, peakLuminance: number = 10000): HWBColor =>
+export const jzczhzToHWB = (color: JzCzHzColor, peakLuminance = 10000): HWBColor =>
   jzazbzToHWB(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
@@ -171,7 +172,7 @@ export const jzczhzToHWB = (color: JzCzHzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {XYZColor} The color in XYZ space
  */
-export const jzczhzToXYZ = (color: JzCzHzColor, peakLuminance: number = 10000): XYZColor =>
+export const jzczhzToXYZ = (color: JzCzHzColor, peakLuminance = 10000): XYZColor =>
   jzazbzToXYZ(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
@@ -183,7 +184,7 @@ export const jzczhzToXYZ = (color: JzCzHzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {LabColor} The color in Lab space
  */
-export const jzczhzToLab = (color: JzCzHzColor, peakLuminance: number = 10000): LabColor =>
+export const jzczhzToLab = (color: JzCzHzColor, peakLuminance = 10000): LabColor =>
   jzazbzToLab(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
@@ -195,7 +196,7 @@ export const jzczhzToLab = (color: JzCzHzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {LChColor} The color in LCh space
  */
-export const jzczhzToLCh = (color: JzCzHzColor, peakLuminance: number = 10000): LChColor =>
+export const jzczhzToLCh = (color: JzCzHzColor, peakLuminance = 10000): LChColor =>
   jzazbzToLCh(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
@@ -207,7 +208,7 @@ export const jzczhzToLCh = (color: JzCzHzColor, peakLuminance: number = 10000): 
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {OKLabColor} The color in OKLab space
  */
-export const jzczhzToOKLab = (color: JzCzHzColor, peakLuminance: number = 10000): OKLabColor =>
+export const jzczhzToOKLab = (color: JzCzHzColor, peakLuminance = 10000): OKLabColor =>
   jzazbzToOKLab(jzczhzToJzAzBz(color), peakLuminance);
 
 /**
@@ -219,7 +220,7 @@ export const jzczhzToOKLab = (color: JzCzHzColor, peakLuminance: number = 10000)
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {OKLChColor} The color in OKLCh space
  */
-export const jzczhzToOKLCh = (color: JzCzHzColor, peakLuminance: number = 10000): OKLChColor =>
+export const jzczhzToOKLCh = (color: JzCzHzColor, peakLuminance = 10000): OKLChColor =>
   jzazbzToOKLCh(jzczhzToJzAzBz(color), peakLuminance);
 
 /**

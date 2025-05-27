@@ -1,4 +1,4 @@
-import { lab, LabColor } from './lab';
+import { lab, type LabColor } from './lab';
 import { ColorStringParser } from '../../semantics/colorParser';
 
 /**

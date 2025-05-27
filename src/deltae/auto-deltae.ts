@@ -5,8 +5,7 @@ import { deltaE2000 } from './deltae-2000';
 import { deltaEOK } from './deltae-ok';
 import { deltaEOKScaled } from './deltae-ok-scaled';
 import { deltaEJZ } from './deltae-jz';
-import { JzCzHzColor } from '../models/jzczhz';
-import { Color } from '../foundation';
+import type { Color } from '../foundation';
 
 /**
  * Represents the available algorithms for calculating color difference (Delta E) between two colors.
@@ -66,7 +65,7 @@ export const deltaE = (
       return deltaEOKScaled(parseColor(color, 'oklab'), parseColor(sample, 'oklab'));
 
     case 'Jz':
-      return deltaEJZ(parseColor(color, 'jzczhz'), parseColor(sample, 'jzczhz') as JzCzHzColor);
+      return deltaEJZ(parseColor(color, 'jzczhz'), parseColor(sample, 'jzczhz'));
 
     default:
       throw new Error(`Unknown algorithm: ${algorithm}`);

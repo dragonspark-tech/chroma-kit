@@ -1,17 +1,17 @@
-import { lab, LabColor, labToXYZ } from '../lab';
-import { OKLabColor, oklabToOKLCh } from '../oklab';
-import { OKLChColor } from '../oklch';
-import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
-import { XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz';
-import { JzAzBzColor } from '../jzazbz';
-import { JzCzHzColor } from '../jzczhz';
-import { HSLColor } from '../hsl';
-import { HSVColor } from '../hsv';
-import { ColorBase } from '../../foundation';
+import { lab, type LabColor, labToXYZ } from '../lab';
+import { type OKLabColor, oklabToOKLCh } from '../oklab';
+import type { OKLChColor } from '../oklch';
+import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import { type XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz';
+import type { JzAzBzColor } from '../jzazbz';
+import type { JzCzHzColor } from '../jzczhz';
+import type { HSLColor } from '../hsl';
+import type { HSVColor } from '../hsv';
+import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
-import { HWBColor } from '../hwb';
-import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
+import type { HWBColor } from '../hwb';
+import { type Illuminant, IlluminantD65 } from '../../standards/illuminants';
 
 /**
  * Represents a color in the CIE LCh color space.
@@ -67,7 +67,13 @@ export const lchToCSSString = (color: LChColor): string => {
  * @param {Illuminant} [illuminant] - The reference white point to use, defaults to D65
  * @returns {LChColor} A new LCh color object
  */
-export const lch = (l: number, c: number, h: number, alpha?: number, illuminant?: Illuminant): LChColor => ({
+export const lch = (
+  l: number,
+  c: number,
+  h: number,
+  alpha?: number,
+  illuminant?: Illuminant
+): LChColor => ({
   space: 'lch',
   l,
   c,
@@ -118,7 +124,7 @@ export const lchFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const lchToRGB = (color: LChColor, performGamutMapping: boolean = true): RGBColor =>
+export const lchToRGB = (color: LChColor, performGamutMapping = true): RGBColor =>
   xyzToRGB(lchToXYZ(color), performGamutMapping);
 
 /**
@@ -133,7 +139,7 @@ export const lchToRGB = (color: LChColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const lchToHSL = (color: LChColor, performGamutMapping: boolean = true): HSLColor =>
+export const lchToHSL = (color: LChColor, performGamutMapping = true): HSLColor =>
   rgbToHSL(lchToRGB(color, performGamutMapping));
 
 /**
@@ -148,7 +154,7 @@ export const lchToHSL = (color: LChColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const lchToHSV = (color: LChColor, performGamutMapping: boolean = true): HSVColor =>
+export const lchToHSV = (color: LChColor, performGamutMapping = true): HSVColor =>
   rgbToHSV(lchToRGB(color, performGamutMapping));
 
 /**
@@ -163,7 +169,7 @@ export const lchToHSV = (color: LChColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const lchToHWB = (color: LChColor, performGamutMapping: boolean = true): HWBColor =>
+export const lchToHWB = (color: LChColor, performGamutMapping = true): HWBColor =>
   rgbToHWB(lchToRGB(color, performGamutMapping));
 
 /**
@@ -221,7 +227,7 @@ export const lchToOKLCh = (color: LChColor): OKLChColor => oklabToOKLCh(lchToOKL
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const lchToJzAzBz = (color: LChColor, peakLuminance: number = 10000): JzAzBzColor =>
+export const lchToJzAzBz = (color: LChColor, peakLuminance = 10000): JzAzBzColor =>
   xyzToJzAzBz(lchToXYZ(color), peakLuminance);
 
 /**
@@ -236,5 +242,5 @@ export const lchToJzAzBz = (color: LChColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const lchToJzCzHz = (color: LChColor, peakLuminance: number = 10000): JzCzHzColor =>
+export const lchToJzCzHz = (color: LChColor, peakLuminance = 10000): JzCzHzColor =>
   xyzToJzCzHz(lchToXYZ(color), peakLuminance);

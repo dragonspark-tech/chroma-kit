@@ -3,14 +3,8 @@ import { registerAllConversions } from '../../conversion/register-all-conversion
 import * as conversionModule from '../../conversion/conversion';
 import { clearConversionRegistry } from '../../conversion/conversion';
 import { rgb } from '../../models/rgb';
-import { lab } from '../../models/lab';
 import { hsl } from '../../models/hsl';
 import { hsv } from '../../models/hsv';
-import { hwb } from '../../models/hwb';
-import { oklab } from '../../models/oklab';
-import { oklch } from '../../models/oklch';
-import { jzazbz } from '../../models/jzazbz';
-import { jzczhz } from '../../models/jzczhz';
 
 describe('Register Conversions', () => {
   // Spy on the registerConversion function

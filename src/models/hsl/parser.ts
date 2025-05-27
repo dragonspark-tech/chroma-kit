@@ -1,4 +1,4 @@
-import { hsl, HSLColor } from './hsl';
+import { hsl, type HSLColor } from './hsl';
 
 /**
  * Parses a CSS HSL color string into an HSLColor object.

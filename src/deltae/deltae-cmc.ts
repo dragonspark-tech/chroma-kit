@@ -1,4 +1,4 @@
-import { LChColor } from '../models/lch';
+import type { LChColor } from '../models/lch';
 import { DEG_TO_RAD } from './constants';
 
 /**
@@ -7,10 +7,10 @@ import { DEG_TO_RAD } from './constants';
  * @property {number} kL - Lightness tolerance factor (default: 2)
  * @property {number} kC - Chroma tolerance factor (default: 1)
  */
-export type DeltaECMCTolerances = {
+export interface DeltaECMCTolerances {
   kL: number;
   kC: number;
-};
+}
 
 /**
  * Calculates the CMC l:c color difference (Delta E) between two colors.
@@ -69,7 +69,6 @@ export const deltaECMC = (
 
   const S_C = (0.0638 * C1) / (1 + 0.0131 * C1) + 0.638;
 
-  const h1Rad = h1 * DEG_TO_RAD;
   let T: number;
   if (h1 >= 164 && h1 <= 345) {
     T = 0.56 + Math.abs(0.2 * Math.cos((h1 + 168) * DEG_TO_RAD));

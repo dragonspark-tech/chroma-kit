@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { checkAPCAContrast, isContrastAPCACompliant, APCAContentType } from '../../../plugins/a11y/src/checks/apca';
+import { checkAPCAContrast, isContrastAPCACompliant } from '../../../plugins/a11y/src/checks/apca';
 import { rgb } from '../../../models/rgb';
-import { APCA_BODY_MIN_RATIO, APCA_LARGE_MIN_RATIO, APCA_PLACEHOLDER_MIN_RATIO } from '../../../plugins/a11y/src/constants';
+import {
+  APCA_BODY_MIN_RATIO,
+  APCA_LARGE_MIN_RATIO,
+  APCA_PLACEHOLDER_MIN_RATIO
+} from '../../../plugins/a11y/src/constants';
 
 describe('A11y Plugin - APCA Checks', () => {
   describe('isContrastAPCACompliant', () => {
@@ -29,13 +33,17 @@ describe('A11y Plugin - APCA Checks', () => {
 
     it('should correctly check NonEssentialText compliance', () => {
       // Test with a value above the threshold
-      expect(isContrastAPCACompliant(APCA_PLACEHOLDER_MIN_RATIO + 1, 'NonEssentialText')).toBe(true);
+      expect(isContrastAPCACompliant(APCA_PLACEHOLDER_MIN_RATIO + 1, 'NonEssentialText')).toBe(
+        true
+      );
 
       // Test with a value equal to the threshold
       expect(isContrastAPCACompliant(APCA_PLACEHOLDER_MIN_RATIO, 'NonEssentialText')).toBe(true);
 
       // Test with a value below the threshold
-      expect(isContrastAPCACompliant(APCA_PLACEHOLDER_MIN_RATIO - 1, 'NonEssentialText')).toBe(false);
+      expect(isContrastAPCACompliant(APCA_PLACEHOLDER_MIN_RATIO - 1, 'NonEssentialText')).toBe(
+        false
+      );
     });
 
     it('should correctly check UIControls compliance', () => {
@@ -52,7 +60,9 @@ describe('A11y Plugin - APCA Checks', () => {
 
     it('should throw an error for unknown content type', () => {
       // @ts-expect-error - Testing with invalid content type
-      expect(() => isContrastAPCACompliant(60, 'InvalidType')).toThrow('Unknown content type: InvalidType');
+      expect(() => isContrastAPCACompliant(60, 'InvalidType')).toThrow(
+        'Unknown content type: InvalidType'
+      );
     });
   });
 

@@ -3,7 +3,6 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   hsl,
-  HSLColor,
   hslFromVector,
   hslToCSSString,
   hslToHSV,
@@ -495,7 +494,7 @@ describe('HSL Color Model', () => {
     it('should approximately preserve HSL values when converting to RGB and back', () => {
       const original = hsl(120, 0.5, 0.6);
       const rgb = hslToRGB(original);
-      const roundTrip = rgb.to('hsl') as HSLColor;
+      const roundTrip = rgb.to('hsl');
 
       expect(roundTrip.h).toBeCloseTo(original.h, 0);
       expect(roundTrip.s).toBeCloseTo(original.s, 1);
@@ -531,21 +530,21 @@ describe('HSL Color Model', () => {
     it('should convert RGB primaries to HSL correctly', () => {
       // Red in RGB
       const rgbRed = rgb(1, 0, 0);
-      const hslRed = rgbRed.to('hsl') as HSLColor;
+      const hslRed = rgbRed.to('hsl');
       expect(hslRed.h).toBeCloseTo(0, 0);
       expect(hslRed.s).toBeCloseTo(1, 5);
       expect(hslRed.l).toBeCloseTo(0.5, 5);
 
       // Green in RGB
       const rgbGreen = rgb(0, 1, 0);
-      const hslGreen = rgbGreen.to('hsl') as HSLColor;
+      const hslGreen = rgbGreen.to('hsl');
       expect(hslGreen.h).toBeCloseTo(120, 0);
       expect(hslGreen.s).toBeCloseTo(1, 5);
       expect(hslGreen.l).toBeCloseTo(0.5, 5);
 
       // Blue in RGB
       const rgbBlue = rgb(0, 0, 1);
-      const hslBlue = rgbBlue.to('hsl') as HSLColor;
+      const hslBlue = rgbBlue.to('hsl');
       expect(hslBlue.h).toBeCloseTo(240, 0);
       expect(hslBlue.s).toBeCloseTo(1, 5);
       expect(hslBlue.l).toBeCloseTo(0.5, 5);

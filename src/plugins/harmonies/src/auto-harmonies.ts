@@ -1,4 +1,4 @@
-import { Color, ColorSpace, CreatedColor } from '../../../foundation';
+import type { Color, ColorSpace, CreatedColor } from '../../../foundation';
 import { parseColor } from '../../../index';
 import {
   getAnalogous,
@@ -10,21 +10,21 @@ import {
   getTetradics,
   getTriadics
 } from './harmonies';
-import { HSLColor } from '../../../models/hsl';
+import type { HSLColor } from '../../../models/hsl';
 
 /**
  * Represents the different types of color harmonies available.
  * Each harmony type creates a different arrangement of colors based on color theory principles.
  */
 export type HarmonyType =
-  | 'Analogous'        // Colors adjacent on the color wheel
-  | 'Complementary'    // Colors opposite on the color wheel
+  | 'Analogous' // Colors adjacent on the color wheel
+  | 'Complementary' // Colors opposite on the color wheel
   | 'SplitComplementary' // Base color and colors adjacent to its complement
   | 'DoubleSplitComplementary' // Analogous colors and their complements
-  | 'Square'           // Four colors evenly spaced around the color wheel
-  | 'Tetradic'         // Four colors arranged in two complementary pairs
-  | 'Triadic'          // Three colors evenly spaced around the color wheel
-  | 'Monochromatic';   // Same hue with different lightness values
+  | 'Square' // Four colors evenly spaced around the color wheel
+  | 'Tetradic' // Four colors arranged in two complementary pairs
+  | 'Triadic' // Three colors evenly spaced around the color wheel
+  | 'Monochromatic'; // Same hue with different lightness values
 
 /**
  * Generates a color harmony based on the specified type.

@@ -1,4 +1,4 @@
-import { Matrix3x3 } from '../../utils/linear';
+import type { Matrix3x3 } from '../../utils/linear';
 
 /**
  * Constant used in the chromatic adaptation step of JzAzBz conversions.

@@ -1,18 +1,26 @@
-import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { xyz, XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToOKLCh, xyzToRGB } from '../xyz';
+import { type Illuminant, IlluminantD65 } from '../../standards/illuminants';
+import {
+  xyz,
+  type XYZColor,
+  xyzToJzAzBz,
+  xyzToJzCzHz,
+  xyzToOKLab,
+  xyzToOKLCh,
+  xyzToRGB
+} from '../xyz';
 import { ϵ, κ } from './constants';
-import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
-import { lch, LChColor } from '../lch';
-import { OKLabColor } from '../oklab';
-import { OKLChColor } from '../oklch';
-import { JzAzBzColor } from '../jzazbz';
-import { JzCzHzColor } from '../jzczhz';
-import { HSLColor } from '../hsl';
-import { HSVColor } from '../hsv';
+import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import { lch, type LChColor } from '../lch';
+import type { OKLabColor } from '../oklab';
+import type { OKLChColor } from '../oklch';
+import type { JzAzBzColor } from '../jzazbz';
+import type { JzCzHzColor } from '../jzczhz';
+import type { HSLColor } from '../hsl';
+import type { HSVColor } from '../hsv';
 import { convertColor } from '../../conversion/conversion';
-import { ColorBase } from '../../foundation';
+import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
-import { HWBColor } from '../hwb';
+import type { HWBColor } from '../hwb';
 import { constrainAngle } from '../../utils/angles';
 
 /**
@@ -70,7 +78,13 @@ export const labToCSSString = (color: LabColor): string => {
  * @param {Illuminant} [illuminant] - The reference white point to use, defaults to D65
  * @returns {LabColor} A new Lab color object
  */
-export const lab = (l: number, a: number, b: number, alpha?: number, illuminant?: Illuminant): LabColor => ({
+export const lab = (
+  l: number,
+  a: number,
+  b: number,
+  alpha?: number,
+  illuminant?: Illuminant
+): LabColor => ({
   space: 'lab',
   l,
   a,
@@ -121,7 +135,7 @@ export const labFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const labToRGB = (color: LabColor, performGamutMapping: boolean = true): RGBColor =>
+export const labToRGB = (color: LabColor, performGamutMapping = true): RGBColor =>
   xyzToRGB(labToXYZ(color), performGamutMapping);
 
 /**
@@ -135,7 +149,7 @@ export const labToRGB = (color: LabColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const labToHSL = (color: LabColor, performGamutMapping: boolean = true): HSLColor =>
+export const labToHSL = (color: LabColor, performGamutMapping = true): HSLColor =>
   rgbToHSL(labToRGB(color, performGamutMapping));
 
 /**
@@ -149,7 +163,7 @@ export const labToHSL = (color: LabColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const labToHSV = (color: LabColor, performGamutMapping: boolean = true): HSVColor =>
+export const labToHSV = (color: LabColor, performGamutMapping = true): HSVColor =>
   rgbToHSV(labToRGB(color, performGamutMapping));
 
 /**
@@ -163,7 +177,7 @@ export const labToHSV = (color: LabColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const labToHWB = (color: LabColor, performGamutMapping: boolean = true): HWBColor =>
+export const labToHWB = (color: LabColor, performGamutMapping = true): HWBColor =>
   rgbToHWB(labToRGB(color, performGamutMapping));
 
 /**
@@ -212,8 +226,8 @@ export const labToLCH = (color: LabColor): LChColor => {
   const ϵLCh = 0.0015;
 
   const isAchromatic = Math.abs(a) < ϵLCh && Math.abs(b) < ϵLCh;
-  let h = isAchromatic ? 0 : constrainAngle((Math.atan2(b, a) * 180) / Math.PI);
-  let C = isAchromatic ? 0 : Math.sqrt(a ** 2 + b ** 2);
+  const h = isAchromatic ? 0 : constrainAngle((Math.atan2(b, a) * 180) / Math.PI);
+  const C = isAchromatic ? 0 : Math.sqrt(a ** 2 + b ** 2);
 
   return lch(l, C, h, alpha, illuminant);
 };
@@ -250,7 +264,7 @@ export const labToOKLCh = (color: LabColor): OKLChColor => xyzToOKLCh(labToXYZ(c
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzAzBzColor =>
+export const labToJzAzBz = (color: LabColor, peakLuminance = 10000): JzAzBzColor =>
   xyzToJzAzBz(labToXYZ(color), peakLuminance);
 
 /**
@@ -263,5 +277,5 @@ export const labToJzAzBz = (color: LabColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const labToJzCzHz = (color: LabColor, peakLuminance: number = 10000): JzCzHzColor =>
+export const labToJzCzHz = (color: LabColor, peakLuminance = 10000): JzCzHzColor =>
   xyzToJzCzHz(labToXYZ(color), peakLuminance);

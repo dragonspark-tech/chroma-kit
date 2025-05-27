@@ -1,4 +1,4 @@
-﻿import { rgb, RGBColor } from './rgb';
+﻿import { rgb, type RGBColor } from './rgb';
 import { RGB_INVERSE } from './constants';
 
 /**

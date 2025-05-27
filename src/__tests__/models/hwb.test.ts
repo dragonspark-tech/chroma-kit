@@ -3,7 +3,6 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   hwb,
-  HWBColor,
   hwbFromVector,
   hwbToCSSString,
   hwbToHSL,
@@ -406,7 +405,7 @@ describe('HWB Color Model', () => {
     it('should approximately preserve HWB values when converting to RGB and back', () => {
       const original = hwb(120, 0.3, 0.4);
       const rgb = hwbToRGB(original);
-      const roundTrip = rgb.to('hwb') as HWBColor;
+      const roundTrip = rgb.to('hwb');
 
       expect(roundTrip.h).toBeCloseTo(original.h, 0);
       expect(roundTrip.w).toBeCloseTo(original.w, 1);
@@ -416,7 +415,7 @@ describe('HWB Color Model', () => {
     it('should approximately preserve HWB values when converting to HSL and back', () => {
       const original = hwb(120, 0.3, 0.4);
       const hslColor = hwbToHSL(original);
-      const roundTrip = hslColor.to('hwb') as HWBColor;
+      const roundTrip = hslColor.to('hwb');
 
       expect(roundTrip.h).toBeCloseTo(original.h, 0);
       expect(roundTrip.w).toBeCloseTo(original.w, 1);
@@ -426,7 +425,7 @@ describe('HWB Color Model', () => {
     it('should approximately preserve HWB values when converting to HSV and back', () => {
       const original = hwb(120, 0.3, 0.4);
       const hsvColor = hwbToHSV(original);
-      const roundTrip = hsvColor.to('hwb') as HWBColor;
+      const roundTrip = hsvColor.to('hwb');
 
       expect(roundTrip.h).toBeCloseTo(original.h, 0);
       expect(roundTrip.w).toBeCloseTo(original.w, 1);
@@ -480,21 +479,21 @@ describe('HWB Color Model', () => {
     it('should convert RGB to HWB correctly', () => {
       // Red in RGB
       const rgbRed = rgb(1, 0, 0);
-      const hwbRed = rgbRed.to('hwb') as HWBColor;
+      const hwbRed = rgbRed.to('hwb');
       expect(hwbRed.h).toBeCloseTo(0, 0);
       expect(hwbRed.w).toBeCloseTo(0, 5);
       expect(hwbRed.b).toBeCloseTo(0, 5);
 
       // Green in RGB
       const rgbGreen = rgb(0, 1, 0);
-      const hwbGreen = rgbGreen.to('hwb') as HWBColor;
+      const hwbGreen = rgbGreen.to('hwb');
       expect(hwbGreen.h).toBeCloseTo(120, 0);
       expect(hwbGreen.w).toBeCloseTo(0, 5);
       expect(hwbGreen.b).toBeCloseTo(0, 5);
 
       // Blue in RGB
       const rgbBlue = rgb(0, 0, 1);
-      const hwbBlue = rgbBlue.to('hwb') as HWBColor;
+      const hwbBlue = rgbBlue.to('hwb');
       expect(hwbBlue.h).toBeCloseTo(240, 0);
       expect(hwbBlue.w).toBeCloseTo(0, 5);
       expect(hwbBlue.b).toBeCloseTo(0, 5);
@@ -503,21 +502,21 @@ describe('HWB Color Model', () => {
     it('should convert HSL to HWB correctly', () => {
       // Red in HSL
       const hslRed = hsl(0, 1, 0.5);
-      const hwbRed = hslRed.to('hwb') as HWBColor;
+      const hwbRed = hslRed.to('hwb');
       expect(hwbRed.h).toBeCloseTo(0, 0);
       expect(hwbRed.w).toBeCloseTo(0, 5);
       expect(hwbRed.b).toBeCloseTo(0, 5);
 
       // Green in HSL
       const hslGreen = hsl(120, 1, 0.5);
-      const hwbGreen = hslGreen.to('hwb') as HWBColor;
+      const hwbGreen = hslGreen.to('hwb');
       expect(hwbGreen.h).toBeCloseTo(120, 0);
       expect(hwbGreen.w).toBeCloseTo(0, 5);
       expect(hwbGreen.b).toBeCloseTo(0, 5);
 
       // Blue in HSL
       const hslBlue = hsl(240, 1, 0.5);
-      const hwbBlue = hslBlue.to('hwb') as HWBColor;
+      const hwbBlue = hslBlue.to('hwb');
       expect(hwbBlue.h).toBeCloseTo(240, 0);
       expect(hwbBlue.w).toBeCloseTo(0, 5);
       expect(hwbBlue.b).toBeCloseTo(0, 5);
@@ -526,21 +525,21 @@ describe('HWB Color Model', () => {
     it('should convert HSV to HWB correctly', () => {
       // Red in HSV
       const hsvRed = hsv(0, 1, 1);
-      const hwbRed = hsvRed.to('hwb') as HWBColor;
+      const hwbRed = hsvRed.to('hwb');
       expect(hwbRed.h).toBeCloseTo(0, 0);
       expect(hwbRed.w).toBeCloseTo(0, 5);
       expect(hwbRed.b).toBeCloseTo(0, 5);
 
       // Green in HSV
       const hsvGreen = hsv(120, 1, 1);
-      const hwbGreen = hsvGreen.to('hwb') as HWBColor;
+      const hwbGreen = hsvGreen.to('hwb');
       expect(hwbGreen.h).toBeCloseTo(120, 0);
       expect(hwbGreen.w).toBeCloseTo(0, 5);
       expect(hwbGreen.b).toBeCloseTo(0, 5);
 
       // Blue in HSV
       const hsvBlue = hsv(240, 1, 1);
-      const hwbBlue = hsvBlue.to('hwb') as HWBColor;
+      const hwbBlue = hsvBlue.to('hwb');
       expect(hwbBlue.h).toBeCloseTo(240, 0);
       expect(hwbBlue.w).toBeCloseTo(0, 5);
       expect(hwbBlue.b).toBeCloseTo(0, 5);

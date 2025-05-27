@@ -1,4 +1,4 @@
-import { hwb, HWBColor } from './hwb';
+import { hwb, type HWBColor } from './hwb';
 
 /**
  * Parses a CSS HWB color string into an HWBColor object.

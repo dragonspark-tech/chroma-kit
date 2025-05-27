@@ -3,7 +3,6 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   oklch,
-  OKLChColor,
   oklchFromVector,
   oklchToCSSString,
   oklchToHSL,
@@ -410,7 +409,7 @@ describe('OKLCh Color Model', () => {
     it('should approximately preserve OKLCh values when converting to OKLab and back', () => {
       const original = oklch(0.5, 0.2, 270);
       const oklab = oklchToOKLab(original);
-      const roundTrip = oklab.to('oklch') as OKLChColor;
+      const roundTrip = oklab.to('oklch');
 
       expect(roundTrip.l).toBeCloseTo(original.l, 5);
       expect(roundTrip.c).toBeCloseTo(original.c, 5);
@@ -420,7 +419,7 @@ describe('OKLCh Color Model', () => {
     it('should approximately preserve OKLCh values when converting to RGB and back', () => {
       const original = oklch(0.5, 0.1, 270); // Using lower chroma to stay in gamut
       const rgb = oklchToRGB(original);
-      const roundTrip = rgb.to('oklch') as OKLChColor;
+      const roundTrip = rgb.to('oklch');
 
       expect(roundTrip.l).toBeCloseTo(original.l, 1);
       expect(roundTrip.c).toBeCloseTo(original.c, 1);
@@ -442,7 +441,7 @@ describe('OKLCh Color Model', () => {
     it('should convert pure green in OKLCh correctly', () => {
       // First convert from RGB to OKLCh to get accurate values
       const rgb1 = rgb(0, 1, 0);
-      const green = rgb1.to('oklch') as OKLChColor;
+      const green = rgb1.to('oklch');
       // Then convert back to RGB
       const result = oklchToRGB(green);
       expect(result.r).toBeCloseTo(0, 1);
@@ -453,7 +452,7 @@ describe('OKLCh Color Model', () => {
     it('should convert pure blue in OKLCh correctly', () => {
       // First convert from RGB to OKLCh to get accurate values
       const rgb1 = rgb(0, 0, 1);
-      const blue = rgb1.to('oklch') as OKLChColor;
+      const blue = rgb1.to('oklch');
       // Then convert back to RGB
       const result = oklchToRGB(blue);
       expect(result.r).toBeCloseTo(0, 1);

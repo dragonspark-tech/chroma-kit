@@ -1,4 +1,4 @@
-import { XYZColor } from '../../models/xyz';
+import type { XYZColor } from '../../models/xyz';
 import { WCAG21_LUMINANCE_OFFSET } from './constants';
 
 /**
@@ -40,4 +40,4 @@ export const contrastWCAG21 = (color1: XYZColor, color2: XYZColor): number => {
   const minLum = Math.min(lum1, lum2);
 
   return (maxLum + WCAG21_LUMINANCE_OFFSET) / (minLum + WCAG21_LUMINANCE_OFFSET);
-}
+};

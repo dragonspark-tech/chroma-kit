@@ -102,8 +102,8 @@ describe('math', () => {
   describe('pow7', () => {
     it('should calculate the 7th power of a number', () => {
       expect(pow7(2)).toBe(128); // 2^7 = 128
-      expect(pow7(1)).toBe(1);   // 1^7 = 1
-      expect(pow7(0)).toBe(0);   // 0^7 = 0
+      expect(pow7(1)).toBe(1); // 1^7 = 1
+      expect(pow7(0)).toBe(0); // 0^7 = 0
     });
 
     it('should handle negative numbers', () => {

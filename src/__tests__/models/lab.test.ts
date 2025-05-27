@@ -3,7 +3,6 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   lab,
-  LabColor,
   labFromVector,
   labToCSSString,
   labToHSL,
@@ -20,7 +19,6 @@ import {
 import { labFromCSSString } from '../../models/lab/parser';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
 import { rgb, rgbToXYZ } from '../../models/rgb';
-import { xyz } from '../../models/xyz';
 
 describe('Lab Color Model', () => {
   // Test lab factory function
@@ -406,7 +404,7 @@ describe('Lab Color Model', () => {
     it('should approximately preserve Lab values when converting to XYZ and back', () => {
       const original = lab(50, 10, -20);
       const xyzColor = labToXYZ(original);
-      const roundTrip = xyzColor.to('lab') as LabColor;
+      const roundTrip = xyzColor.to('lab');
 
       expect(roundTrip.l).toBeCloseTo(original.l, 1);
       expect(roundTrip.a).toBeCloseTo(original.a, 1);
@@ -416,7 +414,7 @@ describe('Lab Color Model', () => {
     it('should approximately preserve Lab values when converting to RGB and back', () => {
       const original = lab(50, 10, -20);
       const rgb = labToRGB(original);
-      const roundTrip = rgb.to('lab') as LabColor;
+      const roundTrip = rgb.to('lab');
 
       expect(roundTrip.l).toBeCloseTo(original.l, 1);
       expect(roundTrip.a).toBeCloseTo(original.a, 1);
@@ -453,7 +451,7 @@ describe('Lab Color Model', () => {
 
       // Green in RGB
       const green = rgb(0, 1, 0).to('lab');
-      expect(green.l).toBeCloseTo(87.7355)
+      expect(green.l).toBeCloseTo(87.7355);
       expect(green.a).toBeCloseTo(-86.1815);
       expect(green.b).toBeCloseTo(83.1866);
 

@@ -1,4 +1,4 @@
-import { oklab, OKLabColor } from './oklab';
+import { oklab, type OKLabColor } from './oklab';
 import { ColorStringParser } from '../../semantics/colorParser';
 
 /**

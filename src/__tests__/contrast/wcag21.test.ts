@@ -42,7 +42,7 @@ describe('WCAG 2.1 Contrast', () => {
         { color1: xyz(0, 0, 0), color2: xyz(1, 1, 1) }, // Black vs White (max contrast)
         { color1: xyz(0.3, 0.3, 0.3), color2: xyz(0.7, 0.7, 0.7) }, // Medium contrast
         { color1: xyz(0.4, 0.4, 0.4), color2: xyz(0.6, 0.6, 0.6) }, // Low contrast
-        { color1: xyz(0.5, 0.5, 0.5), color2: xyz(0.5, 0.5, 0.5) }  // No contrast
+        { color1: xyz(0.5, 0.5, 0.5), color2: xyz(0.5, 0.5, 0.5) } // No contrast
       ];
 
       for (const { color1, color2 } of testCases) {

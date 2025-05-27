@@ -1,16 +1,16 @@
-import { OKLChColor, oklchToJzCzHz, oklchToLab, oklchToOKLab } from '../../../../models/oklch';
-import { deltaE2000, deltaEJZ, deltaEOK, deltaEOKScaled } from '../../../../deltae';
-import { TailwindPalette } from '../../../tailwind/src/tailwind.types';
+import { type OKLChColor, oklchToOKLab } from '../../../../models/oklch';
+import { deltaEOKScaled } from '../../../../deltae';
+import type { TailwindPalette } from '../../../tailwind/src/tailwind.types';
 
-export type TailwindColorApproximation = {
-  family: string,
-  palette: TailwindPalette,
+export interface TailwindColorApproximation {
+  family: string;
+  palette: TailwindPalette;
   shade: {
-    number: number,
-    color: OKLChColor
-  },
-  delta: number
-};
+    number: number;
+    color: OKLChColor;
+  };
+  delta: number;
+}
 
 /**
  * Finds the closest matching Tailwind color family from a given input color.
@@ -23,11 +23,14 @@ export type TailwindColorApproximation = {
  * @param {Record<string, TailwindPalette>} availableFamilies - A record of Tailwind color families, where the key is the family name and the value is its corresponding palette.
  * @returns {TailwindPalette} The palette of the closest matching Tailwind color family.
  */
-export const findClosestTailwindFamily = (inputColor: OKLChColor, availableFamilies: Record<string, TailwindPalette>): TailwindColorApproximation => {
-  const approximations: { family: string, delta: number, shade: number }[] = [];
+export const findClosestTailwindFamily = (
+  inputColor: OKLChColor,
+  availableFamilies: Record<string, TailwindPalette>
+): TailwindColorApproximation => {
+  const approximations: { family: string; delta: number; shade: number }[] = [];
 
   for (const [family, shades] of Object.entries(availableFamilies)) {
-    let deltaShades: { family: string, shade: number, delta: number }[] = [];
+    const deltaShades: { family: string; shade: number; delta: number }[] = [];
 
     for (const [shade, shadeColor] of Object.entries(shades)) {
       const delta = deltaEOKScaled(oklchToOKLab(inputColor), oklchToOKLab(shadeColor));
@@ -42,14 +45,17 @@ export const findClosestTailwindFamily = (inputColor: OKLChColor, availableFamil
   approximations.sort((a, b) => a.delta - b.delta);
 
   const finalApproximation = approximations[0];
-  const finalFamily = finalApproximation.family as keyof typeof availableFamilies;
+  const finalFamily = finalApproximation.family;
   return {
     family: finalFamily,
     palette: availableFamilies[finalFamily],
     shade: {
       number: finalApproximation.shade,
-      color: availableFamilies[finalFamily][finalApproximation.shade as keyof typeof availableFamilies[typeof finalFamily]]
+      color:
+        availableFamilies[finalFamily][
+          finalApproximation.shade as keyof (typeof availableFamilies)[typeof finalFamily]
+        ]
     },
     delta: finalApproximation.delta
   };
-}
+};

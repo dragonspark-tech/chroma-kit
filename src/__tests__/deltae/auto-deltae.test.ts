@@ -117,8 +117,7 @@ describe('Auto Delta E', () => {
 
     it('should throw an error for unknown algorithm', () => {
       expect(() => {
-        // @ts-ignore - Testing runtime behavior with invalid input
-        deltaE('#ff0000', '#00ff00', 'Unknown');
+        deltaE('#ff0000', '#00ff00', 'Unknown' as unknown as DeltaEAlgorithm);
       }).toThrow('Unknown algorithm: Unknown');
     });
   });

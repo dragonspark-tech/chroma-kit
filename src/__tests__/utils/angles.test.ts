@@ -13,7 +13,7 @@ describe('angles', () => {
       expect(constrainAngle(360)).toBe(0);
       expect(constrainAngle(361)).toBe(1);
       expect(constrainAngle(540)).toBe(180); // 540 = 360 + 180
-      expect(constrainAngle(720)).toBe(0);   // 720 = 360 * 2
+      expect(constrainAngle(720)).toBe(0); // 720 = 360 * 2
     });
 
     it('should normalize negative angles', () => {
@@ -21,11 +21,11 @@ describe('angles', () => {
       expect(constrainAngle(-180)).toBe(180);
       expect(constrainAngle(-360)).toBe(0);
       expect(constrainAngle(-361)).toBe(359);
-      expect(constrainAngle(-720)).toBe(0);  // -720 = -360 * 2
+      expect(constrainAngle(-720)).toBe(0); // -720 = -360 * 2
     });
 
     it('should handle large angles', () => {
-      expect(constrainAngle(3600)).toBe(0);  // 3600 = 360 * 10
+      expect(constrainAngle(3600)).toBe(0); // 3600 = 360 * 10
       expect(constrainAngle(3601)).toBe(1);
       expect(constrainAngle(-3600)).toBe(0); // -3600 = -360 * 10
       expect(constrainAngle(-3601)).toBe(359);

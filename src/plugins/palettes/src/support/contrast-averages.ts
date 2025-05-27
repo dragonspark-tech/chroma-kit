@@ -5,11 +5,11 @@
  * @property {number} onWhite - The calculated contrast value of the shade against a white background.
  * @property {number} onBlack - The calculated contrast value of the shade against a black background.
  */
-export type ShadeContrastAverage = {
+export interface ShadeContrastAverage {
   shade: number;
   onWhite: number;
   onBlack: number;
-};
+}
 
 /**
  * Represents an array of objects that define average contrast values for various shades

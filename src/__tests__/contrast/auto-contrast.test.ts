@@ -86,7 +86,14 @@ describe('Auto Contrast', () => {
       const gray = rgb(0.5, 0.5, 0.5);
 
       // Contrast between identical colors should be 0 or very close to 0 for all algorithms
-      const algorithms: ContrastAlgorithm[] = ['APCA', 'DeltaL*', 'DeltaPhi*', 'Michelson', 'WCAG21', 'Weber'];
+      const algorithms: ContrastAlgorithm[] = [
+        'APCA',
+        'DeltaL*',
+        'DeltaPhi*',
+        'Michelson',
+        'WCAG21',
+        'Weber'
+      ];
 
       for (const algorithm of algorithms) {
         const result = contrast(gray, gray, algorithm);

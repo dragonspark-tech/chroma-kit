@@ -1,4 +1,4 @@
-import { RGBColor, rgbToHSL, rgbToXYZ } from '../../../../models/rgb';
+import { type RGBColor, rgbToHSL, rgbToXYZ } from '../../../../models/rgb';
 import { hsl, hslToRGB } from '../../../../models/hsl';
 import { contrastAPCA, contrastWCAG21 } from '../../../../contrast';
 import { parseColor } from '../../../../semantics/parsing';
@@ -9,7 +9,7 @@ import { type Color } from '../../../../foundation';
  * - APCA: Advanced Perceptual Contrast Algorithm
  * - WCAG21: Web Content Accessibility Guidelines 2.1
  */
-export type OptimalContrastMethod = 'APCA' | "WCAG21";
+export type OptimalContrastMethod = 'APCA' | 'WCAG21';
 
 /**
  * Function type for calculating contrast between two colors
@@ -50,7 +50,7 @@ const getOptimalColorForContrastGeneric = (
   let closestTone = low;
   let minDiff = Number.POSITIVE_INFINITY;
 
-  for (let i = 0; i < maxIterations && (high - low) > epsilon; i++) {
+  for (let i = 0; i < maxIterations && high - low > epsilon; i++) {
     const mid = (low + high) / 2;
 
     const fgCurrent = hslToRGB(hsl(hue, saturation, mid));
@@ -83,7 +83,7 @@ const getOptimalColorForContrastGeneric = (
   }
 
   return hslToRGB(hsl(hue, saturation, closestTone));
-}
+};
 
 /**
  * Finds an optimal color for APCA contrast by adjusting lightness
@@ -93,9 +93,13 @@ const getOptimalColorForContrastGeneric = (
  * @param targetContrast - The desired APCA contrast value
  * @returns A new color with optimal APCA contrast while preserving hue and saturation
  */
-export const getOptimalColorForContrastAPCA = (foreground: RGBColor, background: RGBColor, targetContrast: number) => {
+export const getOptimalColorForContrastAPCA = (
+  foreground: RGBColor,
+  background: RGBColor,
+  targetContrast: number
+) => {
   return getOptimalColorForContrastGeneric(foreground, background, targetContrast, contrastAPCA);
-}
+};
 
 /**
  * Wrapper function for WCAG 2.1 contrast calculation that works with RGB colors
@@ -116,9 +120,18 @@ const wcagContrastWrapper = (foreground: RGBColor, background: RGBColor) =>
  * @param targetContrast - The desired WCAG 2.1 contrast ratio
  * @returns A new color with optimal WCAG 2.1 contrast while preserving hue and saturation
  */
-export const getOptimalColorForContrastWCAG21 = (foreground: RGBColor, background: RGBColor, targetContrast: number) => {
-  return getOptimalColorForContrastGeneric(foreground, background, targetContrast, wcagContrastWrapper);
-}
+export const getOptimalColorForContrastWCAG21 = (
+  foreground: RGBColor,
+  background: RGBColor,
+  targetContrast: number
+) => {
+  return getOptimalColorForContrastGeneric(
+    foreground,
+    background,
+    targetContrast,
+    wcagContrastWrapper
+  );
+};
 
 /**
  * Finds an optimal color for contrast using either APCA or WCAG 2.1 method
@@ -130,7 +143,12 @@ export const getOptimalColorForContrastWCAG21 = (foreground: RGBColor, backgroun
  * @param method - The contrast calculation method to use (default: 'APCA')
  * @returns A new color with optimal contrast while preserving hue and saturation
  */
-export const getOptimalColorForContrast = (foreground: Color | string, background: Color | string, targetContrast: number, method: OptimalContrastMethod = 'APCA') => {
+export const getOptimalColorForContrast = (
+  foreground: Color | string,
+  background: Color | string,
+  targetContrast: number,
+  method: OptimalContrastMethod = 'APCA'
+) => {
   const fgRGB = parseColor(foreground, 'rgb');
   const bgRGB = parseColor(background, 'rgb');
 
@@ -142,4 +160,4 @@ export const getOptimalColorForContrast = (foreground: Color | string, backgroun
     default:
       throw new Error(`Unknown contrast algorithm: ${method}`);
   }
-}
+};

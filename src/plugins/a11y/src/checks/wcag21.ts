@@ -1,4 +1,9 @@
-import { WCAG21_AA_LARGE_MIN_RATIO, WCAG21_AA_NORMAL_MIN_RATIO, WCAG21_AAA_NORMAL_MIN_RATIO, WCAG21_AAA_LARGE_MIN_RATIO } from '../constants';
+import {
+  WCAG21_AA_LARGE_MIN_RATIO,
+  WCAG21_AA_NORMAL_MIN_RATIO,
+  WCAG21_AAA_NORMAL_MIN_RATIO,
+  WCAG21_AAA_LARGE_MIN_RATIO
+} from '../constants';
 import { type Color } from '../../../../foundation';
 import { contrast } from '../../../../';
 
@@ -18,7 +23,10 @@ export type WCAG21ContentType = 'AANormal' | 'AALarge' | 'AAANormal' | 'AAALarge
  * @param content - The type of content being checked
  * @returns True if the contrast meets the minimum requirement for the content type, false otherwise
  */
-export const isContrastWCAG21Compliant = (contrast: number, content: WCAG21ContentType): boolean => {
+export const isContrastWCAG21Compliant = (
+  contrast: number,
+  content: WCAG21ContentType
+): boolean => {
   const absContrast = Math.abs(contrast);
   switch (content) {
     case 'AANormal':
@@ -46,5 +54,8 @@ export const isContrastWCAG21Compliant = (contrast: number, content: WCAG21Conte
  * @param content - The type of content being checked
  * @returns True if the contrast meets the minimum requirement for the content type, false otherwise
  */
-export const checkWCAG21Contrast = (foreground: Color | string, background: Color | string, content: WCAG21ContentType): boolean =>
-  isContrastWCAG21Compliant(contrast(foreground, background, 'WCAG21'), content);
+export const checkWCAG21Contrast = (
+  foreground: Color | string,
+  background: Color | string,
+  content: WCAG21ContentType
+): boolean => isContrastWCAG21Compliant(contrast(foreground, background, 'WCAG21'), content);

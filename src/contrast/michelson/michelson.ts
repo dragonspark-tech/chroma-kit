@@ -1,4 +1,4 @@
-import { XYZColor } from '../../models/xyz';
+import type { XYZColor } from '../../models/xyz';
 import { MICHELSON_CLAMP } from './constants';
 
 /**
@@ -37,4 +37,4 @@ export const contrastMichelson = (color1: XYZColor, color2: XYZColor): number =>
   const denominator = maxLum + minLum;
 
   return denominator === 0 ? MICHELSON_CLAMP : (maxLum - minLum) / denominator;
-}
+};

@@ -8,7 +8,7 @@ import type { RGBColor } from './models/rgb';
 import type { XYZColor } from './models/xyz';
 import type { HSLColor } from './models/hsl';
 import type { HSVColor } from './models/hsv';
-import { HWBColor } from './models/hwb';
+import type { HWBColor } from './models/hwb';
 
 /**
  * A type representing a color in various color spaces. Color can be expressed in one of the following formats:

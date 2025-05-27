@@ -3,7 +3,6 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   hsv,
-  HSVColor,
   hsvFromVector,
   hsvToCSSString,
   hsvToHSL,
@@ -18,7 +17,6 @@ import {
   hsvToXYZ
 } from '../../models/hsv';
 import { hsvFromCSSString } from '../../models/hsv/parser';
-import { rgb } from '../../models/rgb';
 
 describe('HSV Color Model', () => {
   // Test hsv factory function
@@ -478,7 +476,7 @@ describe('HSV Color Model', () => {
     it('should approximately preserve HSV values when converting to RGB and back', () => {
       const original = hsv(120, 0.5, 0.6);
       const rgb = hsvToRGB(original);
-      const roundTrip = rgb.to('hsv') as HSVColor;
+      const roundTrip = rgb.to('hsv');
 
       expect(roundTrip.h).toBeCloseTo(original.h, 0);
       expect(roundTrip.s).toBeCloseTo(original.s, 1);
@@ -488,7 +486,7 @@ describe('HSV Color Model', () => {
     it('should approximately preserve HSV values when converting to HSL and back', () => {
       const original = hsv(120, 0.5, 0.6);
       const hsl = hsvToHSL(original);
-      const roundTrip = hsl.to('hsv') as HSVColor;
+      const roundTrip = hsl.to('hsv');
 
       expect(roundTrip.h).toBeCloseTo(original.h, 0);
       expect(roundTrip.s).toBeCloseTo(original.s, 1);

@@ -4,7 +4,7 @@
  * These options control how numeric values are interpreted and validated
  * during the parsing process.
  */
-export type ComponentParseOptions = {
+export interface ComponentParseOptions {
   /** Whether the component is a hue value (0-360 degrees) */
   isHue?: boolean;
   /** Whether the component is an alpha value (0-1) */
@@ -19,7 +19,7 @@ export type ComponentParseOptions = {
   max?: number;
   /** Scale factor to apply to the parsed value */
   scale?: number;
-};
+}
 
 /**
  * A low-level parser for CSS color string formats.
@@ -35,8 +35,8 @@ export class ColorStringParser {
   private src: string;
   private i: number;
   private N: number;
-  private commaSyntax: boolean = false;
-  private sawWS: boolean = false;
+  private commaSyntax = false;
+  private sawWS = false;
 
   /**
    * Creates a new parser for the given CSS color string.

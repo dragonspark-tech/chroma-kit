@@ -6,7 +6,7 @@ import {
   convertColor,
   clearConversionRegistry
 } from '../../conversion/conversion';
-import { ColorBase } from '../../foundation';
+import type { ColorBase } from '../../foundation';
 
 // Define simple mock color types for testing
 interface MockColorA extends ColorBase {
@@ -36,10 +36,11 @@ describe('Color Conversion System', () => {
   describe('registerConversion', () => {
     it('should register a conversion function', () => {
       // Create a simple conversion function
-      const mockConversionFn = (color: MockColorA) => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const mockConversionFn = (color: MockColorA) =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
 
       // Register the conversion
       registerConversion('mockA', 'mockB', mockConversionFn);
@@ -60,15 +61,17 @@ describe('Color Conversion System', () => {
   describe('buildConversionGraph', () => {
     it('should build a graph representation of available conversions', () => {
       // Create simple conversion functions
-      const aToB = (color: MockColorA) => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const aToB = (color: MockColorA) =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
 
-      const bToC = (color: MockColorB) => ({
-        space: 'mockC',
-        c: color.b + 1
-      }) as MockColorC;
+      const bToC = (color: MockColorB) =>
+        ({
+          space: 'mockC',
+          c: color.b + 1
+        }) as MockColorC;
 
       // Register the conversions
       registerConversion('mockA', 'mockB', aToB);
@@ -88,10 +91,11 @@ describe('Color Conversion System', () => {
 
     it('should clear the previous graph when rebuilding', () => {
       // Create simple conversion functions
-      const aToB = (color: MockColorA) => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const aToB = (color: MockColorA) =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
 
       // Register the conversion
       registerConversion('mockA', 'mockB', aToB);
@@ -108,10 +112,11 @@ describe('Color Conversion System', () => {
       clearConversionRegistry();
 
       // Now register a different conversion and rebuild
-      const newAToB = (color: MockColorA) => ({
-        space: 'mockB',
-        b: color.a * 3
-      }) as MockColorB;
+      const newAToB = (color: MockColorA) =>
+        ({
+          space: 'mockB',
+          b: color.a * 3
+        }) as MockColorB;
 
       registerConversion('mockA', 'mockB', newAToB);
       buildConversionGraph();
@@ -127,10 +132,11 @@ describe('Color Conversion System', () => {
   describe('getConversionFunction', () => {
     it('should return a direct conversion function if available', () => {
       // Create a simple conversion function
-      const aToB = (color: MockColorA) => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const aToB = (color: MockColorA) =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
 
       // Register the conversion
       registerConversion('mockA', 'mockB', aToB);
@@ -200,17 +206,19 @@ describe('Color Conversion System', () => {
       clearConversionRegistry();
 
       // Register a conversion from mockA to mockB
-      const aToB = (color: MockColorA) => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const aToB = (color: MockColorA) =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
       registerConversion('mockA', 'mockB', aToB);
 
       // Register a conversion from mockB to mockA
-      const bToA = (color: MockColorB) => ({
-        space: 'mockA',
-        a: color.b / 2
-      }) as MockColorA;
+      const bToA = (color: MockColorB) =>
+        ({
+          space: 'mockA',
+          a: color.b / 2
+        }) as MockColorA;
       registerConversion('mockB', 'mockA', bToA);
 
       // Build the graph
@@ -243,10 +251,11 @@ describe('Color Conversion System', () => {
       clearConversionRegistry();
 
       // Register a conversion from mockA to mockE
-      const aToE = (color: MockColorA) => ({
-        space: 'mockE',
-        e: color.a * 2
-      }) as MockColorE;
+      const aToE = (color: MockColorA) =>
+        ({
+          space: 'mockE',
+          e: color.a * 2
+        }) as MockColorE;
       registerConversion('mockA', 'mockE', aToE);
 
       // Build the graph
@@ -282,15 +291,17 @@ describe('Color Conversion System', () => {
 
     it('should create a chained conversion function if no direct conversion is available', () => {
       // Create simple conversion functions
-      const aToB = (color: MockColorA) => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const aToB = (color: MockColorA) =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
 
-      const bToC = (color: MockColorB) => ({
-        space: 'mockC',
-        c: color.b + 1
-      }) as MockColorC;
+      const bToC = (color: MockColorB) =>
+        ({
+          space: 'mockC',
+          c: color.b + 1
+        }) as MockColorC;
 
       // Register the conversions
       registerConversion('mockA', 'mockB', aToB);
@@ -328,21 +339,24 @@ describe('Color Conversion System', () => {
       }
 
       // Register conversions A->B and B->C to establish a path
-      const aToB = (color: MockColorA): MockColorB => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const aToB = (color: MockColorA): MockColorB =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
 
-      const bToC = (color: MockColorB): MockColorC => ({
-        space: 'mockC',
-        c: color.b + 1
-      }) as MockColorC;
+      const bToC = (color: MockColorB): MockColorC =>
+        ({
+          space: 'mockC',
+          c: color.b + 1
+        }) as MockColorC;
 
       // Register a conversion from C to D to extend the path
-      const cToD = (color: MockColorC): MockColorD => ({
-        space: 'mockD',
-        d: color.c * 3
-      }) as MockColorD;
+      const cToD = (color: MockColorC): MockColorD =>
+        ({
+          space: 'mockD',
+          d: color.c * 3
+        }) as MockColorD;
 
       // Register the conversions
       registerConversion('mockA', 'mockB', aToB);
@@ -371,11 +385,12 @@ describe('Color Conversion System', () => {
 
     it('should preserve alpha values in direct conversions', () => {
       // Create a simple conversion function that preserves alpha
-      const aToB = (color: MockColorA) => ({
-        space: 'mockB',
-        b: color.a * 2,
-        ...(color.alpha !== undefined ? { alpha: color.alpha } : {})
-      }) as MockColorB;
+      const aToB = (color: MockColorA) =>
+        ({
+          space: 'mockB',
+          b: color.a * 2,
+          ...(color.alpha !== undefined ? { alpha: color.alpha } : {})
+        }) as MockColorB;
 
       // Register the conversion
       registerConversion('mockA', 'mockB', aToB);
@@ -393,10 +408,13 @@ describe('Color Conversion System', () => {
 
     it('should pass additional arguments to conversion functions', () => {
       // Create a conversion function that accepts additional arguments
-      const aToB = vi.fn((color: MockColorA, multiplier: number = 1): MockColorB => ({
-        space: 'mockB',
-        b: color.a * multiplier
-      }) as MockColorB);
+      const aToB = vi.fn(
+        (color: MockColorA, multiplier = 1): MockColorB =>
+          ({
+            space: 'mockB',
+            b: color.a * multiplier
+          }) as MockColorB
+      );
 
       // Register the conversion
       registerConversion('mockA', 'mockB', aToB);
@@ -428,10 +446,11 @@ describe('Color Conversion System', () => {
 
     it('should convert between different color spaces', () => {
       // Create a simple conversion function
-      const aToB = (color: MockColorA): MockColorB => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const aToB = (color: MockColorA): MockColorB =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
 
       // Register the conversion
       registerConversion('mockA', 'mockB', aToB);
@@ -448,15 +467,16 @@ describe('Color Conversion System', () => {
       expect(result.b).toBe(10); // a(5) * 2 = 10
     });
 
-    it('should build the conversion graph if it hasn\'t been built yet', () => {
+    it("should build the conversion graph if it hasn't been built yet", () => {
       // Create a spy on buildConversionGraph
       const buildGraphSpy = vi.spyOn({ buildConversionGraph }, 'buildConversionGraph');
 
       // Create a simple conversion function
-      const aToB = (color: MockColorA): MockColorB => ({
-        space: 'mockB',
-        b: color.a * 2
-      }) as MockColorB;
+      const aToB = (color: MockColorA): MockColorB =>
+        ({
+          space: 'mockB',
+          b: color.a * 2
+        }) as MockColorB;
 
       // Register the conversion
       registerConversion('mockA', 'mockB', aToB);
@@ -477,10 +497,11 @@ describe('Color Conversion System', () => {
 
     it('should pass additional arguments to the conversion function', () => {
       // Create a conversion function that accepts additional arguments
-      const aToB = (color: MockColorA, multiplier: number = 1): MockColorB => ({
-        space: 'mockB',
-        b: color.a * multiplier
-      }) as MockColorB;
+      const aToB = (color: MockColorA, multiplier = 1): MockColorB =>
+        ({
+          space: 'mockB',
+          b: color.a * multiplier
+        }) as MockColorB;
 
       // Register the conversion
       registerConversion('mockA', 'mockB', aToB);

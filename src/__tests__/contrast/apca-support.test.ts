@@ -6,11 +6,7 @@ import {
   inputConformsToClamp
 } from '../../contrast/apca/support';
 import { rgb } from '../../models/rgb';
-import {
-  APCA_INPUT_CLAMP_MAX,
-  APCA_INPUT_CLAMP_MIN,
-  SA98G_BLACK_THRESHOLD
-} from '../../contrast/apca/constants';
+import { APCA_INPUT_CLAMP_MAX, SA98G_BLACK_THRESHOLD } from '../../contrast/apca/constants';
 
 describe('APCA Support Functions', () => {
   describe('inputConformsToClamp', () => {
@@ -63,7 +59,6 @@ describe('APCA Support Functions', () => {
 
   describe('alphaBlendRGBColor', () => {
     it('should blend colors based on alpha value', () => {
-      const white = rgb(1, 1, 1);
       const black = rgb(0, 0, 0);
       const transparentWhite = rgb(1, 1, 1, 0.5);
 
@@ -88,7 +83,6 @@ describe('APCA Support Functions', () => {
     });
 
     it('should clamp alpha values to the range [0, 1]', () => {
-      const white = rgb(1, 1, 1);
       const black = rgb(0, 0, 0);
 
       // Test with alpha > 1

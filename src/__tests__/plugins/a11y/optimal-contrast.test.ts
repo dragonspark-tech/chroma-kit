@@ -4,7 +4,7 @@ import {
   getOptimalColorForContrastAPCA,
   getOptimalColorForContrastWCAG21
 } from '../../../plugins/a11y/src/utils/optimal-contrast';
-import { hexToRGB, rgb } from '../../../models/rgb';
+import { rgb } from '../../../models/rgb';
 import { contrastAPCA } from '../../../contrast/apca';
 import { contrastWCAG21 } from '../../../contrast/wcag21';
 import { rgbToXYZ } from '../../../models/rgb';
@@ -58,7 +58,7 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
 
     it('should handle cases where very low contrasts are present, such as dark-on-dark (WCAG21)', () => {
       const background = rgb(0.02, 0.02, 0.02);
-      const foreground = rgb(0.10, 0.10, 0.10);
+      const foreground = rgb(0.1, 0.1, 0.1);
       const targetContrast = 4.5;
 
       const result = getOptimalColorForContrastWCAG21(foreground, background, targetContrast);
@@ -170,7 +170,9 @@ describe('A11y Plugin - Optimal Contrast Utils', () => {
 
     it('should throw an error for unknown method', () => {
       // @ts-expect-error - Testing with invalid method
-      expect(() => getOptimalColorForContrast('#000000', '#FFFFFF', 60, 'INVALID')).toThrow('Unknown contrast algorithm: INVALID');
+      expect(() => getOptimalColorForContrast('#000000', '#FFFFFF', 60, 'INVALID')).toThrow(
+        'Unknown contrast algorithm: INVALID'
+      );
     });
   });
 });

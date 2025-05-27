@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deltaECMC, type DeltaECMCTolerances } from '../../deltae';
-import { lch, type LChColor } from '../../models/lch';
+import { lch } from '../../models/lch';
 import { DEG_TO_RAD } from '../../deltae/constants';
 
 describe('Delta E CMC', () => {
@@ -55,9 +55,6 @@ describe('Delta E CMC', () => {
       // Manual calculation for S_L = 0.511 when L1 < 16
       const ΔL = 15 - 20;
       const S_L = 0.511;
-      const S_C = (0.0638 * 30) / (1 + 0.0131 * 30) + 0.638;
-      const T = 0.36 + Math.abs(0.4 * Math.cos((+35) * DEG_TO_RAD));
-      const S_H = S_C * T;
 
       // For identical chroma and hue, ΔC = 0 and ΔH = 0
       const expected = Math.sqrt(Math.pow(ΔL / (2 * S_L), 2));
@@ -72,9 +69,6 @@ describe('Delta E CMC', () => {
       // Manual calculation for S_L when L1 >= 16
       const ΔL = 50 - 55;
       const S_L = (0.040975 * 50) / (1 + 0.01765 * 50);
-      const S_C = (0.0638 * 30) / (1 + 0.0131 * 30) + 0.638;
-      const T = 0.36 + Math.abs(0.4 * Math.cos((+35) * DEG_TO_RAD));
-      const S_H = S_C * T;
 
       // For identical chroma and hue, ΔC = 0 and ΔH = 0
       const expected = Math.sqrt(Math.pow(ΔL / (2 * S_L), 2));
@@ -95,12 +89,7 @@ describe('Delta E CMC', () => {
 
       // For identical lightness and chroma, ΔL = 0 and ΔC = 0
       // Calculate ΔH
-      const ΔH = Math.sqrt(
-        Math.max(
-          0,
-          30 * 30 * 2 * (1 - Math.cos((200 - 210) * DEG_TO_RAD))
-        )
-      );
+      const ΔH = Math.sqrt(Math.max(0, 30 * 30 * 2 * (1 - Math.cos((200 - 210) * DEG_TO_RAD))));
 
       const expected = Math.sqrt(Math.pow(ΔH / S_H, 2));
 
@@ -118,12 +107,7 @@ describe('Delta E CMC', () => {
 
       // For identical lightness and chroma, ΔL = 0 and ΔC = 0
       // Calculate ΔH
-      const ΔH = Math.sqrt(
-        Math.max(
-          0,
-          30 * 30 * 2 * (1 - Math.cos((100 - 110) * DEG_TO_RAD))
-        )
-      );
+      const ΔH = Math.sqrt(Math.max(0, 30 * 30 * 2 * (1 - Math.cos((100 - 110) * DEG_TO_RAD))));
 
       const expected = Math.sqrt(Math.pow(ΔH / S_H, 2));
 

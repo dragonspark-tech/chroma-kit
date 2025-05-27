@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { deltaE76 } from '../../deltae/deltae-76';
 import { lab, type LabColor } from '../../models/lab';
 import { rgb, type RGBColor } from '../../models/rgb';
-import { hsl, type HSLColor } from '../../models/hsl';
+import { hsl } from '../../models/hsl';
 
 describe('Delta E 76', () => {
   describe('Basic functionality', () => {

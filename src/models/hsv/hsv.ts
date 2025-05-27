@@ -1,7 +1,6 @@
 import {
   rgb,
-  RGBColor,
-  rgbToHWB,
+  type RGBColor,
   rgbToJzAzBz,
   rgbToJzCzHz,
   rgbToLab,
@@ -10,18 +9,18 @@ import {
   rgbToOKLCh,
   rgbToXYZ
 } from '../rgb';
-import { hsl, HSLColor } from '../hsl';
-import { XYZColor } from '../xyz';
-import { LabColor } from '../lab';
-import { LChColor } from '../lch';
-import { OKLabColor } from '../oklab';
-import { OKLChColor } from '../oklch';
-import { JzAzBzColor } from '../jzazbz';
-import { JzCzHzColor } from '../jzczhz';
-import { ColorBase, ColorSpace } from '../../foundation';
+import { hsl, type HSLColor } from '../hsl';
+import type { XYZColor } from '../xyz';
+import type { LabColor } from '../lab';
+import type { LChColor } from '../lch';
+import type { OKLabColor } from '../oklab';
+import type { OKLChColor } from '../oklch';
+import type { JzAzBzColor } from '../jzazbz';
+import type { JzCzHzColor } from '../jzczhz';
+import type { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
-import { hwb, HWBColor } from '../hwb';
+import { hwb, type HWBColor } from '../hwb';
 
 /**
  * Represents a color in the HSV color space.
@@ -81,8 +80,8 @@ export const hsvFromVector = (v: number[], alpha?: number) => {
  */
 export const hsvToRGB = (color: HSVColor): RGBColor => {
   // Normalize hue to [0, 360) range
-  let h = ((color.h % 360) + 360) % 360;
-  let [s, v] = [color.s, color.v];
+  const h = ((color.h % 360) + 360) % 360;
+  const [s, v] = [color.s, color.v];
 
   const c = v * s;
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
@@ -125,7 +124,7 @@ export const hsvToRGB = (color: HSVColor): RGBColor => {
  * @returns {HSLColor} The color in HSL space
  */
 export const hsvToHSL = (color: HSVColor): HSLColor => {
-  let [h, s, v] = [color.h, color.s, color.v];
+  const [h, s, v] = [color.h, color.s, color.v];
 
   const l = v * (1 - s / 2);
   const sl = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l);
@@ -143,12 +142,11 @@ export const hsvToHSL = (color: HSVColor): HSLColor => {
  * @param {HSVColor} color - The HSV color to convert
  * @returns {HWBColor} The color in HWB space
  */
-export const hsvToHWB = (color: HSVColor): HWBColor =>
-{
-  const {h, s, v} = color;
+export const hsvToHWB = (color: HSVColor): HWBColor => {
+  const { h, s, v } = color;
 
   return hwb(h, (1 - s) * v, 1 - v, color.alpha);
-}
+};
 
 /**
  * Converts an HSV color to the CIE XYZ color space.
@@ -194,7 +192,7 @@ export const hsvToLCh = (color: HSVColor): LChColor => rgbToLCH(hsvToRGB(color))
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLabColor} The color in OKLab space
  */
-export const hsvToOKLab = (color: HSVColor, useChromaticAdaptation: boolean = false): OKLabColor =>
+export const hsvToOKLab = (color: HSVColor, useChromaticAdaptation = false): OKLabColor =>
   rgbToOKLab(hsvToRGB(color), useChromaticAdaptation);
 
 /**
@@ -208,7 +206,7 @@ export const hsvToOKLab = (color: HSVColor, useChromaticAdaptation: boolean = fa
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLChColor} The color in OKLCh space
  */
-export const hsvToOKLCh = (color: HSVColor, useChromaticAdaptation: boolean = false): OKLChColor =>
+export const hsvToOKLCh = (color: HSVColor, useChromaticAdaptation = false): OKLChColor =>
   rgbToOKLCh(hsvToRGB(color), useChromaticAdaptation);
 
 /**
@@ -221,7 +219,7 @@ export const hsvToOKLCh = (color: HSVColor, useChromaticAdaptation: boolean = fa
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const hsvToJzAzBz = (color: HSVColor, peakLuminance: number = 10000): JzAzBzColor =>
+export const hsvToJzAzBz = (color: HSVColor, peakLuminance = 10000): JzAzBzColor =>
   rgbToJzAzBz(hsvToRGB(color), peakLuminance);
 
 /**
@@ -236,5 +234,5 @@ export const hsvToJzAzBz = (color: HSVColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const hsvToJzCzHz = (color: HSVColor, peakLuminance: number = 10000): JzCzHzColor =>
+export const hsvToJzCzHz = (color: HSVColor, peakLuminance = 10000): JzCzHzColor =>
   rgbToJzCzHz(hsvToRGB(color), peakLuminance);

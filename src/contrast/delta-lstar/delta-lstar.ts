@@ -1,4 +1,4 @@
-import { LabColor } from '../../models/lab';
+import type { LabColor } from '../../models/lab';
 
 /**
  * Calculates the difference in CIE Lightness (L*) between two colors in the Lab color space.
@@ -30,4 +30,4 @@ import { LabColor } from '../../models/lab';
  */
 export const contrastDeltaLStar = (color1: LabColor, color2: LabColor): number => {
   return Math.abs(color1.l - color2.l);
-}
+};

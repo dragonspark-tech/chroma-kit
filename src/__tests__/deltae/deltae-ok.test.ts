@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deltaEOK } from '../../deltae/deltae-ok';
-import { oklab, type OKLabColor } from '../../models/oklab';
+import { oklab } from '../../models/oklab';
 
 describe('Delta E OK', () => {
   describe('Basic functionality', () => {

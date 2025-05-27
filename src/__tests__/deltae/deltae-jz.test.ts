@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deltaEJZ } from '../../deltae';
-import { jzczhz, type JzCzHzColor } from '../../models/jzczhz';
+import { jzczhz } from '../../models/jzczhz';
 import { DEG_TO_RAD } from '../../deltae/constants';
 
 describe('Delta E JZ', () => {

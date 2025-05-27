@@ -24,10 +24,10 @@ export {
   oklchFromVector
 } from './fn';
 
-export {deltaE, type DeltaEAlgorithm} from './deltae/auto-deltae';
+export { deltaE, type DeltaEAlgorithm } from './deltae/auto-deltae';
 export * from './deltae/index';
 
-export {contrast, type ContrastAlgorithm} from './contrast/auto-contrast';
+export { contrast, type ContrastAlgorithm } from './contrast/auto-contrast';
 export * from './contrast/index';
 
 export * from './semantics/parsing';

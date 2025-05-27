@@ -7,11 +7,11 @@
  * @property {Matrix3x3} matrix - A 3x3 matrix representing the transformation associated with the cone response model.
  * @property {Matrix3x3} inverseMatrix - A 3x3 matrix representing the inverse transformation of the cone response model.
  */
-export type ConeResponseModel = {
+export interface ConeResponseModel {
   name: string;
   matrix: Matrix3x3;
   inverseMatrix: Matrix3x3;
-};
+}
 
 /**
  * Represents the XYZ scaling cone response model.

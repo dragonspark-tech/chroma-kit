@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { parseV1, serializeV1 } from '../../semantics/serialization';
-import { rgb, RGBColor } from '../../models/rgb';
-import { xyz, XYZColor } from '../../models/xyz';
-import { hsl, HSLColor } from '../../models/hsl';
-import { hsv, HSVColor } from '../../models/hsv';
-import { lab, LabColor } from '../../models/lab';
-import { lch, LChColor } from '../../models/lch';
-import { oklab, OKLabColor } from '../../models/oklab';
-import { oklch, OKLChColor } from '../../models/oklch';
-import { jzazbz, JzAzBzColor } from '../../models/jzazbz';
-import { jzczhz, JzCzHzColor } from '../../models/jzczhz';
-import { hwb, HWBColor } from '../../models/hwb';
+import { rgb, type RGBColor } from '../../models/rgb';
+import { xyz, type XYZColor } from '../../models/xyz';
+import { hsl, type HSLColor } from '../../models/hsl';
+import { hsv, type HSVColor } from '../../models/hsv';
+import { lab, type LabColor } from '../../models/lab';
+import { lch, type LChColor } from '../../models/lch';
+import { oklab, type OKLabColor } from '../../models/oklab';
+import { oklch, type OKLChColor } from '../../models/oklch';
+import { jzazbz, type JzAzBzColor } from '../../models/jzazbz';
+import { jzczhz, type JzCzHzColor } from '../../models/jzczhz';
+import { hwb, type HWBColor } from '../../models/hwb';
 import { IlluminantD65 } from '../../standards/illuminants';
 
 describe('Serialization', () => {
@@ -213,7 +213,7 @@ describe('Serialization', () => {
     });
 
     it('should round-trip correctly', () => {
-      const original = rgb(1, 0, 0, 0.5) as RGBColor;
+      const original = rgb(1, 0, 0, 0.5);
       const serialized = serializeV1(original);
       const parsed = parseV1(serialized) as RGBColor;
 

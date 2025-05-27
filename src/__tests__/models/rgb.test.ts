@@ -23,7 +23,8 @@ import {
   denormalizeRGBColor,
   linearizeRGBColor,
   normalizeRGBColor,
-  rgbFromCSSString, isInSRGB
+  rgbFromCSSString,
+  isInSRGB
 } from '../../models/rgb';
 import { oklch, oklchToRGB } from '../../models/oklch';
 
@@ -110,8 +111,8 @@ describe('RGB Color Model', () => {
       expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.3447, 6.35), false))).toBe(false);
       expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.3541, 152.47), false))).toBe(false);
       expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.2507, 214.94), false))).toBe(false);
-    })
-  })
+    });
+  });
 
   // Test rgbToCSSString function
   describe('rgbToCSSString', () => {

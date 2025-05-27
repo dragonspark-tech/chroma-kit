@@ -11,7 +11,7 @@ describe('Delta Phi* Contrast', () => {
 
       // Manual calculation: (|50^φ - 80^φ|)^(1/φ) * √2 - 40
       const delta = Math.abs(50 ** φ - 80 ** φ);
-      const expected = (delta ** (1 / φ)) * Math.SQRT2 - 40;
+      const expected = delta ** (1 / φ) * Math.SQRT2 - 40;
 
       expect(contrastDeltaPhiStar(color1, color2)).toBeCloseTo(expected);
     });
@@ -43,7 +43,7 @@ describe('Delta Phi* Contrast', () => {
 
       // Calculate the actual contrast value
       const delta = Math.abs(50 ** φ - 52 ** φ);
-      const actualContrast = (delta ** (1 / φ)) * Math.SQRT2 - 40;
+      const actualContrast = delta ** (1 / φ) * Math.SQRT2 - 40;
 
       // Verify our test assumption that this is below the default threshold of 7.5
       expect(actualContrast).toBeLessThan(7.5);
@@ -58,7 +58,7 @@ describe('Delta Phi* Contrast', () => {
 
       // Calculate the actual contrast value
       const delta = Math.abs(50 ** φ - 60 ** φ);
-      const actualContrast = (delta ** (1 / φ)) * Math.SQRT2 - 40;
+      const actualContrast = delta ** (1 / φ) * Math.SQRT2 - 40;
 
       // Set a threshold higher than the actual contrast
       const highThreshold = actualContrast + 10;
@@ -101,7 +101,7 @@ describe('Delta Phi* Contrast', () => {
 
       // Manual calculation ignoring alpha
       const delta = Math.abs(50 ** φ - 80 ** φ);
-      const expected = (delta ** (1 / φ)) * Math.SQRT2 - 40;
+      const expected = delta ** (1 / φ) * Math.SQRT2 - 40;
 
       expect(contrastDeltaPhiStar(color1, color2)).toBeCloseTo(expected);
     });
@@ -114,7 +114,7 @@ describe('Delta Phi* Contrast', () => {
 
       // Manual calculation using the formula
       const delta = Math.abs(25 ** φ - 75 ** φ);
-      const expected = (delta ** (1 / φ)) * Math.SQRT2 - 40;
+      const expected = delta ** (1 / φ) * Math.SQRT2 - 40;
 
       expect(contrastDeltaPhiStar(color1, color2)).toBeCloseTo(expected);
     });

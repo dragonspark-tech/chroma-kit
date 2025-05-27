@@ -9,11 +9,11 @@ import { pow7 } from '../utils/math';
  * @property {number} kC - Chroma weight factor (default: 1)
  * @property {number} kH - Hue weight factor (default: 1)
  */
-export type DeltaE2000Weights = {
+export interface DeltaE2000Weights {
   kL: number;
   kC: number;
   kH: number;
-};
+}
 
 /**
  * Calculates the CIEDE2000 color difference (Delta E) between two colors.

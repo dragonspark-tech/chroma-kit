@@ -33,7 +33,7 @@ describe('logic', () => {
     });
 
     it('should return false for functions', () => {
-      expect(isNone(() => {})).toBe(false);
+      expect(isNone(() => void 0)).toBe(false);
     });
   });
 });

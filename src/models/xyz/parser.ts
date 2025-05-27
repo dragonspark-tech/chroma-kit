@@ -18,9 +18,9 @@
  * @param {string} src - The CSS XYZ color string to parse
  * @returns {XYZColor} The parsed XYZ color object
  */
-import { xyz, XYZColor } from './xyz';
+import { xyz, type XYZColor } from './xyz';
 import { ColorStringParser } from '../../semantics/colorParser';
-import { Illuminant, IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
+import { type Illuminant, IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
 
 export function xyzFromCSSString(src: string): XYZColor {
   // Check if the string starts with "color(xyz-"

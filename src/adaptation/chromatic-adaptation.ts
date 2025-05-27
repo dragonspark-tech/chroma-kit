@@ -61,6 +61,7 @@ export const getAdaptationMatrix = (
 ): Matrix3x3 => {
   const precomputedMatrix: Matrix3x3 | undefined =
     coneMatrixes[`${coneModel.name}_${sourceIlluminant.name}_TO_${targetIlluminant.name}`];
+
   if (precomputedMatrix) {
     return precomputedMatrix;
   }

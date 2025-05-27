@@ -6,7 +6,7 @@ import {
   SA98G_MONITOR_GAMMA,
   SA98G_SRGB_LUMINANCE
 } from './constants';
-import { rgb, RGBColor } from '../../models/rgb';
+import { rgb, type RGBColor } from '../../models/rgb';
 
 /**
  * Checks if a luminance value is within the acceptable range for APCA calculations.
@@ -65,10 +65,7 @@ export const deriveYFromRGBColor = (color: RGBColor): number => {
  *                                 the nearest integer.
  * @returns {RGBColor} The resulting blended color as an RGBColor object.
  */
-export const alphaBlendRGBColor = (
-  foreground: RGBColor,
-  background: RGBColor
-): RGBColor => {
+export const alphaBlendRGBColor = (foreground: RGBColor, background: RGBColor): RGBColor => {
   const fgAlpha = Math.max(Math.min(foreground.alpha ?? 1.0, 1.0), 0.0);
   const compositionBlend = 1 - fgAlpha;
 

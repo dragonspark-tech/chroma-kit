@@ -1,22 +1,34 @@
-﻿import { lab, LabColor, labToLCH } from '../lab';
+﻿import { lab, type LabColor, labToLCH } from '../lab';
 import { ϵ, κ } from '../lab/constants';
-import { Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { delinearizeRGBColor, RGBColor, rgbFromVector, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import { type Illuminant, IlluminantD65 } from '../../standards/illuminants';
+import {
+  delinearizeRGBColor,
+  type RGBColor,
+  rgbFromVector,
+  rgbToHSL,
+  rgbToHSV,
+  rgbToHWB
+} from '../rgb';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { XYZ_JZAZBZ_LMS_IABZ, XYZ_JZAZBZ_LMS_MATRIX, XYZ_OKLCH_THROUGH_LMS_MATRIX, XYZ_RGB_MATRIX } from './constants';
-import { OKLabColor, oklabFromVector, oklabToOKLCh } from '../oklab';
+import {
+  XYZ_JZAZBZ_LMS_IABZ,
+  XYZ_JZAZBZ_LMS_MATRIX,
+  XYZ_OKLCH_THROUGH_LMS_MATRIX,
+  XYZ_RGB_MATRIX
+} from './constants';
+import { type OKLabColor, oklabFromVector, oklabToOKLCh } from '../oklab';
 import { LMS_OKLAB_MATRIX } from '../oklab/constants';
-import { LChColor } from '../lch';
-import { OKLChColor } from '../oklch';
-import { jzazbz, JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
+import type { LChColor } from '../lch';
+import type { OKLChColor } from '../oklch';
+import { jzazbz, type JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
 import { b, d, d0, g } from '../jzazbz/constants';
-import { JzCzHzColor } from '../jzczhz';
-import { HSLColor } from '../hsl';
-import { HSVColor } from '../hsv';
-import { ColorBase, ColorSpace } from '../../foundation';
+import type { JzCzHzColor } from '../jzczhz';
+import type { HSLColor } from '../hsl';
+import type { HSVColor } from '../hsv';
+import type { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
-import { HWBColor } from '../hwb';
+import type { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -127,7 +139,7 @@ export const xyzFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const xyzToRGB = (color: XYZColor, performGamutMapping: boolean = true): RGBColor => {
+export const xyzToRGB = (color: XYZColor, performGamutMapping = true): RGBColor => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
 
   // Check if the color is within the RGB gamut
@@ -170,7 +182,7 @@ export const xyzToRGB = (color: XYZColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const xyzToHSL = (color: XYZColor, performGamutMapping: boolean = true): HSLColor =>
+export const xyzToHSL = (color: XYZColor, performGamutMapping = true): HSLColor =>
   rgbToHSL(xyzToRGB(color, performGamutMapping));
 
 /**
@@ -185,7 +197,7 @@ export const xyzToHSL = (color: XYZColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const xyzToHSV = (color: XYZColor, performGamutMapping: boolean = true): HSVColor =>
+export const xyzToHSV = (color: XYZColor, performGamutMapping = true): HSVColor =>
   rgbToHSV(xyzToRGB(color, performGamutMapping));
 
 /**
@@ -200,7 +212,7 @@ export const xyzToHSV = (color: XYZColor, performGamutMapping: boolean = true): 
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const xyzToHWB = (color: XYZColor, performGamutMapping: boolean = true): HWBColor =>
+export const xyzToHWB = (color: XYZColor, performGamutMapping = true): HWBColor =>
   rgbToHWB(xyzToRGB(color, performGamutMapping));
 
 /**
@@ -300,7 +312,7 @@ export const xyzToOKLCh = (color: XYZColor): OKLChColor => oklabToOKLCh(xyzToOKL
  * @param {number} [peakLuminance=10000] - The peak luminance in cd/m² that Y=1 maps to
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzAzBzColor => {
+export const xyzToJzAzBz = (color: XYZColor, peakLuminance = 10000): JzAzBzColor => {
   const { x, y, z } = color;
 
   const illuminant = color.illuminant || IlluminantD65;
@@ -340,5 +352,5 @@ export const xyzToJzAzBz = (color: XYZColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance in cd/m² that Y=1 maps to
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const xyzToJzCzHz = (color: XYZColor, peakLuminance: number = 10000): JzCzHzColor =>
+export const xyzToJzCzHz = (color: XYZColor, peakLuminance = 10000): JzCzHzColor =>
   jzazbzToJzCzHz(xyzToJzAzBz(color, peakLuminance));

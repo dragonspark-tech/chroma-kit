@@ -4,8 +4,8 @@ import prettier from 'eslint-config-prettier';
 
 export default teseslint.config(
   eslint.configs.recommended,
-  teseslint.configs.strictTypeChecked,
-  teseslint.configs.stylisticTypeChecked,
+  teseslint.configs.strict,
+  teseslint.configs.stylistic,
   prettier,
   {
     languageOptions: {
@@ -16,6 +16,6 @@ export default teseslint.config(
     }
   },
   {
-    ignores: ['eslint.config.mjs']
+    ignores: ['eslint.config.mjs', 'dist/**/*.*', 'assets/**/*.*', 'docs/**/*.*']
   }
 );

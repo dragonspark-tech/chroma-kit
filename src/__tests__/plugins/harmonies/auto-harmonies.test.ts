@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { harmony, HarmonyType } from '../../../plugins/harmonies/src/auto-harmonies';
+import { harmony, type HarmonyType } from '../../../plugins/harmonies/src/auto-harmonies';
 import { hsl } from '../../../models/hsl';
 import {
   getAnalogous,
@@ -11,7 +11,7 @@ import {
   getTetradics,
   getTriadics
 } from '../../../plugins/harmonies/src/harmonies';
-import { ColorSpace } from '../../../foundation';
+import type { ColorSpace } from '../../../foundation';
 
 describe('Harmonies Plugin - Automatic', () => {
   // Test color for all tests
@@ -40,8 +40,9 @@ describe('Harmonies Plugin - Automatic', () => {
     });
 
     it('should throw an error for unknown harmony type', () => {
-      // @ts-ignore - Testing invalid input
-      expect(() => harmony(testColor, 'InvalidHarmony', 'hsl')).toThrow('Unknown harmony');
+      expect(() => harmony(testColor, 'InvalidHarmony' as unknown as HarmonyType, 'hsl')).toThrow(
+        'Unknown harmony'
+      );
     });
 
     // Test each harmony type
@@ -56,7 +57,7 @@ describe('Harmonies Plugin - Automatic', () => {
       'Monochromatic'
     ];
 
-    harmonyTypes.forEach(type => {
+    harmonyTypes.forEach((type) => {
       it(`should generate ${type} harmony correctly`, () => {
         const result = harmony(testColor, type, 'hsl');
         expect(result).toBeDefined();
@@ -99,10 +100,10 @@ describe('Harmonies Plugin - Automatic', () => {
 
     // Test with different output color spaces
     const colorSpaces: ColorSpace[] = ['hsl', 'rgb', 'lab', 'lch', 'oklab', 'oklch'];
-    colorSpaces.forEach(space => {
+    colorSpaces.forEach((space) => {
       it(`should output colors in ${space} color space`, () => {
         const result = harmony(testColor, 'Complementary', space);
-        result.forEach(color => {
+        result.forEach((color) => {
           expect(color.space).toBe(space);
         });
       });

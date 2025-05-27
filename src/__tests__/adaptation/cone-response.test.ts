@@ -5,7 +5,7 @@ import {
   VonKriesConeModel,
   type ConeResponseModel
 } from '../../adaptation/cone-response';
-import { multiplyMatrices, multiplyMatrixByVector } from '../../utils/linear';
+import { multiplyMatrixByVector } from '../../utils/linear';
 
 describe('Cone Response Models', () => {
   describe('ConeResponseModel type', () => {
@@ -83,7 +83,10 @@ describe('Cone Response Models', () => {
       const coneVector = multiplyMatrixByVector(BradfordConeModel.matrix, vector);
 
       // Convert back to original space
-      const reconstructedVector = multiplyMatrixByVector(BradfordConeModel.inverseMatrix, coneVector);
+      const reconstructedVector = multiplyMatrixByVector(
+        BradfordConeModel.inverseMatrix,
+        coneVector
+      );
 
       // Check if the reconstructed vector is close to the original
       expect(reconstructedVector[0]).toBeCloseTo(vector[0], 5);
@@ -120,7 +123,10 @@ describe('Cone Response Models', () => {
       const coneVector = multiplyMatrixByVector(VonKriesConeModel.matrix, vector);
 
       // Convert back to original space
-      const reconstructedVector = multiplyMatrixByVector(VonKriesConeModel.inverseMatrix, coneVector);
+      const reconstructedVector = multiplyMatrixByVector(
+        VonKriesConeModel.inverseMatrix,
+        coneVector
+      );
 
       // Check if the reconstructed vector is close to the original
       expect(reconstructedVector[0]).toBeCloseTo(vector[0], 5);

@@ -1,4 +1,4 @@
-import { jzczhz, JzCzHzColor } from './jzczhz';
+import { jzczhz, type JzCzHzColor } from './jzczhz';
 import { ColorStringParser } from '../../semantics/colorParser';
 
 /**

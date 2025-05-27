@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { checkWCAG21Contrast, isContrastWCAG21Compliant, WCAG21ContentType } from '../../../plugins/a11y/src/checks/wcag21';
+import {
+  checkWCAG21Contrast,
+  isContrastWCAG21Compliant
+} from '../../../plugins/a11y/src/checks/wcag21';
 import { rgb } from '../../../models/rgb';
 import {
   WCAG21_AA_NORMAL_MIN_RATIO,
@@ -56,7 +59,9 @@ describe('A11y Plugin - WCAG 2.1 Checks', () => {
 
     it('should throw an error for unknown content type', () => {
       // @ts-expect-error - Testing with invalid content type
-      expect(() => isContrastWCAG21Compliant(4.5, 'InvalidType')).toThrow('Unknown content type: InvalidType');
+      expect(() => isContrastWCAG21Compliant(4.5, 'InvalidType')).toThrow(
+        'Unknown content type: InvalidType'
+      );
     });
   });
 

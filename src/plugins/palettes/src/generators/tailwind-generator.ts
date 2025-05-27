@@ -1,11 +1,11 @@
-import { oklch, OKLChColor, oklchToRGB } from '../../../../models/oklch';
+import { oklch, type OKLChColor, oklchToRGB } from '../../../../models/oklch';
 import { TailwindColors } from '../../../tailwind';
 import { findClosestTailwindFamily } from '../support/find-shade';
-import { TailwindPalette } from '../../../tailwind/src/tailwind.types';
-import { ShadeContrastAverages } from '../support/contrast-averages';
+import type { TailwindPalette } from '../../../tailwind/src/tailwind.types';
+import { ShadeContrastAverages, type ShadeContrastAverage } from '../support/contrast-averages';
 import { getOptimalColorForContrastAPCA } from '../../../a11y/fn';
 import { isInSRGB, rgb, rgbToOKLCh } from '../../../../models/rgb';
-import { ColorPalette, ColorPaletteShade } from './palette.types';
+import type { ColorPalette, ColorPaletteShade } from './palette.types';
 
 /**
  * Generates a Tailwind-compatible color palette from a given OKLCh color, allowing for optional contrast adjustments.
@@ -17,8 +17,8 @@ import { ColorPalette, ColorPaletteShade } from './palette.types';
  */
 export const generateTailwindPalette = (
   input: OKLChColor,
-  adjustContrast: boolean = true,
-  ensureColorInAdjustment: boolean = true
+  adjustContrast = true,
+  ensureColorInAdjustment = true
 ): ColorPalette => {
   const availableSchemas: Record<string, TailwindPalette> = Object.fromEntries(
     Object.entries(TailwindColors).filter(
@@ -44,7 +44,7 @@ export const generateTailwindPalette = (
   const builtShades: ColorPaletteShade[] = Object.entries(closest.palette).map(
     ([numStr, baseShade]) => {
       const shadeNumber = parseInt(numStr, 10);
-      const base = baseShade as OKLChColor;
+      const base = baseShade;
 
       if (ensureColorInAdjustment && shadeNumber === closest.shade.number) {
         return {
@@ -81,7 +81,9 @@ export const generateTailwindPalette = (
         const black = rgb(0, 0, 0);
         const white = rgb(1, 1, 1);
 
-        const refΔ = ShadeContrastAverages.find((x) => x.shade === shadeNumber)!;
+        const refΔ = ShadeContrastAverages.find(
+          (x) => x.shade === shadeNumber
+        ) as ShadeContrastAverage;
 
         rgbSrgb =
           shadeNumber < 500

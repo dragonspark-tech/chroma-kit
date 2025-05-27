@@ -3,7 +3,6 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   jzazbz,
-  JzAzBzColor,
   jzazbzFromVector,
   jzazbzPQForward,
   jzazbzPQInverse,
@@ -485,7 +484,7 @@ describe('JzAzBz Color Model', () => {
     it('should approximately preserve JzAzBz values when converting to XYZ and back', () => {
       const original = jzazbz(0.2, 0.1, 0.05);
       const xyz = jzazbzToXYZ(original);
-      const roundTrip = xyz.to('jzazbz') as JzAzBzColor;
+      const roundTrip = xyz.to('jzazbz');
 
       // Due to the non-linear nature of the JzAzBz color space and numerical precision issues,
       // round-trip conversions may not preserve exact values. We use a lower precision requirement.
@@ -497,7 +496,7 @@ describe('JzAzBz Color Model', () => {
     it('should approximately preserve JzAzBz values when converting to RGB and back', () => {
       const original = jzazbz(0.2, 0.1, 0.05);
       const rgb = jzazbzToRGB(original);
-      const roundTrip = rgb.to('jzazbz') as JzAzBzColor;
+      const roundTrip = rgb.to('jzazbz');
 
       // Due to the non-linear nature of the JzAzBz color space and numerical precision issues,
       // round-trip conversions may not preserve exact values. We use a lower precision requirement.
@@ -509,7 +508,7 @@ describe('JzAzBz Color Model', () => {
     it('should approximately preserve JzAzBz values when converting to JzCzHz and back', () => {
       const original = jzazbz(0.2, 0.1, 0.05);
       const jzczhz = jzazbzToJzCzHz(original);
-      const roundTrip = jzczhz.to('jzazbz') as JzAzBzColor;
+      const roundTrip = jzczhz.to('jzazbz');
 
       expect(roundTrip.jz).toBeCloseTo(original.jz, 5);
       expect(roundTrip.az).toBeCloseTo(original.az, 5);
@@ -520,9 +519,7 @@ describe('JzAzBz Color Model', () => {
   // Test specific color conversions
   describe('Specific Color Conversions', () => {
     it('should convert D65 white point correctly', () => {
-      const white = xyz(0.95047, 1.0, 1.08883, undefined, IlluminantD65).to(
-        'jzazbz'
-      ) as JzAzBzColor;
+      const white = xyz(0.95047, 1.0, 1.08883, undefined, IlluminantD65).to('jzazbz');
 
       // White point should have near-zero a and b components
       expect(white.jz).toBeGreaterThan(0);
@@ -532,19 +529,19 @@ describe('JzAzBz Color Model', () => {
 
     it('should convert RGB primaries correctly', () => {
       // Red in RGB
-      const red = rgb(1, 0, 0).to('jzazbz') as JzAzBzColor;
+      const red = rgb(1, 0, 0).to('jzazbz');
       expect(red.jz).toBeGreaterThan(0);
       expect(red.az).toBeGreaterThan(0);
       expect(red.bz).toBeGreaterThan(0);
 
       // Green in RGB
-      const green = rgb(0, 1, 0).to('jzazbz') as JzAzBzColor;
+      const green = rgb(0, 1, 0).to('jzazbz');
       expect(green.jz).toBeGreaterThan(0);
       expect(green.az).toBeLessThan(0);
       expect(green.bz).toBeGreaterThan(0);
 
       // Blue in RGB
-      const blue = rgb(0, 0, 1).to('jzazbz') as JzAzBzColor;
+      const blue = rgb(0, 0, 1).to('jzazbz');
       expect(blue.jz).toBeGreaterThan(0);
       // In the JzAzBz color space, blue has a negative az value
       expect(blue.az).toBeLessThan(0);

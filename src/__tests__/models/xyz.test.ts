@@ -3,7 +3,7 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   xyz,
-  XYZColor,
+  type XYZColor,
   xyzFromVector,
   xyzToCSSString,
   xyzToHSL,
@@ -222,7 +222,7 @@ describe('XYZ Color Model', () => {
         expect(rgb.g).toBeLessThanOrEqual(1);
         expect(rgb.b).toBeGreaterThanOrEqual(0);
         expect(rgb.b).toBeLessThanOrEqual(1);
-      })
+      });
 
       it('should not perform gamut mapping when disabled', () => {
         // Create an XYZ color that is out of the RGB gamut
@@ -466,7 +466,7 @@ describe('XYZ Color Model', () => {
     it('should approximately preserve XYZ values when converting to RGB and back', () => {
       const original = xyz(0.5, 0.6, 0.7);
       const rgb = xyzToRGB(original);
-      const roundTrip = rgb.to('xyz') as XYZColor;
+      const roundTrip = rgb.to('xyz');
 
       expect(roundTrip.x).toBeCloseTo(original.x, 1);
       expect(roundTrip.y).toBeCloseTo(original.y, 1);
@@ -476,7 +476,7 @@ describe('XYZ Color Model', () => {
     it('should approximately preserve XYZ values when converting to Lab and back', () => {
       const original = xyz(0.5, 0.6, 0.7);
       const lab = xyzToLab(original);
-      const roundTrip = lab.to('xyz') as XYZColor;
+      const roundTrip = lab.to('xyz');
 
       expect(roundTrip.x).toBeCloseTo(original.x, 1);
       expect(roundTrip.y).toBeCloseTo(original.y, 1);
@@ -497,19 +497,19 @@ describe('XYZ Color Model', () => {
 
     it('should convert RGB primaries correctly', () => {
       // Red in RGB
-      const red = rgb(1, 0, 0).to('xyz') as XYZColor;
+      const red = rgb(1, 0, 0).to('xyz');
       expect(red.x).toBeCloseTo(0.4124, 3);
       expect(red.y).toBeCloseTo(0.2126, 3);
       expect(red.z).toBeCloseTo(0.0193, 3);
 
       // Green in RGB
-      const green = rgb(0, 1, 0).to('xyz') as XYZColor;
+      const green = rgb(0, 1, 0).to('xyz');
       expect(green.x).toBeCloseTo(0.3576, 3);
       expect(green.y).toBeCloseTo(0.7152, 3);
       expect(green.z).toBeCloseTo(0.1192, 3);
 
       // Blue in RGB
-      const blue = rgb(0, 0, 1).to('xyz') as XYZColor;
+      const blue = rgb(0, 0, 1).to('xyz');
       expect(blue.x).toBeCloseTo(0.1805, 3);
       expect(blue.y).toBeCloseTo(0.0722, 3);
       expect(blue.z).toBeCloseTo(0.9505, 3);

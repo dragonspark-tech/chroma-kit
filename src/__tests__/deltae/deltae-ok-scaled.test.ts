@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 import { deltaEOKScaled } from '../../deltae/deltae-ok-scaled';
-import { oklab, type OKLabColor } from '../../models/oklab';
-import { APPRX_OKLAB_SCALING, COMBVD_OKLAB_SCALING, OSAUCS_OKLAB_SCALING } from '../../deltae/constants';
+import { oklab } from '../../models/oklab';
+import {
+  APPRX_OKLAB_SCALING,
+  COMBVD_OKLAB_SCALING,
+  OSAUCS_OKLAB_SCALING
+} from '../../deltae/constants';
 
 describe('Delta E OK Scaled', () => {
   describe('Basic functionality', () => {

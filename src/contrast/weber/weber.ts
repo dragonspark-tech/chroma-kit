@@ -1,4 +1,4 @@
-import { XYZColor } from '../../models/xyz';
+import type { XYZColor } from '../../models/xyz';
 import { WEBER_CLAMP } from './constants';
 
 /**

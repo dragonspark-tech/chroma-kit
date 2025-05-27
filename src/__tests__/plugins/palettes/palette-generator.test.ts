@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generatePalette, GeneratorFamily } from '../../../plugins/palettes';
+import { generatePalette, type GeneratorFamily } from '../../../plugins/palettes';
 import { oklch } from '../../../models/oklch';
 import { hexToRGB, rgbToOKLCh } from '../../../models/rgb';
 import { generateTailwindPalette } from '../../../plugins/palettes/fn';
@@ -31,13 +31,15 @@ describe('Color Palettes Plugin - Palette Generation', () => {
     });
 
     it('should error when an incorrect family is provided', () => {
-      expect(() => generatePalette(base, false, false, 'Teil wind v5' as unknown as GeneratorFamily)).toThrowError('Unknown generator family: Teil wind v5');
+      expect(() =>
+        generatePalette(base, false, false, 'Teil wind v5' as unknown as GeneratorFamily)
+      ).toThrowError('Unknown generator family: Teil wind v5');
     });
 
     it('should generate an adjusted, Tailwind v4-based, color-assured palette by default', () => {
       const palette = generatePalette(base);
       expect(palette).toMatchSnapshot();
-    })
+    });
   });
 
   describe('generateTailwindPalette', () => {
@@ -54,6 +56,6 @@ describe('Color Palettes Plugin - Palette Generation', () => {
     it('should handle generation of color palettes with out of sRGB gamut inputs', () => {
       const vibrantColor = oklch(0.55, 0.45, 330);
       expect(generateTailwindPalette(vibrantColor)).toMatchSnapshot();
-    })
-  })
+    });
+  });
 });

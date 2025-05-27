@@ -1,4 +1,4 @@
-import { LabColor } from '../../models/lab';
+import type { LabColor } from '../../models/lab';
 import { φ } from './constants';
 
 /**
@@ -33,14 +33,14 @@ import { φ } from './constants';
 export const contrastDeltaPhiStar = (
   color1: LabColor,
   color2: LabColor,
-  threshold: number = 7.5
+  threshold = 7.5
 ): number => {
   // Ensure lightness values are non-negative
   const LStar1 = Math.max(0, color1.l);
   const LStar2 = Math.max(0, color2.l);
 
   const Δφ = Math.abs(LStar1 ** φ - LStar2 ** φ);
-  const contrast = (Δφ ** (1 / φ)) * Math.SQRT2 - 40;
+  const contrast = Δφ ** (1 / φ) * Math.SQRT2 - 40;
 
   return contrast < threshold ? 0.0 : contrast;
 };

@@ -3,7 +3,6 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   oklab,
-  OKLabColor,
   oklabFromVector,
   oklabToCSSString,
   oklabToRGB,
@@ -408,7 +407,7 @@ describe('OKLab Color Model', () => {
     it('should approximately preserve OKLab values when converting to RGB and back', () => {
       const original = oklab(0.5, 0.1, -0.2);
       const rgb = oklabToRGB(original);
-      const roundTrip = rgb.to('oklab') as OKLabColor;
+      const roundTrip = rgb.to('oklab');
 
       expect(roundTrip.l).toBeCloseTo(original.l, 1);
       expect(roundTrip.a).toBeCloseTo(original.a, 1);
@@ -418,7 +417,7 @@ describe('OKLab Color Model', () => {
     it('should approximately preserve OKLab values when converting to XYZ and back', () => {
       const original = oklab(0.5, 0.1, -0.2);
       const xyzColor = oklabToXYZ(original);
-      const roundTrip = xyzColor.to('oklab') as OKLabColor;
+      const roundTrip = xyzColor.to('oklab');
 
       expect(roundTrip.l).toBeCloseTo(original.l, 1);
       expect(roundTrip.a).toBeCloseTo(original.a, 1);
@@ -440,27 +439,27 @@ describe('OKLab Color Model', () => {
 
     it('should convert RGB primaries correctly', () => {
       // Red in RGB
-      const red = rgb(1, 0, 0).to('oklab') as OKLabColor;
+      const red = rgb(1, 0, 0).to('oklab');
       expect(red.l).toBeCloseTo(0.627986, 4);
       expect(red.a).toBeCloseTo(0.2248, 4);
       expect(red.b).toBeCloseTo(0.1258, 4);
 
       // Green in RGB
-      const green = rgb(0, 1, 0).to('oklab') as OKLabColor;
+      const green = rgb(0, 1, 0).to('oklab');
       expect(green.l).toBeCloseTo(0.86644, 4);
       expect(green.a).toBeCloseTo(-0.2339, 4);
       expect(green.b).toBeCloseTo(0.1794, 4);
 
       // Blue in RGB
-      const blue = rgb(0, 0, 1).to('oklab') as OKLabColor;
-      expect(blue.l).toBeCloseTo(0.4520, 4);
+      const blue = rgb(0, 0, 1).to('oklab');
+      expect(blue.l).toBeCloseTo(0.452, 4);
       expect(blue.a).toBeCloseTo(-0.0324, 4);
       expect(blue.b).toBeCloseTo(-0.3116, 4);
     });
 
     it('should convert XYZ D65 white point correctly', () => {
       // D65 white point in XYZ
-      const white = xyz(0.95047, 1.0, 1.08883).to('oklab') as OKLabColor;
+      const white = xyz(0.95047, 1.0, 1.08883).to('oklab');
       expect(white.l).toBeCloseTo(1, 1);
       expect(white.a).toBeCloseTo(0, 1);
       expect(white.b).toBeCloseTo(0, 1);

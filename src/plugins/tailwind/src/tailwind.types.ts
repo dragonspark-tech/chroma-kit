@@ -1,4 +1,4 @@
-import { OKLChColor } from '../../../models/oklch';
+import type { OKLChColor } from '../../../models/oklch';
 
 /**
  * Represents a Tailwind CSS color palette with predefined shade levels.
@@ -7,7 +7,7 @@ import { OKLChColor } from '../../../models/oklch';
  *
  * The palette contains shade levels from 50 to 950, for a total of 11.
  */
-export type TailwindPalette = {
+export interface TailwindPalette {
   50: OKLChColor;
   100: OKLChColor;
   200: OKLChColor;
@@ -27,6 +27,4 @@ export type TailwindPalette = {
  * This type maps palette names (keys as strings) to their corresponding
  * TailwindPalette objects, defining color configurations for use in styling.
  */
-export type TailwindPalettes = {
-  [key: string]: TailwindPalette;
-};
+export type TailwindPalettes = Record<string, TailwindPalette>;

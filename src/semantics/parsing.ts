@@ -9,7 +9,7 @@
  * - Robust error handling and validation
  */
 
-import { Color, ColorSpace, CreatedColor } from '../foundation';
+import type { Color, ColorSpace, CreatedColor } from '../foundation';
 import { parseV1 } from './serialization';
 import { hexToRGB } from '../models/rgb';
 
@@ -57,7 +57,15 @@ const accessOrder: string[] = [];
  *
  * @private
  */
-export const __TEST_ONLY = { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1, parserRegistry };
+export const __TEST_ONLY = {
+  cacheSet,
+  cacheGet,
+  cache,
+  accessOrder,
+  isValidHexColor,
+  isValidChromaKitV1,
+  parserRegistry
+};
 
 /**
  * Manages the hot cache with LRU eviction policy
@@ -125,9 +133,14 @@ function isValidHexColor(hex: string): boolean {
   // Check if all characters after # are valid hex digits
   for (let i = 1; i < hex.length; i++) {
     const char = hex.charCodeAt(i);
-    if (!((char >= 48 && char <= 57) || // 0-9
-      (char >= 65 && char <= 70) || // A-F
-      (char >= 97 && char <= 102))) { // a-f
+    if (
+      !(
+        (char >= 48 && char <= 57) || // 0-9
+        (char >= 65 && char <= 70) || // A-F
+        (char >= 97 && char <= 102)
+      )
+    ) {
+      // a-f
       return false;
     }
   }
@@ -147,17 +160,13 @@ function isValidChromaKitV1(input: string): boolean {
   // <space> is captured as a word (\w+), e.g., rgb, oklch, etc.
   // Numbers can be int, float, or exponential
 
-  const chromaKitV1Pattern = /^ChromaKit\|v1 (\w+)((?: -?\d*\.?\d+(?:e[+-]?\d+)?){3,})(?: \/ ([01](?:\.\d+)?))?$/i;
+  const chromaKitV1Pattern =
+    /^ChromaKit\|v1 (\w+)((?: -?\d*\.?\d+(?:e[+-]?\d+)?){3,})(?: \/ ([01](?:\.\d+)?))?$/i;
   //                 ^---space---^ ^--------coords--------^  ^---optional alpha---^
 
   // Now, check if it matches, and also make sure all coords are numbers (not just empty spaces)
-  const match = input.match(chromaKitV1Pattern);
+  const match = chromaKitV1Pattern.exec(input);
   if (!match) return false;
-
-  // Ensure at least 3 coords are present (already enforced by regex, but double-check)
-  const coords = match[2].trim().split(/\s+/);
-  if (coords.length < 3) return false;
-  if (!coords.every(s => !isNaN(Number(s)))) return false;
 
   // If alpha is present, validate it is a number in [0,1]
   if (match[3] !== undefined) {
@@ -249,7 +258,7 @@ export function parseColor<T extends ColorSpace>(
 
   try {
     // Fast path for hex strings (starting with '#')
-    if (trimmedInput[0] === '#') {
+    if (trimmedInput.startsWith('#')) {
       if (!isValidHexColor(trimmedInput)) {
         throw new SyntaxError(`Invalid hex color format: ${trimmedInput}`);
       }
@@ -267,8 +276,8 @@ export function parseColor<T extends ColorSpace>(
       if (parserRegistry.length === 0) {
         throw new Error(
           `No valid parser was found for the supplied input.` +
-          `\nIf you're using the functional APIs, use direct parsers instead, like parseLabFromCSSString().` +
-          `\nIf you're using the parseColor() method, parsers must be manually registered.`
+            `\nIf you're using the functional APIs, use direct parsers instead, like parseLabFromCSSString().` +
+            `\nIf you're using the parseColor() method, parsers must be manually registered.`
         );
       }
 
@@ -286,13 +295,15 @@ export function parseColor<T extends ColorSpace>(
     cacheSet(cacheKey, result);
 
     return result;
-
   } catch (error) {
     // Re-throw with more context if it's not already a TypeError or SyntaxError
     if (error instanceof TypeError || error instanceof SyntaxError) {
       throw error;
     }
-    throw new SyntaxError(`Failed to parse color "${trimmedInput}": ${(error as any).message || error}`);
+    throw new SyntaxError(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      `Failed to parse color "${trimmedInput}": ${(error as any).message || error}`
+    );
   }
 }
 
@@ -315,7 +326,7 @@ export function getCacheStats(): {
 } {
   return {
     size: cache.size,
-    maxSize: HOT_CACHE_SIZE,
+    maxSize: HOT_CACHE_SIZE
     // TODO: Would need to track hits/misses to calculate hit rate
   };
 }

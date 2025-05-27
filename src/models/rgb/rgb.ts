@@ -1,22 +1,30 @@
-﻿import { XYZColor, xyzFromVector, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToOKLab } from '../xyz';
+﻿import {
+  type XYZColor,
+  xyzFromVector,
+  xyzToJzAzBz,
+  xyzToJzCzHz,
+  xyzToLab,
+  xyzToLCh,
+  xyzToOKLab
+} from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { HEX_CHARS, RGB_INVERSE, RGB_XYZ_MATRIX } from './constants';
 import { denormalizeRGBColor, linearizeRGBColor, normalizeRGBColor } from './transform';
 import { getAdaptationMatrix } from '../../adaptation/chromatic-adaptation';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
 import { BradfordConeModel } from '../../adaptation/cone-response';
-import { LabColor } from '../lab';
-import { OKLabColor, oklabToOKLCh } from '../oklab';
-import { OKLChColor } from '../oklch';
-import { LChColor } from '../lch';
-import { JzAzBzColor } from '../jzazbz';
-import { JzCzHzColor } from '../jzczhz';
-import { hsl, HSLColor } from '../hsl';
-import { hsv, HSVColor, hsvToHWB } from '../hsv';
+import type { LabColor } from '../lab';
+import { type OKLabColor, oklabToOKLCh } from '../oklab';
+import type { OKLChColor } from '../oklch';
+import type { LChColor } from '../lch';
+import type { JzAzBzColor } from '../jzazbz';
+import type { JzCzHzColor } from '../jzczhz';
+import { hsl, type HSLColor } from '../hsl';
+import { hsv, type HSVColor, hsvToHWB } from '../hsv';
 import { serializeV1 } from '../../semantics/serialization';
-import { ColorBase, ColorSpace } from '../../foundation';
+import type { ColorBase, ColorSpace } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
-import { hwb, HWBColor } from '../hwb';
+import type { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the RGB color space.
@@ -62,7 +70,7 @@ export const isInSRGB = (color: RGBColor): boolean => {
  * @param {boolean} [forceFullString=false] - Whether to force the rgba() format even for fully opaque colors
  * @returns {string} The CSS-compatible string representation
  */
-export const rgbToCSSString = (color: RGBColor, forceFullString: boolean = false): string => {
+export const rgbToCSSString = (color: RGBColor, forceFullString = false): string => {
   const { r, g, b, alpha } = color;
 
   const rInt = Math.round(r * 255);
@@ -159,7 +167,7 @@ const hexDigit = (c: number): number => (c & 0xf) + (c >> 6) * 9;
  * @throws {Error} If the provided `hex` string has an invalid format or length.
  */
 export const hexToRGB = (hex: string): RGBColor => {
-  let i = hex.charCodeAt(0) === 35 ? 1 : 0;
+  const i = hex.charCodeAt(0) === 35 ? 1 : 0;
   const n = hex.length - i;
 
   let r: number, g: number, b: number, a: number | undefined;
@@ -203,7 +211,6 @@ export const hexToRGB = (hex: string): RGBColor => {
   return normalizeRGBColor(rgb(r, g, b, a));
 };
 
-
 /**
  * Converts an RGB color to its hexadecimal string representation.
  *
@@ -226,16 +233,23 @@ export const rgbToHex = (color: RGBColor): string => {
   const b = Math.max(0, Math.min(255, Math.round(nC.b)));
 
   // Alpha remains in 0..1 range, convert to 0..255 for hex
-  const alpha = color.alpha !== undefined ? Math.max(0, Math.min(255, Math.round(color.alpha * 255))) : undefined;
+  const alpha =
+    color.alpha !== undefined
+      ? Math.max(0, Math.min(255, Math.round(color.alpha * 255)))
+      : undefined;
 
   // Always use full 6-char format (or 8-char with alpha)
-  let result = '#' +
-    HEX_CHARS[(r & 0xF0) >> 4] + HEX_CHARS[r & 0x0F] +
-    HEX_CHARS[(g & 0xF0) >> 4] + HEX_CHARS[g & 0x0F] +
-    HEX_CHARS[(b & 0xF0) >> 4] + HEX_CHARS[b & 0x0F];
+  let result =
+    '#' +
+    HEX_CHARS[(r & 0xf0) >> 4] +
+    HEX_CHARS[r & 0x0f] +
+    HEX_CHARS[(g & 0xf0) >> 4] +
+    HEX_CHARS[g & 0x0f] +
+    HEX_CHARS[(b & 0xf0) >> 4] +
+    HEX_CHARS[b & 0x0f];
 
   if (alpha !== undefined && alpha !== 255) {
-    result += HEX_CHARS[(alpha & 0xF0) >> 4] + HEX_CHARS[alpha & 0x0F];
+    result += HEX_CHARS[(alpha & 0xf0) >> 4] + HEX_CHARS[alpha & 0x0f];
   }
 
   return result;
@@ -255,10 +269,7 @@ const calculateHSpaceHue = (color: RGBColor, max: number, min: number): number =
   let h = 0;
 
   if (Δ !== 0) {
-    h =
-    max === r ? (g - b) / Δ + (g < b ? 6 : 0) :
-    max === g ? (b - r) / Δ + 2 :
-    (r - g) / Δ + 4;
+    h = max === r ? (g - b) / Δ + (g < b ? 6 : 0) : max === g ? (b - r) / Δ + 2 : (r - g) / Δ + 4;
 
     h *= 60;
   }
@@ -289,9 +300,7 @@ export const rgbToHSL = (color: RGBColor): HSLColor => {
   const l = (max + min) * 0.5;
 
   if (max !== min) {
-    s =
-    l > 0.5 ? Δ / (2 - max - min) :
-    Δ / (max + min);
+    s = l > 0.5 ? Δ / (2 - max - min) : Δ / (max + min);
   }
 
   return hsl(h, s, l, color.alpha);
@@ -332,8 +341,7 @@ export const rgbToHSV = (color: RGBColor): HSVColor => {
  * @param {RGBColor} color - The RGB color to convert
  * @returns {HWBColor} The color in HWB space
  */
-export const rgbToHWB = (color: RGBColor): HWBColor =>
-  hsvToHWB(rgbToHSV(color));
+export const rgbToHWB = (color: RGBColor): HWBColor => hsvToHWB(rgbToHSV(color));
 
 /**
  * Converts an RGB color to the CIE XYZ color space.
@@ -347,7 +355,7 @@ export const rgbToHWB = (color: RGBColor): HWBColor =>
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {XYZColor} The color in XYZ space, with the appropriate illuminant specified
  */
-export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation: boolean = false): XYZColor => {
+export const rgbToXYZ = (color: RGBColor, useChromaticAdaptation = false): XYZColor => {
   const lC = linearizeRGBColor(color);
   const xyz = multiplyMatrixByVector(RGB_XYZ_MATRIX, [lC.r, lC.g, lC.b]);
 
@@ -395,10 +403,8 @@ export const rgbToLCH = (color: RGBColor): LChColor => xyzToLCh(rgbToXYZ(color))
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLabColor} The color in OKLab space
  */
-export const rgbToOKLab = (
-  color: RGBColor,
-  useChromaticAdaptation: boolean = false
-): OKLabColor => xyzToOKLab(rgbToXYZ(color, useChromaticAdaptation));
+export const rgbToOKLab = (color: RGBColor, useChromaticAdaptation = false): OKLabColor =>
+  xyzToOKLab(rgbToXYZ(color, useChromaticAdaptation));
 
 /**
  * Converts an RGB color to the OKLCh color space.
@@ -411,10 +417,8 @@ export const rgbToOKLab = (
  * @param {boolean} [useChromaticAdaptation=false] - Whether to adapt from D65 to D50 white point
  * @returns {OKLChColor} The color in OKLCh space
  */
-export const rgbToOKLCh = (
-  color: RGBColor,
-  useChromaticAdaptation: boolean = false
-): OKLChColor => oklabToOKLCh(rgbToOKLab(color, useChromaticAdaptation));
+export const rgbToOKLCh = (color: RGBColor, useChromaticAdaptation = false): OKLChColor =>
+  oklabToOKLCh(rgbToOKLab(color, useChromaticAdaptation));
 
 /**
  * Converts an RGB color to the JzAzBz color space.
@@ -426,7 +430,7 @@ export const rgbToOKLCh = (
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const rgbToJzAzBz = (color: RGBColor, peakLuminance: number = 10000): JzAzBzColor =>
+export const rgbToJzAzBz = (color: RGBColor, peakLuminance = 10000): JzAzBzColor =>
   xyzToJzAzBz(rgbToXYZ(color), peakLuminance);
 
 /**
@@ -441,5 +445,5 @@ export const rgbToJzAzBz = (color: RGBColor, peakLuminance: number = 10000): JzA
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const rgbToJzCzHz = (color: RGBColor, peakLuminance: number = 10000): JzCzHzColor =>
+export const rgbToJzCzHz = (color: RGBColor, peakLuminance = 10000): JzCzHzColor =>
   xyzToJzCzHz(rgbToXYZ(color), peakLuminance);

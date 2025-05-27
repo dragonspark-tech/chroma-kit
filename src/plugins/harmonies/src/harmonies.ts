@@ -1,4 +1,4 @@
-import { hsl, HSLColor } from '../../../models/hsl';
+import { hsl, type HSLColor } from '../../../models/hsl';
 import {
   ANALOGOUS_HUESHIFT,
   COMPLEMENTARY_HUESHIFT,

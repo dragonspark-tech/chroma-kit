@@ -1,4 +1,4 @@
-import { lch, LChColor } from './lch';
+import { lch, type LChColor } from './lch';
 import { ColorStringParser } from '../../semantics/colorParser';
 
 /**

@@ -88,7 +88,7 @@ describe('Michelson Contrast', () => {
       const color2 = xyz(0, 0.0002, 0);
 
       // (0.0002 - 0.0001) / (0.0002 + 0.0001) = 0.0001 / 0.0003 = 0.333...
-      const expected = 1/3;
+      const expected = 1 / 3;
 
       expect(contrastMichelson(color1, color2)).toBeCloseTo(expected);
     });

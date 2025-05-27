@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hsl, HSLColor } from '../../../models/hsl';
+import { hsl } from '../../../models/hsl';
 import {
   buildHarmony,
   getAnalogous,
@@ -35,7 +35,7 @@ describe('Harmonies Plugin - Functions', () => {
       // Check each color in the harmony
       harmony.forEach((color, index) => {
         expect(color.space).toBe('hsl');
-        expect(color.h).toBe((baseColor.h + shifts[index]) % 360);
+        expect(color.h).toBe((baseColor.h + (shifts[index] ?? 0)) % 360);
         expect(color.s).toBe(baseColor.s);
         expect(color.l).toBe(baseColor.l);
       });
@@ -49,7 +49,7 @@ describe('Harmonies Plugin - Functions', () => {
 
       // Check each color in the harmony
       harmony.forEach((color, index) => {
-        const expectedHue = (baseColor.h + shifts[index]) % 360;
+        const expectedHue = (baseColor.h + (shifts[index] ?? 0)) % 360;
         expect(color.h).toBe(expectedHue < 0 ? expectedHue + 360 : expectedHue);
       });
     });
@@ -59,7 +59,7 @@ describe('Harmonies Plugin - Functions', () => {
       const shifts = [0, 30, 60];
       const harmony = buildHarmony(colorWithAlpha, shifts);
 
-      harmony.forEach(color => {
+      harmony.forEach((color) => {
         expect(color.alpha).toBe(0.8);
       });
     });
@@ -171,7 +171,7 @@ describe('Harmonies Plugin - Functions', () => {
       expect(harmony.length).toBe(4);
 
       // All colors should have the same hue and saturation
-      harmony.forEach(color => {
+      harmony.forEach((color) => {
         expect(color.h).toBe(baseColor.h);
         expect(color.s).toBe(baseColor.s);
         // Lightness should be different but within 0-1 range
@@ -190,7 +190,7 @@ describe('Harmonies Plugin - Functions', () => {
       const harmony = getMonochromatics(lightColor);
 
       // All lightness values should be within 0-1 range
-      harmony.forEach(color => {
+      harmony.forEach((color) => {
         expect(color.l).toBeGreaterThanOrEqual(0);
         expect(color.l).toBeLessThanOrEqual(1);
       });
@@ -201,7 +201,7 @@ describe('Harmonies Plugin - Functions', () => {
       const harmony = getMonochromatics(darkColor);
 
       // All lightness values should be within 0-1 range
-      harmony.forEach(color => {
+      harmony.forEach((color) => {
         expect(color.l).toBeGreaterThanOrEqual(0);
         expect(color.l).toBeLessThanOrEqual(1);
       });

@@ -1,6 +1,5 @@
 import { isNone } from '../utils/logic';
 import { type Color, colorVectorMappings } from '../foundation';
-import { convertColor } from '../conversion/conversion';
 
 /**
  * Calculates the CIE76 color difference (Delta E) between two colors.

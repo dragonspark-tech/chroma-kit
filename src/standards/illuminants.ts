@@ -6,12 +6,12 @@
  *
  * @see https://en.wikipedia.org/wiki/Standard_illuminant
  */
-export type Illuminant = {
+export interface Illuminant {
   name: string;
   xR: number;
   yR: number;
   zR: number;
-};
+}
 
 /**
  * CIE standard illuminant A is intended to represent typical, domestic, tungsten-filament lighting.

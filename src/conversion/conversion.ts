@@ -1,4 +1,5 @@
-import { ColorBase } from '../foundation';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ColorBase } from '../foundation';
 
 /**
  * This module provides a flexible color conversion system that allows for converting colors
@@ -42,11 +43,16 @@ interface ConversionRegistryEntry<TFrom extends ColorBase, TTo extends ColorBase
   convert: ColorConversionFn<TFrom, TTo>;
 }
 
+type ConversionRegistry<TFrom extends ColorBase, TTo extends ColorBase> = ConversionRegistryEntry<
+  TFrom,
+  TTo
+>[];
+
 /**
  * A registry of all available direct color conversions.
  * This is used to build conversion paths between color spaces.
  */
-const conversionRegistry: ConversionRegistryEntry<any, any>[] = [];
+const conversionRegistry: ConversionRegistry<any, any> = [];
 
 /**
  * Clears the conversion registry.
@@ -89,6 +95,7 @@ const conversionGraph: Record<string, string[]> = {};
  */
 export function buildConversionGraph(): void {
   // Clear the existing graph
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
   Object.keys(conversionGraph).forEach((key) => delete conversionGraph[key]);
 
   // Build the graph from the registry
@@ -114,6 +121,7 @@ function findConversionPath(from: string, to: string): string[] | null {
   const visited = new Set<string>([from]);
 
   while (queue.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const { space, path } = queue.shift()!;
 
     const neighbors = conversionGraph[space] || [];
@@ -141,9 +149,9 @@ function findConversionPath(from: string, to: string): string[] | null {
  * @returns A formatted error message string
  */
 const buildConversionError = (from: string, to: string): string =>
-    `No conversion path could be found from ${from} to ${to}.` +
-    `\nIf you're using the functional APIs, use direct conversions instead, like rgbToOKLCh().` +
-    `\nIf you're using the to() methods, conversions must be manually registered.`;
+  `No conversion path could be found from ${from} to ${to}.` +
+  `\nIf you're using the functional APIs, use direct conversions instead, like rgbToOKLCh().` +
+  `\nIf you're using the to() methods, conversions must be manually registered.`;
 
 /**
  * Gets a conversion function that converts from one color space to another.
@@ -163,7 +171,6 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
   from: string,
   to: string
 ): ColorConversionFn<TFrom, TTo> {
-
   if (from === to) {
     return (color: TFrom) => color as unknown as TTo;
   }
@@ -178,11 +185,10 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
 
   const path = findConversionPath(from, to);
 
-  if (!path || path.length < 2)
-    throw Error(buildConversionError(from, to));
+  if (!path || path.length < 2) throw Error(buildConversionError(from, to));
 
   return (color: TFrom, ...args: any[]): TTo => {
-    let result: any = color;
+    let result = color;
 
     for (let i = 0; i < path.length - 1; i++) {
       const fromSpace = path[i];
@@ -192,13 +198,12 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
         (entry) => entry.from === fromSpace && entry.to === toSpace
       );
 
-      if (!conversion)
-        throw new Error(buildConversionError(fromSpace, toSpace));
+      if (!conversion) throw new Error(buildConversionError(fromSpace, toSpace));
 
       result = conversion.convert(result, ...args);
     }
 
-    return result as TTo;
+    return result as unknown as TTo;
   };
 }
 

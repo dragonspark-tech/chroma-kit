@@ -1,16 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import '../../conversion/register-all-conversions';
 
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { parseColor, clearColorCache, getCacheStats, clearParserRegistry, registerParser } from '../../semantics/parsing';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import {
+  parseColor,
+  clearColorCache,
+  getCacheStats,
+  clearParserRegistry,
+  registerParser
+} from '../../semantics/parsing';
 import { __TEST_ONLY } from '../../semantics/parsing';
 import { rgb } from '../../models/rgb';
 import * as serialization from '../../semantics/serialization';
 import { rgbFromCSSString } from '../../models/rgb';
 import { hslFromCSSString } from '../../models/hsl';
 import { registerAllParsers } from '../../semantics/register-all-parsers';
+import type { Color } from '../../foundation';
 
 // Access private functions for testing
-const { cacheSet, cacheGet, cache, accessOrder, isValidHexColor, isValidChromaKitV1, parserRegistry } = __TEST_ONLY;
+const { cacheSet, cacheGet, cache, accessOrder, isValidChromaKitV1, parserRegistry } = __TEST_ONLY;
 
 describe('parseColor', () => {
   beforeEach(() => {
@@ -42,7 +50,7 @@ describe('parseColor', () => {
       expect(result.r).toBe(1);
       expect(result.g).toBe(0);
       expect(result.b).toBe(0);
-      expect(result.alpha).toBeCloseTo(2/3, 2); // 0xaa/0xff ≈ 0.67
+      expect(result.alpha).toBeCloseTo(2 / 3, 2); // 0xaa/0xff ≈ 0.67
     });
 
     it('should parse a short hex string and convert to the target space', () => {
@@ -76,11 +84,15 @@ describe('parseColor', () => {
     });
 
     it('should throw for invalid alpha value in ChromaKit|v1 format', () => {
-      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0 / 1.5', 'rgb')).toThrow('Invalid ChromaKit v1 format');
+      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0 / 1.5', 'rgb')).toThrow(
+        'Invalid ChromaKit v1 format'
+      );
     });
 
     it('should throw for negative alpha value in ChromaKit|v1 format', () => {
-      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0 / -0.5', 'rgb')).toThrow('Invalid ChromaKit v1 format');
+      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0 / -0.5', 'rgb')).toThrow(
+        'Invalid ChromaKit v1 format'
+      );
     });
   });
 
@@ -93,7 +105,7 @@ describe('parseColor', () => {
       // Test with a mocked match object to directly test the code path
       const originalMatch = String.prototype.match;
       try {
-        // @ts-ignore - Mocking for testing
+        // @ts-expect-error - Mocking for testing
         String.prototype.match = () => {
           return ['match', 'rgb', ' 1 0', undefined];
         };
@@ -110,7 +122,7 @@ describe('parseColor', () => {
       // Test with a mocked match object to directly test the code path
       const originalMatch = String.prototype.match;
       try {
-        // @ts-ignore - Mocking for testing
+        // @ts-expect-error - Mocking for testing
         String.prototype.match = () => {
           return ['match', 'rgb', ' 1 0 abc', undefined];
         };
@@ -128,7 +140,6 @@ describe('parseColor', () => {
       // Test with a mocked match object to directly test the code path
       const originalMatch = String.prototype.match;
       try {
-        // @ts-ignore - Mocking for testing
         String.prototype.match = () => {
           return ['match', 'rgb', ' 1 0 0', '1.5'];
         };
@@ -139,19 +150,6 @@ describe('parseColor', () => {
     });
 
     it('should handle valid alpha values in [0,1] range', () => {
-      // Test with a mocked match object to directly test the code path
-      const originalMatch = String.prototype.match;
-      try {
-        // @ts-ignore - Mocking for testing
-        String.prototype.match = () => {
-          return ['match', 'rgb', ' 1 0 0', '0.5'];
-        };
-        expect(isValidChromaKitV1('mock')).toBe(true);
-      } finally {
-        String.prototype.match = originalMatch;
-      }
-
-      // Test with actual valid input
       expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 0 / 0.5')).toBe(true);
       expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 0 / 0')).toBe(true);
       expect(isValidChromaKitV1('ChromaKit|v1 rgb 1 0 0 / 1')).toBe(true);
@@ -255,15 +253,19 @@ describe('parseColor', () => {
     });
 
     it('should throw for unsupported color() formats', () => {
-      expect(() => parseColor('color(display-p3 1 0 0)', 'rgb')).toThrow('Generic CSS Color 4 parsing not implemented yet');
+      expect(() => parseColor('color(display-p3 1 0 0)', 'rgb')).toThrow(
+        'Generic CSS Color 4 parsing not implemented yet'
+      );
     });
 
     it('should throw for unsupported color formats', () => {
-      expect(() => parseColor('unknown(1, 2, 3)', 'rgb')).toThrow('Unsupported color format: unknown(1, 2, 3)');
+      expect(() => parseColor('unknown(1, 2, 3)', 'rgb')).toThrow(
+        'Unsupported color format: unknown(1, 2, 3)'
+      );
     });
   });
 
-    // Test hot cache functionality
+  // Test hot cache functionality
   describe('hot cache', () => {
     beforeEach(() => {
       // Clear the cache before each test
@@ -353,9 +355,7 @@ describe('parseColor', () => {
       // in the accessOrder array and needs to be removed before being added to the end
 
       // Mock the accessOrder array and cache to simulate the condition
-      // @ts-ignore - Accessing private variables for testing
       const mockAccessOrder = ['key1', 'key2', 'key3'];
-      // @ts-ignore - Accessing private variables for testing
       const mockCache = new Map([
         ['key1', { to: () => ({ space: 'rgb' }) }],
         ['key2', { to: () => ({ space: 'rgb' }) }],
@@ -363,8 +363,7 @@ describe('parseColor', () => {
       ]);
 
       // Create a direct reference to the cacheSet function
-      // @ts-ignore - Accessing private function for testing
-      const cacheSetFn = function(key: string, color: any) {
+      const cacheSetFn = function (key: string, color: any) {
         // This is a simplified version of the cacheSet function
         // that focuses on the part we want to test
         mockCache.set(key, color);
@@ -509,7 +508,7 @@ describe('parseColor', () => {
       // Fill the cache to capacity
       const cacheLimit = getCacheStats().maxSize;
       for (let i = 0; i < cacheLimit; i++) {
-        cacheSet(`key-${i}`, rgb(i/cacheLimit, 0, 0));
+        cacheSet(`key-${i}`, rgb(i / cacheLimit, 0, 0));
       }
 
       // Verify the cache is full
@@ -535,7 +534,7 @@ describe('parseColor', () => {
       // Manually set the cache size to the limit without adding to accessOrder
       const cacheLimit = getCacheStats().maxSize;
       for (let i = 0; i < cacheLimit; i++) {
-        cache.set(`key-${i}`, rgb(i/cacheLimit, 0, 0));
+        cache.set(`key-${i}`, rgb(i / cacheLimit, 0, 0));
       }
 
       // Verify the cache is full but accessOrder is empty
@@ -585,11 +584,11 @@ describe('parseColor', () => {
     });
 
     it('moves a hit to the MRU end (splice is executed)', () => {
-      const red  = '#ff0000';
+      const red = '#ff0000';
       const blue = '#0000ff';
 
-      parseColor(red,  'rgb');               // seed 1
-      parseColor(blue, 'rgb');               // seed 2
+      parseColor(red, 'rgb'); // seed 1
+      parseColor(blue, 'rgb'); // seed 2
       expect(accessOrder).toEqual([`${red}:rgb`, `${blue}:rgb`]);
 
       // cache hit → splice should run
@@ -600,8 +599,8 @@ describe('parseColor', () => {
 
     it('removes the old position and appends the key', () => {
       const keyString = '#ff0000';
-      const target    = 'rgb';
-      const cacheKey  = `${keyString}:${target}`;
+      const target = 'rgb';
+      const cacheKey = `${keyString}:${target}`;
 
       // 1️⃣  prime the cache so the key is in accessOrder
       const parsed = parseColor(keyString, target);
@@ -633,22 +632,27 @@ describe('parseColor', () => {
         throw { toString: () => 'Custom error object' };
       });
 
-      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0', 'rgb')).toThrow('Failed to parse color "ChromaKit|v1 rgb 1 0 0": Custom error object');
+      expect(() => parseColor('ChromaKit|v1 rgb 1 0 0', 'rgb')).toThrow(
+        'Failed to parse color "ChromaKit|v1 rgb 1 0 0": Custom error object'
+      );
     });
 
     it('should throw for null input', () => {
-      // @ts-ignore - Testing runtime behavior with invalid input
-      expect(() => parseColor(null, 'rgb')).toThrow('Color input cannot be null or undefined');
+      expect(() => parseColor(null as unknown as Color, 'rgb')).toThrow(
+        'Color input cannot be null or undefined'
+      );
     });
 
     it('should throw for undefined input', () => {
-      // @ts-ignore - Testing runtime behavior with invalid input
-      expect(() => parseColor(undefined, 'rgb')).toThrow('Color input cannot be null or undefined');
+      expect(() => parseColor(undefined as unknown as Color, 'rgb')).toThrow(
+        'Color input cannot be null or undefined'
+      );
     });
 
     it('should throw for non-string, non-Color input', () => {
-      // @ts-ignore - Testing runtime behavior with invalid input
-      expect(() => parseColor(123, 'rgb')).toThrow('Input must be a string or Color object');
+      expect(() => parseColor(123 as unknown as Color, 'rgb')).toThrow(
+        'Input must be a string or Color object'
+      );
     });
 
     it('should throw for empty string input', () => {

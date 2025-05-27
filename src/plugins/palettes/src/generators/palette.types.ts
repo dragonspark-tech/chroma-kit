@@ -11,7 +11,7 @@ import { type OKLChColor } from '../../../../models/oklch';
  * @property {string} oklch - The OKLCh string representation of the color.
  * @property {string} chromakit - A string representation compatible with the Chromakit format.
  */
-export type ColorPaletteShade = {
+export interface ColorPaletteShade {
   number: number;
   isBase: boolean;
 
@@ -31,7 +31,7 @@ export type ColorPaletteShade = {
  * The `arrayValues` property provides an array containing all shade values
  * for the palette in a sequential order.
  */
-export type ColorPalette = {
+export interface ColorPalette {
   50: ColorPaletteShade;
   100: ColorPaletteShade;
   200: ColorPaletteShade;

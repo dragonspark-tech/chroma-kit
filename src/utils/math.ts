@@ -17,7 +17,7 @@ export const clamp = (value: number, a: number, b: number): number => {
  * @param {number} [digits=0] The number of decimal places to round to. Defaults to 0 if not specified.
  * @return {number} The rounded number.
  */
-export const round = (num: number, digits: number = 0): number => {
+export const round = (num: number, digits = 0): number => {
   if (digits === 0) {
     return Math.round(num);
   }
@@ -32,7 +32,7 @@ export const round = (num: number, digits: number = 0): number => {
  * @param {number} [digits=0] - The number of decimal places to round down to. Defaults to 0.
  * @return {number} The rounded down value.
  */
-export const floor = (num: number, digits: number = 0): number => {
+export const floor = (num: number, digits = 0): number => {
   if (digits === 0) {
     return Math.floor(num);
   }

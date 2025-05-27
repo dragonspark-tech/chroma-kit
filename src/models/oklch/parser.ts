@@ -1,4 +1,4 @@
-import { oklch, OKLChColor } from './oklch';
+import { oklch, type OKLChColor } from './oklch';
 import { ColorStringParser } from '../../semantics/colorParser';
 
 /**

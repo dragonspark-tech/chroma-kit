@@ -17,7 +17,6 @@ import {
   jzczhzToXYZ
 } from '../../models/jzczhz';
 import { jzczhzFromCSSString } from '../../models/jzczhz/parser';
-import { rgb } from '../../models/rgb';
 
 describe('JzCzHz Color Model', () => {
   // Test jzczhz factory function

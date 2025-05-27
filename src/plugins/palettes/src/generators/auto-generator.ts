@@ -1,7 +1,7 @@
 import type { Color } from '../../../../foundation';
 import { parseColor } from '../../../../';
 import { generateTailwindPalette } from './tailwind-generator';
-import { ColorPalette } from './palette.types';
+import type { ColorPalette } from './palette.types';
 
 /**
  * Represents a type for defining a specific generator family.
@@ -9,7 +9,6 @@ import { ColorPalette } from './palette.types';
  * particularly for tools or frameworks where versioning differentiates functionality or compatibility.
  */
 export type GeneratorFamily = 'Tailwind v4';
-
 
 /**
  * Generates a color palette based on the specified base color and options.
@@ -21,7 +20,12 @@ export type GeneratorFamily = 'Tailwind v4';
  * @returns {ColorPalette} - The generated color palette as a `ColorPalette` object.
  * @throws {Error} - Throws an error if the specified `family` is not recognized.
  */
-export const generatePalette = (color: Color | string, adjustContrast: boolean = true, ensureColorInAdjustment: boolean = true, family: GeneratorFamily = 'Tailwind v4'): ColorPalette => {
+export const generatePalette = (
+  color: Color | string,
+  adjustContrast = true,
+  ensureColorInAdjustment = true,
+  family: GeneratorFamily = 'Tailwind v4'
+): ColorPalette => {
   const baseColor = parseColor(color, 'oklch');
   switch (family) {
     case 'Tailwind v4':
@@ -29,4 +33,4 @@ export const generatePalette = (color: Color | string, adjustContrast: boolean =
     default:
       throw new Error(`Unknown generator family: ${family}`);
   }
-}
+};

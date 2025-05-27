@@ -1,4 +1,4 @@
-import { jzazbz, JzAzBzColor } from './jzazbz';
+import { jzazbz, type JzAzBzColor } from './jzazbz';
 
 /**
  * Parses a CSS JzAzBz color string into a JzAzBzColor object.

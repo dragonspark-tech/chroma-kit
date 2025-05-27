@@ -1,4 +1,4 @@
-import { hsv, HSVColor } from './hsv';
+import { hsv, type HSVColor } from './hsv';
 import { ColorStringParser } from '../../semantics/colorParser';
 
 /**

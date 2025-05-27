@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  Matrix3x3,
+  type Matrix3x3,
   multiplyMatrixByVector,
   transposeMatrix3x3,
   multiplyMatrix3x3,
@@ -43,15 +43,27 @@ describe('linear', () => {
     });
 
     it('should throw an error if vector is empty', () => {
-      expect(() => multiplyMatrixByVector([[1, 2], [3, 4]], [])).toThrow(
-        'Matrix and vector must have valid non-empty dimensions.'
-      );
+      expect(() =>
+        multiplyMatrixByVector(
+          [
+            [1, 2],
+            [3, 4]
+          ],
+          []
+        )
+      ).toThrow('Matrix and vector must have valid non-empty dimensions.');
     });
 
     it('should throw an error if matrix rows do not match vector length', () => {
-      expect(() => multiplyMatrixByVector([[1, 2, 3], [4, 5]], [1, 2])).toThrow(
-        "All matrix rows must match the vector's length."
-      );
+      expect(() =>
+        multiplyMatrixByVector(
+          [
+            [1, 2, 3],
+            [4, 5]
+          ],
+          [1, 2]
+        )
+      ).toThrow("All matrix rows must match the vector's length.");
     });
   });
 
@@ -207,9 +219,7 @@ describe('linear', () => {
     });
 
     it('should throw an error if no matrices are provided', () => {
-      expect(() => multiplyMatrices()).toThrow(
-        'No matrices provided for multiplication.'
-      );
+      expect(() => multiplyMatrices()).toThrow('No matrices provided for multiplication.');
     });
   });
 });

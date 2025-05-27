@@ -1,4 +1,4 @@
-import { Color } from '../foundation';
+import type { Color } from '../foundation';
 import { contrastAPCA } from './apca';
 import { parseColor } from '../semantics/parsing';
 import { contrastDeltaLStar } from './delta-lstar';
@@ -68,9 +68,7 @@ export const contrast = (
 
   // Check if colors are identical (comparing RGB values)
   const colorsAreIdentical =
-    fgSRGB.r === bgSRGB.r &&
-    fgSRGB.g === bgSRGB.g &&
-    fgSRGB.b === bgSRGB.b;
+    fgSRGB.r === bgSRGB.r && fgSRGB.g === bgSRGB.g && fgSRGB.b === bgSRGB.b;
 
   // If colors are identical, return 0 for all algorithms for consistency
   if (colorsAreIdentical) {

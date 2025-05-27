@@ -1,4 +1,8 @@
-import { APCA_BODY_MIN_RATIO, APCA_LARGE_MIN_RATIO, APCA_PLACEHOLDER_MIN_RATIO } from '../constants';
+import {
+  APCA_BODY_MIN_RATIO,
+  APCA_LARGE_MIN_RATIO,
+  APCA_PLACEHOLDER_MIN_RATIO
+} from '../constants';
 import { type Color } from '../../../../foundation';
 import { contrast } from '../../../../';
 
@@ -36,7 +40,7 @@ export const isContrastAPCACompliant = (contrast: number, content: APCAContentTy
     default:
       throw new Error(`Unknown content type: ${content}`);
   }
-}
+};
 
 /**
  * Checks if the contrast between two colors meets APCA requirements for a specific content type
@@ -46,5 +50,8 @@ export const isContrastAPCACompliant = (contrast: number, content: APCAContentTy
  * @param content - The type of content being checked
  * @returns True if the contrast meets the minimum requirement for the content type, false otherwise
  */
-export const checkAPCAContrast = (foreground: Color | string, background: Color | string, content: APCAContentType): boolean =>
-  isContrastAPCACompliant(contrast(foreground, background, 'APCA'), content);
+export const checkAPCAContrast = (
+  foreground: Color | string,
+  background: Color | string,
+  content: APCAContentType
+): boolean => isContrastAPCACompliant(contrast(foreground, background, 'APCA'), content);

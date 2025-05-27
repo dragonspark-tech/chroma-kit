@@ -1,19 +1,27 @@
 import { OKLAB_LMS_MATRIX, OKLCH_THROUGH_LMS_XYZ_MATRIX } from './constants';
 import { multiplyMatrixByVector } from '../../utils/linear';
-import { XYZColor, xyzFromVector, xyzToJzAzBz, xyzToJzCzHz, xyzToLab, xyzToLCh, xyzToRGB } from '../xyz';
-import { RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
-import { LabColor } from '../lab';
-import { LChColor } from '../lch';
-import { JzAzBzColor } from '../jzazbz';
-import { JzCzHzColor } from '../jzczhz';
-import { oklch, OKLChColor } from '../oklch';
-import { HSLColor } from '../hsl';
-import { HSVColor } from '../hsv';
+import {
+  type XYZColor,
+  xyzFromVector,
+  xyzToJzAzBz,
+  xyzToJzCzHz,
+  xyzToLab,
+  xyzToLCh,
+  xyzToRGB
+} from '../xyz';
+import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
+import type { LabColor } from '../lab';
+import type { LChColor } from '../lch';
+import type { JzAzBzColor } from '../jzazbz';
+import type { JzCzHzColor } from '../jzczhz';
+import { oklch, type OKLChColor } from '../oklch';
+import type { HSLColor } from '../hsl';
+import type { HSVColor } from '../hsv';
 import { IlluminantD65 } from '../../standards/illuminants';
-import { ColorBase } from '../../foundation';
+import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
-import { HWBColor } from '../hwb';
+import type { HWBColor } from '../hwb';
 
 /**
  * Represents a color in the OKLab color space.
@@ -115,7 +123,7 @@ export const oklabFromVector = (v: number[], alpha?: number): OKLabColor => {
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const oklabToRGB = (color: OKLabColor, performGamutMapping: boolean = true): RGBColor =>
+export const oklabToRGB = (color: OKLabColor, performGamutMapping = true): RGBColor =>
   xyzToRGB(oklabToXYZ(color), performGamutMapping);
 
 /**
@@ -130,7 +138,7 @@ export const oklabToRGB = (color: OKLabColor, performGamutMapping: boolean = tru
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const oklabToHSL = (color: OKLabColor, performGamutMapping: boolean = true): HSLColor =>
+export const oklabToHSL = (color: OKLabColor, performGamutMapping = true): HSLColor =>
   rgbToHSL(oklabToRGB(color, performGamutMapping));
 
 /**
@@ -145,7 +153,7 @@ export const oklabToHSL = (color: OKLabColor, performGamutMapping: boolean = tru
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const oklabToHSV = (color: OKLabColor, performGamutMapping: boolean = true): HSVColor =>
+export const oklabToHSV = (color: OKLabColor, performGamutMapping = true): HSVColor =>
   rgbToHSV(oklabToRGB(color, performGamutMapping));
 
 /**
@@ -160,7 +168,7 @@ export const oklabToHSV = (color: OKLabColor, performGamutMapping: boolean = tru
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const oklabToHWB = (color: OKLabColor, performGamutMapping: boolean = true): HWBColor =>
+export const oklabToHWB = (color: OKLabColor, performGamutMapping = true): HWBColor =>
   rgbToHWB(oklabToRGB(color, performGamutMapping));
 
 /**
@@ -230,7 +238,7 @@ export const oklabToOKLCh = (color: OKLabColor): OKLChColor => {
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const oklabToJzAzBz = (color: OKLabColor, peakLuminance: number = 10000): JzAzBzColor =>
+export const oklabToJzAzBz = (color: OKLabColor, peakLuminance = 10000): JzAzBzColor =>
   xyzToJzAzBz(oklabToXYZ(color), peakLuminance);
 
 /**
@@ -245,5 +253,5 @@ export const oklabToJzAzBz = (color: OKLabColor, peakLuminance: number = 10000):
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const oklabToJzCzHz = (color: OKLabColor, peakLuminance: number = 10000): JzCzHzColor =>
+export const oklabToJzCzHz = (color: OKLabColor, peakLuminance = 10000): JzCzHzColor =>
   xyzToJzCzHz(oklabToXYZ(color), peakLuminance);

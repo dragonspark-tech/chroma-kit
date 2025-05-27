@@ -3,7 +3,6 @@ import '../../conversion/register-all-conversions';
 import { describe, expect, it } from 'vitest';
 import {
   lch,
-  LChColor,
   lchFromVector,
   lchToCSSString,
   lchToHSL,
@@ -372,7 +371,7 @@ describe('LCh Color Model', () => {
     it('should approximately preserve LCh values when converting to Lab and back', () => {
       const original = lch(50, 60, 70);
       const lab = lchToLab(original);
-      const roundTrip = lab.to('lch') as LChColor;
+      const roundTrip = lab.to('lch');
 
       expect(roundTrip.l).toBeCloseTo(original.l, 1);
       expect(roundTrip.c).toBeCloseTo(original.c, 1);
@@ -382,7 +381,7 @@ describe('LCh Color Model', () => {
     it('should approximately preserve LCh values when converting to XYZ and back', () => {
       const original = lch(50, 60, 70);
       const xyz = lchToXYZ(original);
-      const roundTrip = xyz.to('lch') as LChColor;
+      const roundTrip = xyz.to('lch');
 
       expect(roundTrip.l).toBeCloseTo(original.l, 1);
       expect(roundTrip.c).toBeCloseTo(original.c, 1);
@@ -395,35 +394,35 @@ describe('LCh Color Model', () => {
     it('should convert known Lab colors to LCh correctly', () => {
       // Lab(50, 0, 0) should convert to LCh(50, 0, 0)
       const grayLab = lab(50, 0, 0);
-      const grayLCh = grayLab.to('lch') as LChColor;
+      const grayLCh = grayLab.to('lch');
       expect(grayLCh.l).toBeCloseTo(50, 5);
       expect(grayLCh.c).toBeCloseTo(0, 5);
       expect(grayLCh.h).toBeCloseTo(0, 5);
 
       // Lab(50, 50, 0) should convert to LCh(50, 50, 0)
       const redLab = lab(50, 50, 0);
-      const redLCh = redLab.to('lch') as LChColor;
+      const redLCh = redLab.to('lch');
       expect(redLCh.l).toBeCloseTo(50, 5);
       expect(redLCh.c).toBeCloseTo(50, 5);
       expect(redLCh.h).toBeCloseTo(0, 5);
 
       // Lab(50, 0, 50) should convert to LCh(50, 50, 90)
       const yellowLab = lab(50, 0, 50);
-      const yellowLCh = yellowLab.to('lch') as LChColor;
+      const yellowLCh = yellowLab.to('lch');
       expect(yellowLCh.l).toBeCloseTo(50, 5);
       expect(yellowLCh.c).toBeCloseTo(50, 5);
       expect(yellowLCh.h).toBeCloseTo(90, 5);
 
       // Lab(50, -50, 0) should convert to LCh(50, 50, 180)
       const greenLab = lab(50, -50, 0);
-      const greenLCh = greenLab.to('lch') as LChColor;
+      const greenLCh = greenLab.to('lch');
       expect(greenLCh.l).toBeCloseTo(50, 5);
       expect(greenLCh.c).toBeCloseTo(50, 5);
       expect(greenLCh.h).toBeCloseTo(180, 5);
 
       // Lab(50, 0, -50) should convert to LCh(50, 50, 270)
       const blueLab = lab(50, 0, -50);
-      const blueLCh = blueLab.to('lch') as LChColor;
+      const blueLCh = blueLab.to('lch');
       expect(blueLCh.l).toBeCloseTo(50, 5);
       expect(blueLCh.c).toBeCloseTo(50, 5);
       expect(blueLCh.h).toBeCloseTo(270, 5);
@@ -433,7 +432,7 @@ describe('LCh Color Model', () => {
       const red = rgb(1, 0, 0).to('lch');
 
       expect(red.l).toBeCloseTo(53.2371);
-      expect(red.c).toBeCloseTo(104.5500);
+      expect(red.c).toBeCloseTo(104.55);
       expect(red.h).toBeCloseTo(39.9998);
       expect(red.illuminant?.name).toBe('D65');
     });
