@@ -102,6 +102,7 @@
     "build": "rimraf ./dist ./tsup && tsup --config tsup.config.ts && rimraf .tsup",
     "build:precomputed": "jiti ./toolchain/build.ts",
     "build:docs": "typedoc --options typedoc.json",
+    "check": "pnpm lint && pnpm lint:types && pnpm test",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "lint:types": "tsc --noemit",
