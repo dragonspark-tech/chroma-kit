@@ -1,5 +1,6 @@
 import type { TailwindPalette } from './tailwind.types';
 import { oklch } from '../../../models/oklch';
+import type { OKLChColor } from '../../../models/oklch';
 
 /**
  * Tailwind’s White color.
@@ -9,7 +10,7 @@ import { oklch } from '../../../models/oklch';
  *
  * @see https://tailwindcss.com/docs/colors#default-color-palette-reference
  */
-export const TW_WHITE = oklch(1, 0, 0);
+export const TW_WHITE: OKLChColor = oklch(1, 0, 0);
 
 /**
  * Tailwind’s Black color.
@@ -19,7 +20,7 @@ export const TW_WHITE = oklch(1, 0, 0);
  *
  * @see https://tailwindcss.com/docs/colors#default-color-palette-reference
  */
-export const TW_BLACK = oklch(0, 0, 0);
+export const TW_BLACK: OKLChColor = oklch(0, 0, 0);
 
 /**
  * Tailwind's Slate color palette.
