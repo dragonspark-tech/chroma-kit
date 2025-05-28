@@ -13,6 +13,7 @@ import {
   lchToLab,
   lchToOKLab,
   lchToOKLCh,
+  lchToP3,
   lchToRGB,
   lchToXYZ
 } from '../../models/lch';
@@ -362,6 +363,44 @@ describe('LCh Color Model', () => {
         const colorWithAlpha = lch(50, 60, 70, 0.8);
         const jzczhz = lchToJzCzHz(colorWithAlpha);
         expect(jzczhz.alpha).toBe(0.8);
+      });
+    });
+
+    describe('lchToP3', () => {
+      it('should convert LCh to P3 with gamut mapping by default', () => {
+        const p3 = lchToP3(testColor);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should convert LCh to P3 without gamut mapping when specified', () => {
+        const p3 = lchToP3(testColor, false);
+        expect(p3.space).toBe('p3');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = lch(50, 60, 70, 0.8);
+        const p3 = lchToP3(colorWithAlpha);
+        expect(p3.alpha).toBe(0.8);
+      });
+
+      it('should handle out-of-gamut colors correctly with gamut mapping', () => {
+        // Create an LCh color with high chroma that is likely out of P3 gamut
+        const outOfGamutColor = lch(50, 150, 70);
+        const p3 = lchToP3(outOfGamutColor);
+
+        // After gamut mapping, all values should be within 0-1 range
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
       });
     });
   });

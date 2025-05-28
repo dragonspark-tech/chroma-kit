@@ -8,6 +8,10 @@ export * from './models/rgb/rgb';
 export * from './models/rgb/parser';
 export * from './models/rgb/transform';
 
+export * from './models/p3/p3';
+export * from './models/p3/parser';
+export * from './models/p3/transform';
+
 export * from './models/xyz/xyz';
 export * from './models/xyz/parser';
 

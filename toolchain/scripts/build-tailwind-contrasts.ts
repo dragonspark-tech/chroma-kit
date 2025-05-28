@@ -1,6 +1,5 @@
 import { TailwindColors } from '../../src/plugins/tailwind';
 import { contrastAPCA, rgb } from '../../src';
-import { build } from 'tsup';
 import { writeFileSync } from 'node:fs';
 
 type ShadeContrasts = {

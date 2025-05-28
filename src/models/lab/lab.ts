@@ -5,7 +5,7 @@ import {
   xyzToJzAzBz,
   xyzToJzCzHz,
   xyzToOKLab,
-  xyzToOKLCh,
+  xyzToOKLCh, xyzToP3,
   xyzToRGB
 } from '../xyz';
 import { ϵ, κ } from './constants';
@@ -22,6 +22,7 @@ import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import type { HWBColor } from '../hwb';
 import { constrainAngle } from '../../utils/angles';
+import type { P3Color } from '../p3/p3';
 
 /**
  * Represents a color in the CIE Lab color space.
@@ -137,6 +138,9 @@ export const labFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  */
 export const labToRGB = (color: LabColor, performGamutMapping = true): RGBColor =>
   xyzToRGB(labToXYZ(color), performGamutMapping);
+
+export const labToP3 = (color: LabColor, performGamutMapping = true): P3Color =>
+  xyzToP3(labToXYZ(color), performGamutMapping);
 
 /**
  * Converts a color from CIE Lab to HSL color space.

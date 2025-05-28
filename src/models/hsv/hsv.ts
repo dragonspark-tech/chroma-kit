@@ -10,7 +10,7 @@ import {
   rgbToXYZ
 } from '../rgb';
 import { hsl, type HSLColor } from '../hsl';
-import type { XYZColor } from '../xyz';
+import { type XYZColor, xyzToP3 } from '../xyz';
 import type { LabColor } from '../lab';
 import type { LChColor } from '../lch';
 import type { OKLabColor } from '../oklab';
@@ -21,6 +21,7 @@ import type { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import { hwb, type HWBColor } from '../hwb';
+import type { P3Color } from '../p3/p3';
 
 /**
  * Represents a color in the HSV color space.
@@ -113,6 +114,9 @@ export const hsvToRGB = (color: HSVColor): RGBColor => {
 
   return rgb(r + m, g + m, b + m, color.alpha);
 };
+
+export const hsvToP3 = (color: HSVColor): P3Color =>
+  xyzToP3(hsvToXYZ(color));
 
 /**
  * Converts an HSV color to the HSL color space.

@@ -29,6 +29,8 @@ import type { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
+import { type P3Color, p3FromVector } from '../p3/p3';
+import { delinearizeP3Color } from '../p3/transform';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -151,7 +153,6 @@ export const xyzToRGB = (color: XYZColor, performGamutMapping = true): RGBColor 
   }
 
   // Perform gamut mapping by scaling the color to fit within the gamut
-
   if (Math.min(lRGB[0], lRGB[1], lRGB[2]) < 0) {
     const minValue = Math.min(lRGB[0], lRGB[1], lRGB[2]);
     lRGB[0] -= minValue;
@@ -169,6 +170,44 @@ export const xyzToRGB = (color: XYZColor, performGamutMapping = true): RGBColor 
 
   return delinearizeRGBColor(rgbFromVector(lRGB, color.alpha));
 };
+
+/**
+ * Converts a color from CIE XYZ to DCI-P3 RGB color space.
+ *
+ * This function applies the XYZ to P3 RGB transformation matrix to convert the color,
+ * then delinearizes the RGB values (applies gamma correction) to get standard RGB values.
+ * It also performs gamut mapping to ensure the resulting RGB values are within the valid DCI-P3 gamut.
+ *
+ * @param {XYZColor} color - The XYZ color to convert
+ * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
+ * @returns {P3Color} The color in DCI-P3 RGB space
+ */
+export const xyzToP3 = (color: XYZColor, performGamutMapping = true): P3Color => {
+  const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
+  const isInGamut = lRGB.every((value) => value >= 0 && value <= 1);
+
+  if (isInGamut || !performGamutMapping) {
+    return delinearizeP3Color(p3FromVector(lRGB, color.alpha));
+  }
+
+  // Perform gamut mapping by scaling the color to fit within the gamut
+  if (Math.min(lRGB[0], lRGB[1], lRGB[2]) < 0) {
+    const minValue = Math.min(lRGB[0], lRGB[1], lRGB[2]);
+    lRGB[0] -= minValue;
+    lRGB[1] -= minValue;
+    lRGB[2] -= minValue;
+  }
+
+  // Then, handle values > 1 by scaling down if needed
+  const maxValue = Math.max(lRGB[0], lRGB[1], lRGB[2]);
+  if (maxValue > 1) {
+    lRGB[0] /= maxValue;
+    lRGB[1] /= maxValue;
+    lRGB[2] /= maxValue;
+  }
+
+  return delinearizeP3Color(p3FromVector(lRGB, color.alpha));
+}
 
 /**
  * Converts a color from CIE XYZ to HSL color space.

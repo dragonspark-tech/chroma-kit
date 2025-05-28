@@ -9,6 +9,7 @@ import type { XYZColor } from './models/xyz';
 import type { HSLColor } from './models/hsl';
 import type { HSVColor } from './models/hsv';
 import type { HWBColor } from './models/hwb';
+import type { P3Color } from './models/p3/p3';
 
 /**
  * A type representing a color in various color spaces. Color can be expressed in one of the following formats:
@@ -28,6 +29,7 @@ import type { HWBColor } from './models/hwb';
  */
 export type Color =
   | RGBColor
+  | P3Color
   | HSLColor
   | HSVColor
   | HWBColor
@@ -89,27 +91,29 @@ export interface ColorBase {
  */
 export type CreatedColor<T extends ColorSpace> = T extends 'rgb'
   ? RGBColor
-  : T extends 'xyz'
-    ? XYZColor
-    : T extends 'hsl'
-      ? HSLColor
-      : T extends 'hsv'
-        ? HSVColor
-        : T extends 'hwb'
-          ? HWBColor
-          : T extends 'lab'
-            ? LabColor
-            : T extends 'lch'
-              ? LChColor
-              : T extends 'oklab'
-                ? OKLabColor
-                : T extends 'oklch'
-                  ? OKLChColor
-                  : T extends 'jzazbz'
-                    ? JzAzBzColor
-                    : T extends 'jzczhz'
-                      ? JzCzHzColor
-                      : never;
+  : T extends 'p3'
+    ? P3Color
+    : T extends 'xyz'
+      ? XYZColor
+      : T extends 'hsl'
+        ? HSLColor
+        : T extends 'hsv'
+          ? HSVColor
+          : T extends 'hwb'
+            ? HWBColor
+            : T extends 'lab'
+              ? LabColor
+              : T extends 'lch'
+                ? LChColor
+                : T extends 'oklab'
+                  ? OKLabColor
+                  : T extends 'oklch'
+                    ? OKLChColor
+                    : T extends 'jzazbz'
+                      ? JzAzBzColor
+                      : T extends 'jzczhz'
+                        ? JzCzHzColor
+                        : never;
 
 /**
  * A mapping of color spaces to their respective channel identifiers.
@@ -125,6 +129,7 @@ export type CreatedColor<T extends ColorSpace> = T extends 'rgb'
  */
 export const colorVectorMappings: Record<ColorSpace, readonly string[]> = {
   rgb: ['r', 'g', 'b'],
+  p3: ['r', 'g', 'b'],
   xyz: ['x', 'y', 'z'],
   hsl: ['h', 's', 'l'],
   hsv: ['h', 's', 'v'],

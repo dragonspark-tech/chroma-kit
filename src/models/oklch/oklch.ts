@@ -2,7 +2,7 @@ import type { LabColor } from '../lab';
 import type { LChColor } from '../lch';
 import { oklab, type OKLabColor, oklabToLab, oklabToLCh, oklabToXYZ } from '../oklab';
 import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
-import { type XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToRGB } from '../xyz';
+import { type XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToP3, xyzToRGB } from '../xyz';
 import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
 import type { HSLColor } from '../hsl';
@@ -11,6 +11,7 @@ import type { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
+import type { P3Color } from '../p3/p3';
 
 /**
  * Represents a color in the OKLCh color space.
@@ -117,10 +118,11 @@ export const oklchFromVector = (v: number[], alpha?: number): OKLChColor => {
  * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const oklchToRGB = (color: OKLChColor, performGamutMapping = true): RGBColor => {
-  const xyz = oklchToXYZ(color);
-  return xyzToRGB(xyz, performGamutMapping);
-};
+export const oklchToRGB = (color: OKLChColor, performGamutMapping = true): RGBColor =>
+  xyzToRGB(oklchToXYZ(color), performGamutMapping);
+
+export const oklchToP3 = (color: OKLChColor, performGamutMapping = true): P3Color =>
+  xyzToP3(oklchToXYZ(color), performGamutMapping);
 
 /**
  * Converts a color from OKLCh to HSL color space.

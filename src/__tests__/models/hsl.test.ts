@@ -13,6 +13,7 @@ import {
   hslToLCh,
   hslToOKLab,
   hslToOKLCh,
+  hslToP3,
   hslToRGB,
   hslToXYZ
 } from '../../models/hsl';
@@ -485,6 +486,48 @@ describe('HSL Color Model', () => {
         const colorWithAlpha = hsl(120, 0.5, 0.6, 0.8);
         const jzczhz = hslToJzCzHz(colorWithAlpha);
         expect(jzczhz.alpha).toBe(0.8);
+      });
+    });
+
+    describe('hslToP3', () => {
+      it('should convert HSL to P3', () => {
+        const p3 = hslToP3(testColor);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should convert primary colors correctly', () => {
+        // Red in HSL
+        const red = hsl(0, 1, 0.5);
+        const p3Red = hslToP3(red);
+        expect(p3Red.r).toBeCloseTo(1, 1);
+        expect(p3Red.g).toBeCloseTo(0, 1);
+        expect(p3Red.b).toBeCloseTo(0, 1);
+
+        // Green in HSL
+        const green = hsl(120, 1, 0.5);
+        const p3Green = hslToP3(green);
+        expect(p3Green.r).toBeCloseTo(0, 1);
+        expect(p3Green.g).toBeCloseTo(1, 1);
+        expect(p3Green.b).toBeCloseTo(0, 1);
+
+        // Blue in HSL
+        const blue = hsl(240, 1, 0.5);
+        const p3Blue = hslToP3(blue);
+        expect(p3Blue.r).toBeCloseTo(0, 1);
+        expect(p3Blue.g).toBeCloseTo(0, 1);
+        expect(p3Blue.b).toBeCloseTo(1, 1);
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = hsl(120, 0.5, 0.6, 0.8);
+        const p3 = hslToP3(colorWithAlpha);
+        expect(p3.alpha).toBe(0.8);
       });
     });
   });

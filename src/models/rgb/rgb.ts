@@ -5,7 +5,7 @@
   xyzToJzCzHz,
   xyzToLab,
   xyzToLCh,
-  xyzToOKLab
+  xyzToOKLab, xyzToP3
 } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { HEX_CHARS, RGB_INVERSE, RGB_XYZ_MATRIX } from './constants';
@@ -25,6 +25,7 @@ import { serializeV1 } from '../../semantics/serialization';
 import type { ColorBase, ColorSpace } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
+import type { P3Color } from '../p3/p3';
 
 /**
  * Represents a color in the RGB color space.
@@ -64,10 +65,10 @@ export const isInSRGB = (color: RGBColor): boolean => {
  * Converts an RGB color object to a CSS-compatible string representation.
  *
  * For fully opaque colors, this function returns a hex format by default as it's more compact.
- * For colors with alpha < 1 or when forceFullString is true, it returns the rgba() format.
+ * For colors with alpha < 1 or when forceFullString is true, it returns the rgb() format.
  *
  * @param {RGBColor} color - The RGB color object to convert
- * @param {boolean} [forceFullString=false] - Whether to force the rgba() format even for fully opaque colors
+ * @param {boolean} [forceFullString=false] - Whether to force the rgb() format even for fully opaque colors
  * @returns {string} The CSS-compatible string representation
  */
 export const rgbToCSSString = (color: RGBColor, forceFullString = false): string => {
@@ -80,7 +81,7 @@ export const rgbToCSSString = (color: RGBColor, forceFullString = false): string
   const a = alpha ?? 1;
 
   if (a < 1 || forceFullString) {
-    return `rgba(${rInt}, ${gInt}, ${bInt}${a < 1 ? ', ' + a.toFixed(3) : ''})`;
+    return `rgb(${rInt} ${gInt} ${bInt}${a < 1 ? ' / ' + a.toFixed(3) : ''})`;
   }
 
   return rgbToHex(color);
@@ -254,6 +255,9 @@ export const rgbToHex = (color: RGBColor): string => {
 
   return result;
 };
+
+export const rgbToP3 = (color: RGBColor): P3Color =>
+  xyzToP3(rgbToXYZ(color));
 
 /**
  * Calculates the hue component of a color in HSL space based on its RGB representation.

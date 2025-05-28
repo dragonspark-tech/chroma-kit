@@ -15,6 +15,7 @@ import {
   xyzToLCh,
   xyzToOKLab,
   xyzToOKLCh,
+  xyzToP3,
   xyzToRGB
 } from '../../models/xyz';
 import { xyzFromCSSString } from '../../models/xyz/parser';
@@ -457,6 +458,62 @@ describe('XYZ Color Model', () => {
         const colorWithAlpha = xyz(0.5, 0.6, 0.7, 0.8);
         const jzczhz = xyzToJzCzHz(colorWithAlpha);
         expect(jzczhz.alpha).toBe(0.8);
+      });
+    });
+
+    describe('xyzToP3', () => {
+      it('should convert XYZ to P3', () => {
+        const p3 = xyzToP3(testColor);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should perform gamut mapping by default', () => {
+        // Create an XYZ color that is out of the P3 gamut
+        const outOfGamutColor = xyz(2.0, 0.0, 0.0);
+        const p3 = xyzToP3(outOfGamutColor);
+
+        // After gamut mapping, all values should be within 0-1 range
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should not perform gamut mapping when disabled', () => {
+        // Create an XYZ color that is out of the P3 gamut
+        const outOfGamutColor = xyz(2.0, 0.0, 0.0);
+        const p3 = xyzToP3(outOfGamutColor, false);
+
+        // Without gamut mapping, values can be outside 0-1 range
+        expect(Math.max(p3.r, p3.g, p3.b)).toBeGreaterThan(1);
+      });
+
+      it('should handle negative values correctly with gamut mapping', () => {
+        // Create an XYZ color with negative components
+        const negativeColor = xyz(-0.1, 0.5, 0.5);
+        const p3 = xyzToP3(negativeColor);
+
+        // After gamut mapping, all values should be within 0-1 range
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = xyz(0.5, 0.6, 0.7, 0.8);
+        const p3 = xyzToP3(colorWithAlpha);
+        expect(p3.alpha).toBe(0.8);
       });
     });
   });

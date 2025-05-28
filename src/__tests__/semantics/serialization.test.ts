@@ -11,6 +11,7 @@ import { oklch, type OKLChColor } from '../../models/oklch';
 import { jzazbz, type JzAzBzColor } from '../../models/jzazbz';
 import { jzczhz, type JzCzHzColor } from '../../models/jzczhz';
 import { hwb, type HWBColor } from '../../models/hwb';
+import { p3, type P3Color } from '../../models/p3/p3';
 import { IlluminantD65 } from '../../standards/illuminants';
 
 describe('Serialization', () => {
@@ -114,6 +115,14 @@ describe('Serialization', () => {
       expect(color.hz).toBe(40);
     });
 
+    it('should parse a valid P3 ChromaKit|v1 string', () => {
+      const color = parseV1('ChromaKit|v1 p3 0.8 0.2 0.4') as P3Color;
+      expect(color.space).toBe('p3');
+      expect(color.r).toBe(0.8);
+      expect(color.g).toBe(0.2);
+      expect(color.b).toBe(0.4);
+    });
+
     it('should throw for invalid format', () => {
       expect(() => parseV1('Not a ChromaKit string')).toThrow('Not a ChromaKit v1 string');
     });
@@ -210,6 +219,12 @@ describe('Serialization', () => {
       const color = jzczhz(0.5, 0.1, 40);
       const serialized = serializeV1(color);
       expect(serialized).toBe('ChromaKit|v1 jzczhz 0.5 0.1 40');
+    });
+
+    it('should serialize a P3 color', () => {
+      const color = p3(0.8, 0.2, 0.4);
+      const serialized = serializeV1(color);
+      expect(serialized).toBe('ChromaKit|v1 p3 0.8 0.2 0.4');
     });
 
     it('should round-trip correctly', () => {

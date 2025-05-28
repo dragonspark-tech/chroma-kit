@@ -14,7 +14,8 @@ import {
   oklabToLCh,
   oklabToOKLCh,
   oklabToJzAzBz,
-  oklabToJzCzHz
+  oklabToJzCzHz,
+  oklabToP3
 } from '../../models/oklab';
 import { oklabFromCSSString } from '../../models/oklab/parser';
 import { IlluminantD65 } from '../../standards/illuminants';
@@ -398,6 +399,48 @@ describe('OKLab Color Model', () => {
         const colorWithAlpha = oklab(0.5, 0.1, -0.2, 0.8);
         const jzczhz = oklabToJzCzHz(colorWithAlpha);
         expect(jzczhz.alpha).toBe(0.8);
+      });
+    });
+
+    describe('oklabToP3', () => {
+      it('should convert OKLab to P3', () => {
+        const p3 = oklabToP3(testColor);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should perform gamut mapping by default', () => {
+        // Create an OKLab color that is out of the P3 gamut
+        const outOfGamutColor = oklab(1.0, 0.5, 0.5);
+        const p3 = oklabToP3(outOfGamutColor);
+
+        // After gamut mapping, all values should be within 0-1 range
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should not perform gamut mapping when disabled', () => {
+        // Create an OKLab color that is out of the P3 gamut
+        const outOfGamutColor = oklab(1.0, 0.5, 0.5);
+        const p3 = oklabToP3(outOfGamutColor, false);
+
+        // Without gamut mapping, values might be outside 0-1 range
+        expect(p3.space).toBe('p3');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = oklab(0.5, 0.1, -0.2, 0.8);
+        const p3 = oklabToP3(colorWithAlpha);
+        expect(p3.alpha).toBe(0.8);
       });
     });
   });

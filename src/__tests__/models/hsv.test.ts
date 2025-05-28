@@ -13,6 +13,7 @@ import {
   hsvToLCh,
   hsvToOKLab,
   hsvToOKLCh,
+  hsvToP3,
   hsvToRGB,
   hsvToXYZ
 } from '../../models/hsv';
@@ -467,6 +468,48 @@ describe('HSV Color Model', () => {
         const colorWithAlpha = hsv(120, 0.5, 0.6, 0.8);
         const jzczhz = hsvToJzCzHz(colorWithAlpha);
         expect(jzczhz.alpha).toBe(0.8);
+      });
+    });
+
+    describe('hsvToP3', () => {
+      it('should convert HSV to P3', () => {
+        const p3 = hsvToP3(testColor);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should convert primary colors correctly', () => {
+        // Red
+        const red = hsv(0, 1, 1);
+        const p3Red = hsvToP3(red);
+        expect(p3Red.r).toBeCloseTo(1, 1);
+        expect(p3Red.g).toBeCloseTo(0, 1);
+        expect(p3Red.b).toBeCloseTo(0, 1);
+
+        // Green
+        const green = hsv(120, 1, 1);
+        const p3Green = hsvToP3(green);
+        expect(p3Green.r).toBeCloseTo(0, 1);
+        expect(p3Green.g).toBeCloseTo(1, 1);
+        expect(p3Green.b).toBeCloseTo(0, 1);
+
+        // Blue
+        const blue = hsv(240, 1, 1);
+        const p3Blue = hsvToP3(blue);
+        expect(p3Blue.r).toBeCloseTo(0, 1);
+        expect(p3Blue.g).toBeCloseTo(0, 1);
+        expect(p3Blue.b).toBeCloseTo(1, 1);
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = hsv(120, 0.5, 0.6, 0.8);
+        const p3 = hsvToP3(colorWithAlpha);
+        expect(p3.alpha).toBe(0.8);
       });
     });
   });

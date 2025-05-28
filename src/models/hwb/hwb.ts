@@ -16,13 +16,14 @@ import {
 } from '../rgb';
 import { hsl, type HSLColor, hslToRGB } from '../hsl';
 import type { HSVColor } from '../hsv';
-import type { XYZColor } from '../xyz';
+import { type XYZColor, xyzToP3 } from '../xyz';
 import type { LabColor } from '../lab';
 import type { LChColor } from '../lch';
 import type { OKLabColor } from '../oklab';
 import type { OKLChColor } from '../oklch';
 import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
+import type { P3Color } from '../p3/p3';
 
 /**
  * Represents a color in the HWB color space.
@@ -139,6 +140,9 @@ export const hwbToRGB = (color: HWBColor): RGBColor => {
 
   return rgb(aR, aG, aB, alpha);
 };
+
+export const hwbToP3 = (color: HWBColor): P3Color =>
+  xyzToP3(hwbToXYZ(color));
 
 /**
  * Converts an HWB color to the HSL color space.

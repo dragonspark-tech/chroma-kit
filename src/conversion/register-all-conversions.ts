@@ -19,7 +19,7 @@ import {
   xyzToLab,
   xyzToLCh,
   xyzToOKLab,
-  xyzToOKLCh,
+  xyzToOKLCh, xyzToP3,
   xyzToRGB
 } from '../models/xyz';
 import { labToLCH, labToXYZ } from '../models/lab';
@@ -31,6 +31,7 @@ import { lchToLab } from '../models/lch';
 import { hslToHSV, hslToRGB } from '../models/hsl';
 import { hsvToHSL, hsvToHWB, hsvToRGB } from '../models/hsv';
 import { hwbToRGB } from '../models/hwb';
+import { p3ToXYZ } from '../models/p3/p3';
 
 /**
  * Registers all available color space conversion functions with the conversion system.
@@ -51,6 +52,9 @@ export function registerAllConversions(): void {
   registerConversion('rgb', 'hsv', rgbToHSV);
   registerConversion('rgb', 'hwb', rgbToHWB);
 
+  // DCI-P3 color space conversions
+  registerConversion('p3', 'xyz', p3ToXYZ);
+
   // HSL color space conversions
   registerConversion('hsl', 'rgb', hslToRGB);
   registerConversion('hsl', 'hsv', hslToHSV);
@@ -65,6 +69,7 @@ export function registerAllConversions(): void {
 
   // XYZ color space conversions (central hub for many conversions)
   registerConversion('xyz', 'rgb', xyzToRGB);
+  registerConversion('xyz', 'p3', xyzToP3);
   registerConversion('xyz', 'lab', xyzToLab);
   registerConversion('xyz', 'lch', xyzToLCh);
   registerConversion('xyz', 'oklab', xyzToOKLab);

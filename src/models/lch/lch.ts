@@ -2,7 +2,7 @@ import { lab, type LabColor, labToXYZ } from '../lab';
 import { type OKLabColor, oklabToOKLCh } from '../oklab';
 import type { OKLChColor } from '../oklch';
 import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
-import { type XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToRGB } from '../xyz';
+import { type XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToP3, xyzToRGB } from '../xyz';
 import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
 import type { HSLColor } from '../hsl';
@@ -12,6 +12,7 @@ import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
 import { type Illuminant, IlluminantD65 } from '../../standards/illuminants';
+import type { P3Color } from '../p3/p3';
 
 /**
  * Represents a color in the CIE LCh color space.
@@ -126,6 +127,9 @@ export const lchFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  */
 export const lchToRGB = (color: LChColor, performGamutMapping = true): RGBColor =>
   xyzToRGB(lchToXYZ(color), performGamutMapping);
+
+export const lchToP3 = (color: LChColor, performGamutMapping = true): P3Color =>
+  xyzToP3(lchToXYZ(color), performGamutMapping);
 
 /**
  * Converts a color from CIE LCh to HSL color space.

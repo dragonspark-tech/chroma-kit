@@ -6,7 +6,7 @@ import {
   xyzToJzAzBz,
   xyzToJzCzHz,
   xyzToLab,
-  xyzToLCh,
+  xyzToLCh, xyzToP3,
   xyzToRGB
 } from '../xyz';
 import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
@@ -22,6 +22,7 @@ import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
+import type { P3Color } from '../p3/p3';
 
 /**
  * Represents a color in the OKLab color space.
@@ -125,6 +126,9 @@ export const oklabFromVector = (v: number[], alpha?: number): OKLabColor => {
  */
 export const oklabToRGB = (color: OKLabColor, performGamutMapping = true): RGBColor =>
   xyzToRGB(oklabToXYZ(color), performGamutMapping);
+
+export const oklabToP3 = (color: OKLabColor, performGamutMapping = true): P3Color =>
+  xyzToP3(oklabToXYZ(color), performGamutMapping);
 
 /**
  * Converts a color from OKLab to HSL color space.

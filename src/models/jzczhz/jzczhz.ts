@@ -11,7 +11,7 @@ import {
   jzazbzToRGB,
   jzazbzToXYZ
 } from '../jzazbz';
-import type { XYZColor } from '../xyz';
+import { type XYZColor, xyzToP3 } from '../xyz';
 import type { RGBColor } from '../rgb';
 import type { LabColor } from '../lab';
 import type { LChColor } from '../lch';
@@ -23,6 +23,7 @@ import type { ColorBase } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
 import { serializeV1 } from '../../semantics/serialization';
 import type { HWBColor } from '../hwb';
+import type { P3Color } from '../p3/p3';
 
 /**
  * Represents a color in the JzCzHz color space.
@@ -116,10 +117,14 @@ export const jzczhzFromVector = (v: number[], alpha?: number): JzCzHzColor => {
  *
  * @param {JzCzHzColor} color - The JzCzHz color to convert
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
+ * @param performGamutMapping - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const jzczhzToRGB = (color: JzCzHzColor, peakLuminance = 10000): RGBColor =>
-  jzazbzToRGB(jzczhzToJzAzBz(color), peakLuminance);
+export const jzczhzToRGB = (color: JzCzHzColor, peakLuminance = 10000, performGamutMapping = true): RGBColor =>
+  jzazbzToRGB(jzczhzToJzAzBz(color), peakLuminance, performGamutMapping);
+
+export const jzczhzToP3 = (color: JzCzHzColor, peakLuminance = 10000, performGamutMapping = true): P3Color =>
+  xyzToP3(jzczhzToXYZ(color, peakLuminance), performGamutMapping);
 
 /**
  * Converts a color from JzCzHz to HSL color space.

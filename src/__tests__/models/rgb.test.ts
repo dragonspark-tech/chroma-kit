@@ -16,6 +16,7 @@ import {
   rgbToLCH,
   rgbToOKLab,
   rgbToOKLCh,
+  rgbToP3,
   rgbToXYZ,
   applyRGBGammaTransfer,
   applyRGBInverseGammaTransfer,
@@ -58,7 +59,7 @@ describe('RGB Color Model', () => {
     it('should have a toCSSString method', () => {
       const color = rgb(0.5, 0.6, 0.7, 0.8);
       expect(typeof color.toCSSString).toBe('function');
-      expect(color.toCSSString()).toContain('rgba');
+      expect(color.toCSSString()).toContain('rgb');
     });
 
     it('should have a to method for color space conversion', () => {
@@ -123,17 +124,17 @@ describe('RGB Color Model', () => {
 
     it('should convert an RGB color to a CSS rgba string when alpha is less than 1', () => {
       const color = rgb(1, 0, 0, 0.5);
-      expect(rgbToCSSString(color)).toBe('rgba(255, 0, 0, 0.500)');
+      expect(rgbToCSSString(color)).toBe('rgb(255 0 0 / 0.500)');
     });
 
     it('should convert an RGB color to a CSS rgba string when forceFullString is true', () => {
       const color = rgb(1, 0, 0);
-      expect(rgbToCSSString(color, true)).toBe('rgba(255, 0, 0)');
+      expect(rgbToCSSString(color, true)).toBe('rgb(255 0 0)');
     });
 
     it('should convert an RGB color to a CSS rgba string when forceFullString is true and alpha is less than 1', () => {
       const color = rgb(1, 0, 0, 0.5);
-      expect(rgbToCSSString(color, true)).toBe('rgba(255, 0, 0, 0.500)');
+      expect(rgbToCSSString(color, true)).toBe('rgb(255 0 0 / 0.500)');
     });
   });
 
@@ -830,6 +831,52 @@ describe('RGB Color Model', () => {
         const color = rgb(1, 0, 0, 0.5);
         const jzczhz = rgbToJzCzHz(color);
         expect(jzczhz.alpha).toBe(0.5);
+      });
+    });
+
+    describe('rgbToP3', () => {
+      it('should convert RGB to P3', () => {
+        const p3 = rgbToP3(testColor);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should convert pure red to P3', () => {
+        const color = rgb(1, 0, 0);
+        const p3 = rgbToP3(color);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeCloseTo(1, 1);
+        expect(p3.g).toBeCloseTo(0, 1);
+        expect(p3.b).toBeCloseTo(0, 1);
+      });
+
+      it('should convert pure green to P3', () => {
+        const color = rgb(0, 1, 0);
+        const p3 = rgbToP3(color);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeCloseTo(0, 1);
+        expect(p3.g).toBeCloseTo(1, 1);
+        expect(p3.b).toBeCloseTo(0, 1);
+      });
+
+      it('should convert pure blue to P3', () => {
+        const color = rgb(0, 0, 1);
+        const p3 = rgbToP3(color);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeCloseTo(0, 1);
+        expect(p3.g).toBeCloseTo(0, 1);
+        expect(p3.b).toBeCloseTo(1, 1);
+      });
+
+      it('should preserve alpha value', () => {
+        const color = rgb(1, 0, 0, 0.5);
+        const p3 = rgbToP3(color);
+        expect(p3.alpha).toBe(0.5);
       });
     });
   });

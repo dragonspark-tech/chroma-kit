@@ -4,6 +4,8 @@ import './semantics/register-all-parsers';
 export {
   rgb,
   rgbFromVector,
+  p3,
+  p3FromVector,
   hsl,
   hslFromVector,
   hsv,

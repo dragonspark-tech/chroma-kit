@@ -13,6 +13,7 @@ import {
   hwbToLCH,
   hwbToOKLab,
   hwbToOKLCh,
+  hwbToP3,
   hwbToRGB,
   hwbToXYZ
 } from '../../models/hwb';
@@ -396,6 +397,25 @@ describe('HWB Color Model', () => {
         const colorWithAlpha = hwb(120, 0.3, 0.4, 0.8);
         const jzczhzColor = hwbToJzCzHz(colorWithAlpha);
         expect(jzczhzColor.alpha).toBe(0.8);
+      });
+    });
+
+    describe('hwbToP3', () => {
+      it('should convert HWB to P3', () => {
+        const p3Color = hwbToP3(testColor);
+        expect(p3Color.space).toBe('p3');
+        expect(p3Color.r).toBeGreaterThanOrEqual(0);
+        expect(p3Color.r).toBeLessThanOrEqual(1);
+        expect(p3Color.g).toBeGreaterThanOrEqual(0);
+        expect(p3Color.g).toBeLessThanOrEqual(1);
+        expect(p3Color.b).toBeGreaterThanOrEqual(0);
+        expect(p3Color.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = hwb(120, 0.3, 0.4, 0.8);
+        const p3Color = hwbToP3(colorWithAlpha);
+        expect(p3Color.alpha).toBe(0.8);
       });
     });
   });

@@ -24,6 +24,7 @@ import { oklchFromVector } from '../models/oklch';
 import { jzazbzFromVector } from '../models/jzazbz';
 import { jzczhzFromVector } from '../models/jzczhz';
 import { hwbFromVector } from '../models/hwb';
+import { p3FromVector } from '../models/p3/p3';
 
 /**
  * Type guard utility to ensure all color spaces are handled.
@@ -64,6 +65,8 @@ export function parseV1(src: string): Color {
   switch (space) {
     case 'rgb':
       return rgbFromVector(nums, alpha);
+    case 'p3':
+      return p3FromVector(nums, alpha);
     case 'hsl':
       return hslFromVector(nums, alpha);
     case 'hsv':

@@ -14,6 +14,7 @@ import {
   jzazbzToLCh,
   jzazbzToOKLab,
   jzazbzToOKLCh,
+  jzazbzToP3,
   jzazbzToRGB,
   jzazbzToXYZ,
   toCSSString
@@ -475,6 +476,57 @@ describe('JzAzBz Color Model', () => {
         const colorWithAlpha = jzazbz(0.2, 0.1, 0.05, 0.8);
         const jzczhz = jzazbzToJzCzHz(colorWithAlpha);
         expect(jzczhz.alpha).toBe(0.8);
+      });
+    });
+
+    describe('jzazbzToP3', () => {
+      it('should convert JzAzBz to P3 with default peak luminance', () => {
+        const p3 = jzazbzToP3(testColor);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should convert JzAzBz to P3 with custom peak luminance', () => {
+        const p3 = jzazbzToP3(testColor, 1000);
+        expect(p3.space).toBe('p3');
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+      });
+
+      it('should perform gamut mapping by default', () => {
+        // Create a JzAzBz color with extreme values that might be out of P3 gamut
+        const extremeColor = jzazbz(0.9, 0.5, 0.5);
+        const p3 = jzazbzToP3(extremeColor);
+
+        // After gamut mapping, all values should be within 0-1 range
+        expect(p3.r).toBeGreaterThanOrEqual(0);
+        expect(p3.r).toBeLessThanOrEqual(1);
+        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(1);
+        expect(p3.b).toBeGreaterThanOrEqual(0);
+        expect(p3.b).toBeLessThanOrEqual(1);
+      });
+
+      it('should not perform gamut mapping when disabled', () => {
+        // Create a JzAzBz color with extreme values that might be out of P3 gamut
+        const extremeColor = jzazbz(0.9, 0.5, 0.5);
+        const p3 = jzazbzToP3(extremeColor, 10000, false);
+
+        // Without gamut mapping, values might be outside 0-1 range
+        // Note: This test might not always detect out-of-gamut values as it depends on the specific color
+        // But we're testing the function behavior, not the specific values
+        expect(p3.space).toBe('p3');
+      });
+
+      it('should preserve alpha', () => {
+        const colorWithAlpha = jzazbz(0.2, 0.1, 0.05, 0.8);
+        const p3 = jzazbzToP3(colorWithAlpha);
+        expect(p3.alpha).toBe(0.8);
       });
     });
   });

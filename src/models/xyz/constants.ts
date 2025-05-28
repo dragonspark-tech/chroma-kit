@@ -19,6 +19,19 @@ export const XYZ_RGB_MATRIX: Matrix3x3 = [
 ];
 
 /**
+ * Transformation matrix for converting CIE XYZ values to linear DCI-P3 RGB values.
+ *
+ * This matrix is the inverse of the P3_XYZ_MATRIX and is used to convert from
+ * XYZ color space back to linear P3 RGB values. It's based on the DCI-P3 RGB
+ * color space with a D65 white point.
+ */
+export const XYZ_P3_MATRIX: Matrix3x3 = [
+  [ 2.493496911941425,   -0.9313836179191239, -0.40271078445071684],
+  [-0.8294889695615747,   1.7626640603183463,  0.023624685841943577],
+  [ 0.03584583024378447, -0.07617238926804182, 0.9568845240076872],
+]
+
+/**
  * Transformation matrix for converting CIE XYZ values to LMS color space.
  *
  * This matrix is used in the conversion from XYZ to OKLab/OKLCh color spaces.
