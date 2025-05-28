@@ -67,6 +67,7 @@ console.log(red.toCSSString()); // "#ff0000"
 ChromaKit embraces the full spectrum of color science with support for a comprehensive range of color models, from the familiar to the cutting-edge:
 
 - **RGB**: The standard RGB color space (RGB) that powers digital displays
+- **P3**: DCI-P3 color space with a wider gamut than sRGB for more vibrant colors on modern displays
 - **HSL**: Hue, Saturation, Lightness - an intuitive cylindrical-coordinate representation
 - **HSV**: Hue, Saturation, Value - another artist-friendly model for color selection
 - **HWB**: Hue, Whiteness, Blackness - a human-friendly alternative to HSL/HSV
@@ -87,10 +88,11 @@ Each color space is implemented with meticulous attention to the underlying math
 ### Color Creation
 
 ```js
-import { rgb, hsl, lab } from '@dragonspark/chroma-kit';
+import { rgb, p3, hsl, lab } from '@dragonspark/chroma-kit';
 
 // Create colors in different spaces
 const redRGB = rgb(1, 0, 0);
+const vividRedP3 = p3(1, 0, 0); // More vibrant red in the wider P3 gamut
 const greenHSL = hsl(120, 1, 0.5);
 const blueLab = lab(30, 20, -80);
 ```
@@ -120,7 +122,7 @@ const green = parseColor('hsl(120, 100%, 50%)', 'hsl'); // Requires HSL parser r
 ### Color Conversion
 
 ```js
-import { rgb } from '@dragonspark/chroma-kit';
+import { rgb, p3 } from '@dragonspark/chroma-kit';
 
 const color = rgb(1, 0, 0);
 
@@ -128,6 +130,11 @@ const color = rgb(1, 0, 0);
 const hslColor = color.to('hsl');
 const labColor = color.to('lab');
 const lchColor = color.to('lch');
+const p3Color = color.to('p3'); // Convert to wider gamut P3
+
+// Convert from P3 to other spaces
+const wideGamutColor = p3(1, 0.2, 0.1);
+const srgbColor = wideGamutColor.to('rgb'); // May perform gamut mapping if needed
 ```
 
 ### Color Difference (Delta E)
@@ -202,7 +209,7 @@ The library includes precise implementations of standard illuminants like D65 (d
 ### String Serialization
 
 ```js
-import { rgb } from '@dragonspark/chroma-kit';
+import { rgb, p3 } from '@dragonspark/chroma-kit';
 
 const color = rgb(1, 0, 0);
 
@@ -212,6 +219,14 @@ console.log(color.toCSSString()); // "#ff0000"
 // With alpha
 const transparentColor = rgb(1, 0, 0, 0.5);
 console.log(transparentColor.toCSSString()); // "rgba(255, 0, 0, 0.5)"
+
+// P3 color serialization
+const p3Color = p3(1, 0, 0);
+console.log(p3Color.toCSSString()); // "color(display-p3 1.000 0.000 0.000)"
+
+// P3 with alpha
+const transparentP3 = p3(1, 0, 0, 0.5);
+console.log(transparentP3.toCSSString()); // "color(display-p3 1.000 0.000 0.000 / 0.500)"
 ```
 
 ## 🚀 Advanced Features
