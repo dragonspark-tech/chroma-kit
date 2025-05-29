@@ -28,8 +28,12 @@ export const denormalizeRGBColor = (color: RGBColor): RGBColor =>
  * @param {number} channel - The input color channel value, normalized in the range [0, 1].
  * @returns {number} The gamma-corrected color channel value.
  */
-export const applyRGBGammaTransfer = (channel: number): number =>
-  channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+export const applyRGBGammaTransfer = (channel: number): number => {
+  const sign = channel < 0 ? -1 : 1;
+  const abs = sign * channel;
+
+  return abs > 0.0031308 ? sign * (1.055 * abs ** (1 / 2.4) - 0.055) : 12.92 * channel;
+};
 
 /**
  * Converts an RGB color to its linearized form by applying the RGB gamma transfer function
@@ -54,8 +58,12 @@ export const linearizeRGBColor = (color: RGBColor): RGBColor =>
  * @param {number} channel - The linear color channel value in the range [0, 1].
  * @returns {number} The gamma-corrected color channel value.
  */
-export const applyRGBInverseGammaTransfer = (channel: number): number =>
-  channel <= 0.0031308 ? channel * 12.92 : 1.055 * channel ** (1 / 2.4) - 0.055;
+export const applyRGBInverseGammaTransfer = (channel: number): number => {
+  const sign = channel < 0 ? -1 : 1;
+  const abs = sign * channel;
+
+  return abs <= 0.04045 ? channel / 12.92 : sign * ((abs + 0.055) / 1.055) ** 2.4;
+};
 
 /**
  * Converts a linear RGB color back to its gamma-corrected form by applying the inverse

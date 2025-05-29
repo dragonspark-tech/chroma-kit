@@ -1,4 +1,3 @@
-import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
@@ -26,6 +25,8 @@ import type { OKLabColor } from '../oklab';
 import type { OKLChColor } from '../oklch';
 import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
+import type { ColorBase } from '../base';
+import { channel } from '../base/channel';
 
 export interface P3Color extends ColorBase {
   space: 'p3';
@@ -67,6 +68,12 @@ export const p3 = (r: number, g: number, b: number, alpha?: number): P3Color => 
   g,
   b,
   alpha,
+
+  channels: {
+    r: channel('r', 'Red', [0, 1]),
+    g: channel('g', 'Green', [0, 1]),
+    b: channel('b', 'Blue', [0, 1])
+  },
 
   toString() {
     return serializeV1(this);

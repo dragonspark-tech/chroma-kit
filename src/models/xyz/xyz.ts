@@ -25,12 +25,14 @@ import { b, d, d0, g } from '../jzazbz/constants';
 import type { JzCzHzColor } from '../jzczhz';
 import type { HSLColor } from '../hsl';
 import type { HSVColor } from '../hsv';
-import type { ColorBase, ColorSpace } from '../../foundation';
+import type { ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
 import { type P3Color, p3FromVector } from '../p3/p3';
 import { delinearizeP3Color } from '../p3/transform';
+import type { ColorBase } from '../base';
+import { channel } from '../base/channel';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -97,6 +99,12 @@ export const xyz = (
   z,
   alpha,
   illuminant: illuminant ?? IlluminantD65,
+
+  channels: {
+    x: channel('x', 'X Axis', [0, 1]),
+    y: channel('y', 'Y Axis', [0, 1]),
+    z: channel('z', 'Z Axis', [0, 1])
+  },
 
   toString() {
     return serializeV1(this);

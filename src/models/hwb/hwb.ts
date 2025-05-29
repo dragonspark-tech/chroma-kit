@@ -1,4 +1,4 @@
-import type { ColorBase, ColorSpace } from '../../foundation';
+import type { ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import {
@@ -24,6 +24,8 @@ import type { OKLChColor } from '../oklch';
 import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
 import type { P3Color } from '../p3/p3';
+import type { ColorBase } from '../base';
+import { channel, ChannelAttribute } from '../base/channel';
 
 /**
  * Represents a color in the HWB color space.
@@ -43,7 +45,6 @@ export interface HWBColor extends ColorBase {
   h: number;
   w: number;
   b: number;
-  alpha?: number;
 }
 
 /**
@@ -83,6 +84,12 @@ export const hwb = (h: number, w: number, b: number, alpha?: number): HWBColor =
   w,
   b,
   alpha,
+
+  channels: {
+    h: channel('h', 'Hue', [0, 360], [ChannelAttribute.ANGLE]),
+    w: channel('w', 'Whiteness', [0, 1], [ChannelAttribute.PERCENTAGE]),
+    b: channel('b', 'Blackness', [0, 1], [ChannelAttribute.PERCENTAGE])
+  },
 
   toString() {
     return serializeV1(this);

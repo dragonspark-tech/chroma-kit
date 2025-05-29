@@ -7,11 +7,13 @@ import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
 import type { HSLColor } from '../hsl';
 import type { HSVColor } from '../hsv';
-import type { ColorBase, ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
+import type { ColorBase } from '../base';
+import { channel, ChannelAttribute } from '../base/channel';
+import type { ColorSpace } from '../../foundation';
 
 /**
  * Represents a color in the OKLCh color space.
@@ -73,6 +75,12 @@ export const oklch = (l: number, c: number, h: number, alpha?: number): OKLChCol
   c,
   h,
   alpha,
+
+  channels: {
+    l: channel('l', 'Lightness', [0, 1], [ChannelAttribute.PERCENTAGE]),
+    c: channel('c', 'Chroma', [0, 0.4]),
+    h: channel('h', 'Hue', [0, 360], [ChannelAttribute.ANGLE])
+  },
 
   toString() {
     return serializeV1(this);

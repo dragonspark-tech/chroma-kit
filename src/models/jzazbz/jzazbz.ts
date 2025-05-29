@@ -22,11 +22,12 @@ import { jzczhz, type JzCzHzColor } from '../jzczhz';
 import { IlluminantD65 } from '../../standards/illuminants';
 import type { HSLColor } from '../hsl';
 import type { HSVColor } from '../hsv';
-import type { ColorBase } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
 import { serializeV1 } from '../../semantics/serialization';
 import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
+import type { ColorBase } from '../base';
+import { channel } from '../base/channel';
 
 /**
  * Represents a color in the JzAzBz color space.
@@ -87,6 +88,12 @@ export const jzazbz = (jz: number, az: number, bz: number, alpha?: number): JzAz
   az,
   bz,
   alpha,
+
+  channels: {
+    jz: channel('jz', 'Lightness', [0, 1]),
+    az: channel('az', 'Green-Red', [-1, 1]),
+    bz: channel('bz', 'Blue-Yellow', [-1, 1])
+  },
 
   toString() {
     return serializeV1(this);

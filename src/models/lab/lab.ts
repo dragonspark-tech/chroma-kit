@@ -1,13 +1,5 @@
 import { type Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import {
-  xyz,
-  type XYZColor,
-  xyzToJzAzBz,
-  xyzToJzCzHz,
-  xyzToOKLab,
-  xyzToOKLCh, xyzToP3,
-  xyzToRGB
-} from '../xyz';
+import { xyz, type XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToOKLCh, xyzToP3, xyzToRGB } from '../xyz';
 import { ϵ, κ } from './constants';
 import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { lch, type LChColor } from '../lch';
@@ -18,11 +10,12 @@ import type { JzCzHzColor } from '../jzczhz';
 import type { HSLColor } from '../hsl';
 import type { HSVColor } from '../hsv';
 import { convertColor } from '../../conversion/conversion';
-import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import type { HWBColor } from '../hwb';
 import { constrainAngle } from '../../utils/angles';
 import type { P3Color } from '../p3/p3';
+import type { ColorBase } from '../base';
+import { channel, ChannelAttribute } from '../base/channel';
 
 /**
  * Represents a color in the CIE Lab color space.
@@ -92,6 +85,12 @@ export const lab = (
   b,
   alpha,
   illuminant: illuminant ?? IlluminantD65,
+
+  channels: {
+    l: channel('l', 'Lightness', [0, 100], [ChannelAttribute.PERCENTAGE]),
+    a: channel('a', 'Green-Red', [-128, 128]),
+    b: channel('b', 'Blue-Yellow', [-128, 128])
+  },
 
   toString() {
     return serializeV1(this);

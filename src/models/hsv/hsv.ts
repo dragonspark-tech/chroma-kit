@@ -17,11 +17,13 @@ import type { OKLabColor } from '../oklab';
 import type { OKLChColor } from '../oklch';
 import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
-import type { ColorBase, ColorSpace } from '../../foundation';
+import type { ColorSpace } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import { hwb, type HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
+import { channel, ChannelAttribute } from '../base/channel';
+import type { ColorBase } from '../base';
 
 /**
  * Represents a color in the HSV color space.
@@ -50,6 +52,12 @@ export const hsv = (h: number, s: number, v: number, alpha?: number): HSVColor =
   s,
   v,
   alpha,
+
+  channels: {
+    h: channel('h', 'Hue', [0, 360], [ChannelAttribute.ANGLE]),
+    s: channel('s', 'Saturation', [0, 1], [ChannelAttribute.PERCENTAGE]),
+    v: channel('v', 'Value', [0, 1], [ChannelAttribute.PERCENTAGE])
+  },
 
   toString() {
     return serializeV1(this);

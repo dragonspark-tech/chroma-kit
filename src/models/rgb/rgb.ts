@@ -22,10 +22,12 @@ import type { JzCzHzColor } from '../jzczhz';
 import { hsl, type HSLColor } from '../hsl';
 import { hsv, type HSVColor, hsvToHWB } from '../hsv';
 import { serializeV1 } from '../../semantics/serialization';
-import type { ColorBase, ColorSpace } from '../../foundation';
+import type { ColorSpace } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
+import type { ColorBase } from '../base';
+import { channel } from '../base/channel';
 
 /**
  * Represents a color in the RGB color space.
@@ -113,6 +115,12 @@ export const rgb = (r: number, g: number, b: number, alpha?: number): RGBColor =
 
   toCSSString() {
     return rgbToCSSString(this);
+  },
+
+  channels: {
+    r: channel('r', 'Red', [0, 1]),
+    g: channel('g', 'Green', [0, 1]),
+    b: channel('b', 'Blue', [0, 1])
   },
 
   to<T extends ColorBase>(colorSpace: ColorSpace) {

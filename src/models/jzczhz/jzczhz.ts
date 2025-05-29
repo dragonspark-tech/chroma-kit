@@ -19,11 +19,12 @@ import type { OKLabColor } from '../oklab';
 import type { OKLChColor } from '../oklch';
 import type { HSLColor } from '../hsl';
 import type { HSVColor } from '../hsv';
-import type { ColorBase } from '../../foundation';
 import { convertColor } from '../../conversion/conversion';
 import { serializeV1 } from '../../semantics/serialization';
 import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
+import type { ColorBase } from '../base';
+import { channel, ChannelAttribute } from '../base/channel';
 
 /**
  * Represents a color in the JzCzHz color space.
@@ -78,6 +79,12 @@ export const jzczhz = (jz: number, cz: number, hz: number, alpha?: number): JzCz
   cz,
   hz,
   alpha,
+
+  channels: {
+    jz: channel('jz', 'Lightness', [0, 1]),
+    cz: channel('cz', 'Chroma', [0, 1]),
+    hz: channel('hz', 'Hue', [0, 360], [ChannelAttribute.ANGLE])
+  },
 
   toString() {
     return serializeV1(this);

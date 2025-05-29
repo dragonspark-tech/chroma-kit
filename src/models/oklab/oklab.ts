@@ -18,11 +18,12 @@ import { oklch, type OKLChColor } from '../oklch';
 import type { HSLColor } from '../hsl';
 import type { HSVColor } from '../hsv';
 import { IlluminantD65 } from '../../standards/illuminants';
-import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
+import type { ColorBase } from '../base';
+import { channel, ChannelAttribute } from '../base/channel';
 
 /**
  * Represents a color in the OKLab color space.
@@ -81,6 +82,12 @@ export const oklab = (l: number, a: number, b: number, alpha?: number): OKLabCol
   a,
   b,
   alpha,
+
+  channels: {
+    l: channel('l', 'Lightness', [0, 1], [ChannelAttribute.PERCENTAGE]),
+    a: channel('a', 'Green-Red', [-0.4, 0.4]),
+    b: channel('b', 'Blue-Yellow', [-0.4, 0.4])
+  },
 
   toString() {
     return serializeV1(this);

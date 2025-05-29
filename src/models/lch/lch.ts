@@ -7,12 +7,13 @@ import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
 import type { HSLColor } from '../hsl';
 import type { HSVColor } from '../hsv';
-import type { ColorBase } from '../../foundation';
 import { serializeV1 } from '../../semantics/serialization';
 import { convertColor } from '../../conversion/conversion';
 import type { HWBColor } from '../hwb';
 import { type Illuminant, IlluminantD65 } from '../../standards/illuminants';
 import type { P3Color } from '../p3/p3';
+import type { ColorBase } from '../base';
+import { channel, ChannelAttribute } from '../base/channel';
 
 /**
  * Represents a color in the CIE LCh color space.
@@ -81,6 +82,12 @@ export const lch = (
   h,
   alpha,
   illuminant: illuminant ?? IlluminantD65,
+
+  channels: {
+    l: channel('l', 'Lightness', [0, 100], [ChannelAttribute.PERCENTAGE]),
+    c: channel('c', 'Chroma', [0, 150]),
+    h: channel('h', 'Hue', [0, 360], [ChannelAttribute.ANGLE])
+  },
 
   toString() {
     return serializeV1(this);
