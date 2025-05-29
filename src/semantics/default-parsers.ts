@@ -8,6 +8,7 @@ import { lchFromCSSString } from '../models/lch';
 import { oklabFromCSSString } from '../models/oklab';
 import { oklchFromCSSString } from '../models/oklch';
 import { xyzFromCSSString } from '../models/xyz';
+import { p3FromCSSString } from '../models/p3/parser';
 
 /**
  * Registers the RGB color parser.
@@ -66,12 +67,14 @@ export function registerOKLCHParser(): void {
 }
 
 /**
- * Registers the XYZ color parser.
+ * Registers the CSS Color Level 4 parser.
  */
-export function registerXYZParser(): void {
+export function registerCSS4Parser(): void {
   registerParser(/^color\s*\(/i, (input: string) => {
     if (input.includes('xyz-')) {
       return xyzFromCSSString(input);
+    } else if (input.includes('display-p3')) {
+      return p3FromCSSString(input);
     }
     throw new SyntaxError('Generic CSS Color 4 parsing not implemented yet');
   });

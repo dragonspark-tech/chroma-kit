@@ -23,7 +23,7 @@ import {
   registerOKLABParser,
   registerOKLCHParser,
   registerSRGBParser,
-  registerXYZParser
+  registerCSS4Parser
 } from './default-parsers';
 
 /**
@@ -38,7 +38,7 @@ export function registerAllParsers(): void {
   registerLCHParser();
   registerOKLABParser();
   registerOKLCHParser();
-  registerXYZParser();
+  registerCSS4Parser();
 }
 
 registerAllParsers();
