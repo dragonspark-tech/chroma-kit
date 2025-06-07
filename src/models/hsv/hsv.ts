@@ -48,6 +48,9 @@ export const hsvToCSSString = (color: HSVColor): string => hsvToHSL(color).toCSS
 
 export const hsv = (h: number, s: number, v: number, alpha?: number): HSVColor => ({
   space: 'hsv',
+  isPolar: true,
+  dynamicRange: 'SDR',
+
   h,
   s,
   v,

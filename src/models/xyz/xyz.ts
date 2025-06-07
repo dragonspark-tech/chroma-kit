@@ -93,6 +93,8 @@ export const xyz = (
   illuminant?: Illuminant
 ): XYZColor => ({
   space: 'xyz',
+  isPolar: false,
+  dynamicRange: 'SDR',
 
   x,
   y,
@@ -114,7 +116,7 @@ export const xyz = (
     return xyzToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: ColorSpace) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<XYZColor, T>(this, colorSpace);
   }
 });
@@ -146,36 +148,10 @@ export const xyzFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  * It also performs gamut mapping to ensure the resulting RGB values are within the valid RGB gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const xyzToRGB = (color: XYZColor, performGamutMapping = true): RGBColor => {
+export const xyzToRGB = (color: XYZColor): RGBColor => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
-
-  // Check if the color is within the RGB gamut
-  const isInGamut = lRGB.every((value) => value >= 0 && value <= 1);
-
-  // If the color is already in gamut or gamut mapping is disabled, return it directly
-  if (isInGamut || !performGamutMapping) {
-    return delinearizeRGBColor(rgbFromVector(lRGB, color.alpha));
-  }
-
-  // Perform gamut mapping by scaling the color to fit within the gamut
-  if (Math.min(lRGB[0], lRGB[1], lRGB[2]) < 0) {
-    const minValue = Math.min(lRGB[0], lRGB[1], lRGB[2]);
-    lRGB[0] -= minValue;
-    lRGB[1] -= minValue;
-    lRGB[2] -= minValue;
-  }
-
-  // Then, handle values > 1 by scaling down if needed
-  const maxValue = Math.max(lRGB[0], lRGB[1], lRGB[2]);
-  if (maxValue > 1) {
-    lRGB[0] /= maxValue;
-    lRGB[1] /= maxValue;
-    lRGB[2] /= maxValue;
-  }
-
   return delinearizeRGBColor(rgbFromVector(lRGB, color.alpha));
 };
 
@@ -187,35 +163,12 @@ export const xyzToRGB = (color: XYZColor, performGamutMapping = true): RGBColor 
  * It also performs gamut mapping to ensure the resulting RGB values are within the valid DCI-P3 gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {P3Color} The color in DCI-P3 RGB space
  */
-export const xyzToP3 = (color: XYZColor, performGamutMapping = true): P3Color => {
+export const xyzToP3 = (color: XYZColor): P3Color => {
   const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
-  const isInGamut = lRGB.every((value) => value >= 0 && value <= 1);
-
-  if (isInGamut || !performGamutMapping) {
-    return delinearizeP3Color(p3FromVector(lRGB, color.alpha));
-  }
-
-  // Perform gamut mapping by scaling the color to fit within the gamut
-  if (Math.min(lRGB[0], lRGB[1], lRGB[2]) < 0) {
-    const minValue = Math.min(lRGB[0], lRGB[1], lRGB[2]);
-    lRGB[0] -= minValue;
-    lRGB[1] -= minValue;
-    lRGB[2] -= minValue;
-  }
-
-  // Then, handle values > 1 by scaling down if needed
-  const maxValue = Math.max(lRGB[0], lRGB[1], lRGB[2]);
-  if (maxValue > 1) {
-    lRGB[0] /= maxValue;
-    lRGB[1] /= maxValue;
-    lRGB[2] /= maxValue;
-  }
-
   return delinearizeP3Color(p3FromVector(lRGB, color.alpha));
-}
+};
 
 /**
  * Converts a color from CIE XYZ to HSL color space.
@@ -226,11 +179,9 @@ export const xyzToP3 = (color: XYZColor, performGamutMapping = true): P3Color =>
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const xyzToHSL = (color: XYZColor, performGamutMapping = true): HSLColor =>
-  rgbToHSL(xyzToRGB(color, performGamutMapping));
+export const xyzToHSL = (color: XYZColor): HSLColor => rgbToHSL(xyzToRGB(color));
 
 /**
  * Converts a color from CIE XYZ to HSV color space.
@@ -241,11 +192,9 @@ export const xyzToHSL = (color: XYZColor, performGamutMapping = true): HSLColor 
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const xyzToHSV = (color: XYZColor, performGamutMapping = true): HSVColor =>
-  rgbToHSV(xyzToRGB(color, performGamutMapping));
+export const xyzToHSV = (color: XYZColor): HSVColor => rgbToHSV(xyzToRGB(color));
 
 /**
  * Converts a color from CIE XYZ to HWB color space.
@@ -256,11 +205,9 @@ export const xyzToHSV = (color: XYZColor, performGamutMapping = true): HSVColor 
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {XYZColor} color - The XYZ color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const xyzToHWB = (color: XYZColor, performGamutMapping = true): HWBColor =>
-  rgbToHWB(xyzToRGB(color, performGamutMapping));
+export const xyzToHWB = (color: XYZColor): HWBColor => rgbToHWB(xyzToRGB(color));
 
 /**
  * Converts a color from CIE XYZ to CIE Lab color space.

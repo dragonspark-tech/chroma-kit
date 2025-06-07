@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ColorBase } from '../foundation';
+
 
 /**
  * This module provides a flexible color conversion system that allows for converting colors
@@ -12,6 +12,9 @@ import type { ColorBase } from '../foundation';
  * 3. Finding the shortest path between color spaces when needed
  * 4. Chaining conversion functions to convert between any supported color spaces
  */
+
+import type { ColorBase } from '../models/base';
+import type { Color, ColorSpace, CreatedColor } from '../foundation';
 
 /**
  * Type for a color conversion function that converts from one color space to another.
@@ -167,12 +170,12 @@ const buildConversionError = (from: string, to: string): string =>
  * @returns {ColorConversionFn} A function that converts from the source color space to the target color space
  * @throws Error if no conversion path can be found
  */
-export function getConversionFunction<TFrom extends ColorBase, TTo extends ColorBase>(
+export function getConversionFunction<TFrom extends ColorBase, TTo extends ColorSpace>(
   from: string,
-  to: string
-): ColorConversionFn<TFrom, TTo> {
+  to: TTo
+): ColorConversionFn<TFrom, CreatedColor<TTo>> {
   if (from === to) {
-    return (color: TFrom) => color as unknown as TTo;
+    return (color: TFrom) => color as unknown as CreatedColor<TTo>;
   }
 
   const directConversion = conversionRegistry.find(
@@ -187,7 +190,7 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
 
   if (!path || path.length < 2) throw Error(buildConversionError(from, to));
 
-  return (color: TFrom, ...args: any[]): TTo => {
+  return (color: TFrom, ...args: any[]): CreatedColor<TTo> => {
     let result = color;
 
     for (let i = 0; i < path.length - 1; i++) {
@@ -203,7 +206,7 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
       result = conversion.convert(result, ...args);
     }
 
-    return result as unknown as TTo;
+    return result as unknown as CreatedColor<TTo>;
   };
 }
 
@@ -222,11 +225,11 @@ export function getConversionFunction<TFrom extends ColorBase, TTo extends Color
  * @returns The converted color in the target color space
  * @throws Error if no conversion path can be found
  */
-export function convertColor<TFrom extends ColorBase, TTo extends ColorBase>(
+export function convertColor<TFrom extends Color, TTo extends ColorSpace>(
   color: TFrom,
-  to: string,
+  to: TTo,
   ...args: any[]
-): TTo {
+): CreatedColor<TTo> {
   const from = color.space;
 
   if (Object.keys(conversionGraph).length === 0) {

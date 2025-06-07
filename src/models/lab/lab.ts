@@ -1,5 +1,14 @@
 import { type Illuminant, IlluminantD65 } from '../../standards/illuminants';
-import { xyz, type XYZColor, xyzToJzAzBz, xyzToJzCzHz, xyzToOKLab, xyzToOKLCh, xyzToP3, xyzToRGB } from '../xyz';
+import {
+  xyz,
+  type XYZColor,
+  xyzToJzAzBz,
+  xyzToJzCzHz,
+  xyzToOKLab,
+  xyzToOKLCh,
+  xyzToP3,
+  xyzToRGB
+} from '../xyz';
 import { ϵ, κ } from './constants';
 import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import { lch, type LChColor } from '../lch';
@@ -16,6 +25,7 @@ import { constrainAngle } from '../../utils/angles';
 import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel, ChannelAttribute } from '../base/channel';
+import type { ColorSpace } from '../../foundation';
 
 /**
  * Represents a color in the CIE Lab color space.
@@ -80,6 +90,9 @@ export const lab = (
   illuminant?: Illuminant
 ): LabColor => ({
   space: 'lab',
+  isPolar: false,
+  dynamicRange: 'SDR',
+
   l,
   a,
   b,
@@ -100,7 +113,7 @@ export const lab = (
     return labToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: string) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<LabColor, T>(this, colorSpace);
   }
 });
@@ -132,14 +145,11 @@ export const labFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  * during the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {LabColor} color - The Lab color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const labToRGB = (color: LabColor, performGamutMapping = true): RGBColor =>
-  xyzToRGB(labToXYZ(color), performGamutMapping);
+export const labToRGB = (color: LabColor): RGBColor => xyzToRGB(labToXYZ(color));
 
-export const labToP3 = (color: LabColor, performGamutMapping = true): P3Color =>
-  xyzToP3(labToXYZ(color), performGamutMapping);
+export const labToP3 = (color: LabColor): P3Color => xyzToP3(labToXYZ(color));
 
 /**
  * Converts a color from CIE Lab to HSL color space.
@@ -149,11 +159,9 @@ export const labToP3 = (color: LabColor, performGamutMapping = true): P3Color =>
  * during the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {LabColor} color - The Lab color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const labToHSL = (color: LabColor, performGamutMapping = true): HSLColor =>
-  rgbToHSL(labToRGB(color, performGamutMapping));
+export const labToHSL = (color: LabColor): HSLColor => rgbToHSL(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to HSV color space.
@@ -163,11 +171,9 @@ export const labToHSL = (color: LabColor, performGamutMapping = true): HSLColor 
  * during the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {LabColor} color - The Lab color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const labToHSV = (color: LabColor, performGamutMapping = true): HSVColor =>
-  rgbToHSV(labToRGB(color, performGamutMapping));
+export const labToHSV = (color: LabColor): HSVColor => rgbToHSV(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to HWB color space.
@@ -177,11 +183,9 @@ export const labToHSV = (color: LabColor, performGamutMapping = true): HSVColor 
  * during the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {LabColor} color - The Lab color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const labToHWB = (color: LabColor, performGamutMapping = true): HWBColor =>
-  rgbToHWB(labToRGB(color, performGamutMapping));
+export const labToHWB = (color: LabColor): HWBColor => rgbToHWB(labToRGB(color));
 
 /**
  * Converts a color from CIE Lab to CIE XYZ color space.

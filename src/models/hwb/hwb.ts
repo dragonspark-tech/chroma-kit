@@ -80,6 +80,9 @@ export const hwbToCSSString = (color: HWBColor): string => {
  */
 export const hwb = (h: number, w: number, b: number, alpha?: number): HWBColor => ({
   space: 'hwb',
+  isPolar: true,
+  dynamicRange: 'SDR',
+
   h,
   w,
   b,

@@ -6,7 +6,8 @@ import {
   xyzToJzAzBz,
   xyzToJzCzHz,
   xyzToLab,
-  xyzToLCh, xyzToP3,
+  xyzToLCh,
+  xyzToP3,
   xyzToRGB
 } from '../xyz';
 import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
@@ -24,6 +25,7 @@ import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel, ChannelAttribute } from '../base/channel';
+import type { ColorSpace } from '../../foundation';
 
 /**
  * Represents a color in the OKLab color space.
@@ -78,6 +80,9 @@ export const oklabToCSSString = (color: OKLabColor): string => {
  */
 export const oklab = (l: number, a: number, b: number, alpha?: number): OKLabColor => ({
   space: 'oklab',
+  isPolar: false,
+  dynamicRange: 'SDR',
+
   l,
   a,
   b,
@@ -97,7 +102,7 @@ export const oklab = (l: number, a: number, b: number, alpha?: number): OKLabCol
     return oklabToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: string) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<OKLabColor, T>(this, colorSpace);
   }
 });
@@ -128,14 +133,11 @@ export const oklabFromVector = (v: number[], alpha?: number): OKLabColor => {
  * color is within the valid RGB gamut.
  *
  * @param {OKLabColor} color - The OKLab color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const oklabToRGB = (color: OKLabColor, performGamutMapping = true): RGBColor =>
-  xyzToRGB(oklabToXYZ(color), performGamutMapping);
+export const oklabToRGB = (color: OKLabColor): RGBColor => xyzToRGB(oklabToXYZ(color));
 
-export const oklabToP3 = (color: OKLabColor, performGamutMapping = true): P3Color =>
-  xyzToP3(oklabToXYZ(color), performGamutMapping);
+export const oklabToP3 = (color: OKLabColor): P3Color => xyzToP3(oklabToXYZ(color));
 
 /**
  * Converts a color from OKLab to HSL color space.
@@ -146,11 +148,9 @@ export const oklabToP3 = (color: OKLabColor, performGamutMapping = true): P3Colo
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLabColor} color - The OKLab color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const oklabToHSL = (color: OKLabColor, performGamutMapping = true): HSLColor =>
-  rgbToHSL(oklabToRGB(color, performGamutMapping));
+export const oklabToHSL = (color: OKLabColor): HSLColor => rgbToHSL(oklabToRGB(color));
 
 /**
  * Converts a color from OKLab to HSV color space.
@@ -161,11 +161,9 @@ export const oklabToHSL = (color: OKLabColor, performGamutMapping = true): HSLCo
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLabColor} color - The OKLab color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const oklabToHSV = (color: OKLabColor, performGamutMapping = true): HSVColor =>
-  rgbToHSV(oklabToRGB(color, performGamutMapping));
+export const oklabToHSV = (color: OKLabColor): HSVColor => rgbToHSV(oklabToRGB(color));
 
 /**
  * Converts a color from OKLab to HWB color space.
@@ -176,11 +174,9 @@ export const oklabToHSV = (color: OKLabColor, performGamutMapping = true): HSVCo
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLabColor} color - The OKLab color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const oklabToHWB = (color: OKLabColor, performGamutMapping = true): HWBColor =>
-  rgbToHWB(oklabToRGB(color, performGamutMapping));
+export const oklabToHWB = (color: OKLabColor): HWBColor => rgbToHWB(oklabToRGB(color));
 
 /**
  * Converts a color from OKLab to CIE XYZ color space.

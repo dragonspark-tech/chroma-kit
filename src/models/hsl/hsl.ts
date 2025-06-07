@@ -59,6 +59,9 @@ export const hslToCSSString = (color: HSLColor): string => {
 
 export const hsl = (h: number, s: number, l: number, alpha?: number): HSLColor => ({
   space: 'hsl',
+  isPolar: false,
+  dynamicRange: 'SDR',
+
   h,
   s,
   l,

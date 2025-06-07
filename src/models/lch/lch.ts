@@ -14,6 +14,7 @@ import { type Illuminant, IlluminantD65 } from '../../standards/illuminants';
 import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel, ChannelAttribute } from '../base/channel';
+import type { ColorSpace } from '../../foundation';
 
 /**
  * Represents a color in the CIE LCh color space.
@@ -77,6 +78,9 @@ export const lch = (
   illuminant?: Illuminant
 ): LChColor => ({
   space: 'lch',
+  isPolar: true,
+  dynamicRange: 'SDR',
+
   l,
   c,
   h,
@@ -97,7 +101,7 @@ export const lch = (
     return lchToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: string) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<LChColor, T>(this, colorSpace);
   }
 });
@@ -129,14 +133,11 @@ export const lchFromVector = (v: number[], alpha?: number, illuminant?: Illumina
  * color is within the valid RGB gamut.
  *
  * @param {LChColor} color - The LCh color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const lchToRGB = (color: LChColor, performGamutMapping = true): RGBColor =>
-  xyzToRGB(lchToXYZ(color), performGamutMapping);
+export const lchToRGB = (color: LChColor): RGBColor => xyzToRGB(lchToXYZ(color));
 
-export const lchToP3 = (color: LChColor, performGamutMapping = true): P3Color =>
-  xyzToP3(lchToXYZ(color), performGamutMapping);
+export const lchToP3 = (color: LChColor): P3Color => xyzToP3(lchToXYZ(color));
 
 /**
  * Converts a color from CIE LCh to HSL color space.
@@ -147,11 +148,9 @@ export const lchToP3 = (color: LChColor, performGamutMapping = true): P3Color =>
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {LChColor} color - The LCh color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const lchToHSL = (color: LChColor, performGamutMapping = true): HSLColor =>
-  rgbToHSL(lchToRGB(color, performGamutMapping));
+export const lchToHSL = (color: LChColor): HSLColor => rgbToHSL(lchToRGB(color));
 
 /**
  * Converts a color from CIE LCh to HSV color space.
@@ -162,11 +161,9 @@ export const lchToHSL = (color: LChColor, performGamutMapping = true): HSLColor 
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {LChColor} color - The LCh color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const lchToHSV = (color: LChColor, performGamutMapping = true): HSVColor =>
-  rgbToHSV(lchToRGB(color, performGamutMapping));
+export const lchToHSV = (color: LChColor): HSVColor => rgbToHSV(lchToRGB(color));
 
 /**
  * Converts a color from CIE LCh to HWB color space.
@@ -177,11 +174,9 @@ export const lchToHSV = (color: LChColor, performGamutMapping = true): HSVColor 
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {LChColor} color - The LCh color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const lchToHWB = (color: LChColor, performGamutMapping = true): HWBColor =>
-  rgbToHWB(lchToRGB(color, performGamutMapping));
+export const lchToHWB = (color: LChColor): HWBColor => rgbToHWB(lchToRGB(color));
 
 /**
  * Converts a color from CIE LCh to CIE XYZ color space.

@@ -20,6 +20,8 @@ import type { ColorChannel } from './channel';
  */
 export interface ColorBase {
   space: string;
+  isPolar: boolean;
+  dynamicRange: "SDR" | "HDR";
 
   channels: Record<string, ColorChannel>;
   alpha?: number;
@@ -27,4 +29,25 @@ export interface ColorBase {
   toString: () => string;
   toCSSString: () => string;
   to: <T extends ColorSpace>(colorSpace: T) => CreatedColor<T>;
+}
+
+/**
+ * Extracts the numeric channels from a color object and returns them as an array of numbers.
+ *
+ * @template T - A type that extends the ColorBase interface, representing a color object.
+ * @param {T} color - The color object from which to extract numeric channel values.
+ * @returns {number[]} An array of numeric values representing the color's channels.
+ */
+export const getColorChannels = <T extends ColorBase>(color: T): number[] => {
+  const channels: number[] = [];
+
+  for (const [channelKey] of Object.entries(color.channels)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Any cast is necessary, as the color object may have additional properties
+    const value = (color as any)[channelKey];
+    if (typeof value !== 'number') continue;
+
+    channels.push(value);
+  }
+
+  return channels;
 }

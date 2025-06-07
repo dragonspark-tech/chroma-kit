@@ -30,40 +30,35 @@ export enum ChannelAttribute {
   MIRROR_PERCENTAGE = 8
 }
 
+
 /**
- * Represents a color channel within a system.
- *
- * This interface is used to define the properties and characteristics of a
- * specific color channel, including its name, permissible range, binding state,
- * and additional attributes.
+ * Represents a color channel within a defined structure.
+ * This interface is used to encapsulate all properties and information related to a color channel.
  *
  * Properties:
- * - `name`: A string representing the name of the color channel.
- * - `range`: An object defining the valid range for this channel.
- * - `isBound` (optional): A boolean indicating whether the channel is bound to a specific property.
- * - `attributes`: A numeric representation of attributes associated with the channel.
+ * - `accessor`: A unique identifier or key used to access this color channel.
+ * - `name`: The descriptive name of the color channel.
+ * - `range`: The valid range of values the color channel can hold, defined as a `ChannelRange`.
+ * - `attributes`: Bitmask derived from {@link ChannelAttribute}.
  */
 export interface ColorChannel {
   accessor: string;
   name: string;
 
   range: ChannelRange;
-  isBound?: boolean;
 
   attributes: number;
 }
 
+
 /**
- * Creates a color channel object with the given name, range, and attributes.
+ * Creates a color channel object with specified properties.
  *
- * @param {string} name - The name of the color channel.
- * @param {ChannelRange} [range=[null, null]] - The range of the color channel as a tuple of two values, defaulting to [null, null].
- * @param {ChannelAttribute[]} [attributes=[]] - An array of attributes relevant to the channel, defaulting to an empty array.
- * @returns {ColorChannel} - Returns a color channel object containing the specified properties:
- *                            - name: The name of the channel.
- *                            - range: The range of the channel.
- *                            - isBound: A boolean indicating whether the range is bounded (i.e., at least one value in the range is not null).
- *                            - attributes: A bitwise OR of all channel attributes provided.
+ * @param {string} accessor - The data accessor that defines the source of the channel's values.
+ * @param {string} name - The name of the channel.
+ * @param {ChannelRange} [range=[null, null]] - The range of values for the channel. Defaults to a range with null bounds.
+ * @param {ChannelAttribute[]} [attributes=[]] - An array of attributes associated with the channel. Defaults to an empty array.
+ * @returns {ColorChannel} The color channel object with computed properties and provided inputs.
  */
 export const channel = (
   accessor: string,
@@ -75,7 +70,6 @@ export const channel = (
   name,
 
   range,
-  isBound: range.some((r) => r !== null),
 
   attributes: attributes.reduce((acc, attr) => acc | attr, 0)
 });

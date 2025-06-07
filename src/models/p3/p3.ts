@@ -27,6 +27,7 @@ import type { JzAzBzColor } from '../jzazbz';
 import type { JzCzHzColor } from '../jzczhz';
 import type { ColorBase } from '../base';
 import { channel } from '../base/channel';
+import type { ColorSpace } from '../../foundation';
 
 export interface P3Color extends ColorBase {
   space: 'p3';
@@ -64,6 +65,9 @@ export const p3ToCSSString = (color: P3Color): string => {
  */
 export const p3 = (r: number, g: number, b: number, alpha?: number): P3Color => ({
   space: 'p3',
+  isPolar: false,
+  dynamicRange: 'SDR',
+
   r,
   g,
   b,
@@ -83,7 +87,7 @@ export const p3 = (r: number, g: number, b: number, alpha?: number): P3Color => 
     return p3ToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: string) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<P3Color, T>(this, colorSpace);
   }
 });
@@ -111,13 +115,11 @@ export const p3FromVector = (v: number[], alpha?: number): P3Color => {
  * the resulting RGB color lies within the displayable range.
  *
  * @param {P3Color} color - The P3 color object to be converted.
- * @param {boolean} [performGamutMapping=true] - Indicates whether gamut mapping should be applied.
  * If true, the resulting RGB color will be clamped to the valid range.
  *
  * @return {RGBColor} The converted RGB color object.
  */
-export const p3ToRGB = (color: P3Color, performGamutMapping = true): RGBColor =>
-  xyzToRGB(p3ToXYZ(color), performGamutMapping);
+export const p3ToRGB = (color: P3Color): RGBColor => xyzToRGB(p3ToXYZ(color));
 
 /**
  * Converts a P3 color to the HSL color space.
@@ -128,8 +130,7 @@ export const p3ToRGB = (color: P3Color, performGamutMapping = true): RGBColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {HSLColor} The color in HSL space
  */
-export const p3ToHSL = (color: P3Color): HSLColor =>
-  rgbToHSL(p3ToRGB(color, true));
+export const p3ToHSL = (color: P3Color): HSLColor => rgbToHSL(p3ToRGB(color));
 
 /**
  * Converts a P3 color to the HSV color space.
@@ -140,8 +141,7 @@ export const p3ToHSL = (color: P3Color): HSLColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {HSVColor} The color in HSV space
  */
-export const p3ToHSV = (color: P3Color): HSVColor =>
-  rgbToHSV(p3ToRGB(color, true));
+export const p3ToHSV = (color: P3Color): HSVColor => rgbToHSV(p3ToRGB(color));
 
 /**
  * Converts a P3 color to the HWB color space.
@@ -152,8 +152,7 @@ export const p3ToHSV = (color: P3Color): HSVColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {HWBColor} The color in HWB space
  */
-export const p3ToHWB = (color: P3Color): HWBColor =>
-  rgbToHWB(p3ToRGB(color, true));
+export const p3ToHWB = (color: P3Color): HWBColor => rgbToHWB(p3ToRGB(color));
 
 /**
  * Converts a P3 color to the CIE Lab color space.
@@ -164,8 +163,7 @@ export const p3ToHWB = (color: P3Color): HWBColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {LabColor} The color in Lab space
  */
-export const p3ToLab = (color: P3Color): LabColor =>
-  xyzToLab(p3ToXYZ(color));
+export const p3ToLab = (color: P3Color): LabColor => xyzToLab(p3ToXYZ(color));
 
 /**
  * Converts a P3 color to the CIE LCh color space.
@@ -177,8 +175,7 @@ export const p3ToLab = (color: P3Color): LabColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {LChColor} The color in LCh space
  */
-export const p3ToLCh = (color: P3Color): LChColor =>
-  xyzToLCh(p3ToXYZ(color));
+export const p3ToLCh = (color: P3Color): LChColor => xyzToLCh(p3ToXYZ(color));
 
 /**
  * Converts a P3 color to the OKLab color space.
@@ -190,8 +187,7 @@ export const p3ToLCh = (color: P3Color): LChColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {OKLabColor} The color in OKLab space
  */
-export const p3ToOklab = (color: P3Color): OKLabColor =>
-  xyzToOKLab(p3ToXYZ(color));
+export const p3ToOklab = (color: P3Color): OKLabColor => xyzToOKLab(p3ToXYZ(color));
 
 /**
  * Converts a P3 color to the OKLCh color space.
@@ -203,8 +199,7 @@ export const p3ToOklab = (color: P3Color): OKLabColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {OKLChColor} The color in OKLCh space
  */
-export const p3ToOklch = (color: P3Color): OKLChColor =>
-  xyzToOKLCh(p3ToXYZ(color));
+export const p3ToOklch = (color: P3Color): OKLChColor => xyzToOKLCh(p3ToXYZ(color));
 
 /**
  * Converts a P3 color to the JzAzBz color space.
@@ -215,8 +210,7 @@ export const p3ToOklch = (color: P3Color): OKLChColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {JzAzBzColor} The color in JzAzBz space
  */
-export const p3ToJzAzBz = (color: P3Color): JzAzBzColor =>
-  xyzToJzAzBz(p3ToXYZ(color));
+export const p3ToJzAzBz = (color: P3Color): JzAzBzColor => xyzToJzAzBz(p3ToXYZ(color));
 
 /**
  * Converts a P3 color to the JzCzHz color space.
@@ -229,8 +223,7 @@ export const p3ToJzAzBz = (color: P3Color): JzAzBzColor =>
  * @param {P3Color} color - The P3 color to convert
  * @returns {JzCzHzColor} The color in JzCzHz space
  */
-export const p3ToJzCzHz = (color: P3Color): JzCzHzColor =>
-  xyzToJzCzHz(p3ToXYZ(color));
+export const p3ToJzCzHz = (color: P3Color): JzCzHzColor => xyzToJzCzHz(p3ToXYZ(color));
 
 /**
  * Converts a color from the P3 color space to the CIE XYZ color space.

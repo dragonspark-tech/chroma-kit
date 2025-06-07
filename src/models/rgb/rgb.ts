@@ -103,6 +103,8 @@ export const rgbToCSSString = (color: RGBColor, forceFullString = false): string
  */
 export const rgb = (r: number, g: number, b: number, alpha?: number): RGBColor => ({
   space: 'rgb',
+  isPolar: false,
+  dynamicRange: 'SDR',
 
   r,
   g,

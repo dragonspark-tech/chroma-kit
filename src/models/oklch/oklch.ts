@@ -71,6 +71,9 @@ export const oklchToCSSString = (color: OKLChColor): string => {
  */
 export const oklch = (l: number, c: number, h: number, alpha?: number): OKLChColor => ({
   space: 'oklch',
+  isPolar: true,
+  dynamicRange: 'SDR',
+
   l,
   c,
   h,
@@ -90,7 +93,7 @@ export const oklch = (l: number, c: number, h: number, alpha?: number): OKLChCol
     return oklchToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: ColorSpace) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<OKLChColor, T>(this, colorSpace);
   }
 });
@@ -123,14 +126,11 @@ export const oklchFromVector = (v: number[], alpha?: number): OKLChColor => {
  * otherwise outside the RGB gamut.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {RGBColor} The color in RGB space
  */
-export const oklchToRGB = (color: OKLChColor, performGamutMapping = true): RGBColor =>
-  xyzToRGB(oklchToXYZ(color), performGamutMapping);
+export const oklchToRGB = (color: OKLChColor): RGBColor => xyzToRGB(oklchToXYZ(color));
 
-export const oklchToP3 = (color: OKLChColor, performGamutMapping = true): P3Color =>
-  xyzToP3(oklchToXYZ(color), performGamutMapping);
+export const oklchToP3 = (color: OKLChColor): P3Color => xyzToP3(oklchToXYZ(color));
 
 /**
  * Converts a color from OKLCh to HSL color space.
@@ -141,11 +141,9 @@ export const oklchToP3 = (color: OKLChColor, performGamutMapping = true): P3Colo
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSLColor} The color in HSL space
  */
-export const oklchToHSL = (color: OKLChColor, performGamutMapping = true): HSLColor =>
-  rgbToHSL(oklchToRGB(color, performGamutMapping));
+export const oklchToHSL = (color: OKLChColor): HSLColor => rgbToHSL(oklchToRGB(color));
 
 /**
  * Converts a color from OKLCh to HSV color space.
@@ -156,11 +154,9 @@ export const oklchToHSL = (color: OKLChColor, performGamutMapping = true): HSLCo
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HSVColor} The color in HSV space
  */
-export const oklchToHSV = (color: OKLChColor, performGamutMapping = true): HSVColor =>
-  rgbToHSV(oklchToRGB(color, performGamutMapping));
+export const oklchToHSV = (color: OKLChColor): HSVColor => rgbToHSV(oklchToRGB(color));
 
 /**
  * Converts a color from OKLCh to HWB color space.
@@ -171,11 +167,9 @@ export const oklchToHSV = (color: OKLChColor, performGamutMapping = true): HSVCo
  * the conversion to ensure the resulting color is within the valid RGB gamut.
  *
  * @param {OKLChColor} color - The OKLCh color to convert
- * @param {boolean} [performGamutMapping=true] - Whether to perform gamut mapping
  * @returns {HWBColor} The color in HWB space
  */
-export const oklchToHWB = (color: OKLChColor, performGamutMapping = true): HWBColor =>
-  rgbToHWB(oklchToRGB(color, performGamutMapping));
+export const oklchToHWB = (color: OKLChColor): HWBColor => rgbToHWB(oklchToRGB(color));
 
 /**
  * Converts a color from OKLCh to CIE XYZ color space.

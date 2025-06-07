@@ -11,7 +11,16 @@ import {
   m1,
   m2p
 } from './constants';
-import { xyz, type XYZColor, xyzToLab, xyzToLCh, xyzToOKLab, xyzToOKLCh, xyzToP3, xyzToRGB } from '../xyz';
+import {
+  xyz,
+  type XYZColor,
+  xyzToLab,
+  xyzToLCh,
+  xyzToOKLab,
+  xyzToOKLCh,
+  xyzToP3,
+  xyzToRGB
+} from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { type RGBColor, rgbToHSL, rgbToHSV, rgbToHWB } from '../rgb';
 import type { LabColor } from '../lab';
@@ -28,6 +37,7 @@ import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel } from '../base/channel';
+import type { ColorSpace } from '../../foundation';
 
 /**
  * Represents a color in the JzAzBz color space.
@@ -84,6 +94,9 @@ export const toCSSString = (color: JzAzBzColor): string => {
  */
 export const jzazbz = (jz: number, az: number, bz: number, alpha?: number): JzAzBzColor => ({
   space: 'jzazbz',
+  isPolar: false,
+  dynamicRange: 'HDR',
+
   jz,
   az,
   bz,
@@ -103,7 +116,7 @@ export const jzazbz = (jz: number, az: number, bz: number, alpha?: number): JzAz
     return toCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: string) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<JzAzBzColor, T>(this, colorSpace);
   }
 });
@@ -133,14 +146,13 @@ export const jzazbzFromVector = (v: number[], alpha?: number): JzAzBzColor => {
  *
  * @param {JzAzBzColor} color - The JzAzBz color to convert
  * @param {number} [peakLuminance=10000] - The peak luminance of the display, in nits
- * @param performGamutMapping - Whether to apply the gamut mapping transformation
  * @returns {RGBColor} The color in RGB space
  */
-export const jzazbzToRGB = (color: JzAzBzColor, peakLuminance = 10000, performGamutMapping = true): RGBColor =>
-  xyzToRGB(jzazbzToXYZ(color, peakLuminance), performGamutMapping);
+export const jzazbzToRGB = (color: JzAzBzColor, peakLuminance = 10000): RGBColor =>
+  xyzToRGB(jzazbzToXYZ(color, peakLuminance));
 
-export const jzazbzToP3 = (color: JzAzBzColor, peakLuminance = 10000, performGamutMapping = true): P3Color =>
-  xyzToP3(jzazbzToXYZ(color, peakLuminance), performGamutMapping);
+export const jzazbzToP3 = (color: JzAzBzColor, peakLuminance = 10000): P3Color =>
+  xyzToP3(jzazbzToXYZ(color, peakLuminance));
 
 /**
  * Converts a color from JzAzBz to HSL color space.
