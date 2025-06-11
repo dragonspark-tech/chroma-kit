@@ -13,7 +13,7 @@ import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel, ChannelAttribute } from '../base/channel';
-import type { ColorSpace } from '../../foundation';
+import type { ColorSpace, CreatedColor } from '../../foundation';
 
 /**
  * Represents a color in the OKLCh color space.
@@ -93,7 +93,7 @@ export const oklch = (l: number, c: number, h: number, alpha?: number): OKLChCol
     return oklchToCSSString(this);
   },
 
-  to<T extends ColorSpace>(colorSpace: T) {
+  to<T extends ColorSpace>(colorSpace: T): CreatedColor<T> {
     return convertColor<OKLChColor, T>(this, colorSpace);
   }
 });

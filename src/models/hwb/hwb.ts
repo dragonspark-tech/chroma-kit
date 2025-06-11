@@ -26,6 +26,7 @@ import type { JzCzHzColor } from '../jzczhz';
 import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel, ChannelAttribute } from '../base/channel';
+import { gamutMapMinDeltaE, isInGamut } from '../../gamut';
 
 /**
  * Represents a color in the HWB color space.
@@ -57,8 +58,7 @@ export interface HWBColor extends ColorBase {
  * @returns {string} The CSS string representation of the color
  */
 export const hwbToCSSString = (color: HWBColor): string => {
-  const { h, w, b, alpha } = color;
-
+  const { h, w, b, alpha } = isInGamut(color) ? color : gamutMapMinDeltaE(hwbToOKLCh(color), 'hwb');
   const hFormatted = h.toFixed(2);
   const wFormatted = (w * 100).toFixed(2);
   const bFormatted = (b * 100).toFixed(2);
@@ -102,7 +102,7 @@ export const hwb = (h: number, w: number, b: number, alpha?: number): HWBColor =
     return hwbToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: ColorSpace) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<HWBColor, T>(this, colorSpace);
   }
 });
@@ -151,8 +151,7 @@ export const hwbToRGB = (color: HWBColor): RGBColor => {
   return rgb(aR, aG, aB, alpha);
 };
 
-export const hwbToP3 = (color: HWBColor): P3Color =>
-  xyzToP3(hwbToXYZ(color));
+export const hwbToP3 = (color: HWBColor): P3Color => xyzToP3(hwbToXYZ(color));
 
 /**
  * Converts an HWB color to the HSL color space.

@@ -32,7 +32,7 @@ export const applyRGBGammaTransfer = (channel: number): number => {
   const sign = channel < 0 ? -1 : 1;
   const abs = sign * channel;
 
-  return abs > 0.0031308 ? sign * (1.055 * abs ** (1 / 2.4) - 0.055) : 12.92 * channel;
+  return abs <= 0.04045 ? channel / 12.92 : sign * ((abs + 0.055) / 1.055) ** 2.4;
 };
 
 /**
@@ -62,7 +62,7 @@ export const applyRGBInverseGammaTransfer = (channel: number): number => {
   const sign = channel < 0 ? -1 : 1;
   const abs = sign * channel;
 
-  return abs <= 0.04045 ? channel / 12.92 : sign * ((abs + 0.055) / 1.055) ** 2.4;
+  return abs > 0.0031308 ? sign * (1.055 * abs ** (1 / 2.4) - 0.055) : 12.92 * channel;
 };
 
 /**

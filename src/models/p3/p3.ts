@@ -28,6 +28,7 @@ import type { JzCzHzColor } from '../jzczhz';
 import type { ColorBase } from '../base';
 import { channel } from '../base/channel';
 import type { ColorSpace } from '../../foundation';
+import { gamutMapMinDeltaE, isInGamut } from '../../gamut';
 
 export interface P3Color extends ColorBase {
   space: 'p3';
@@ -44,7 +45,7 @@ export interface P3Color extends ColorBase {
  * @returns {string} The CSS-compatible string representation
  */
 export const p3ToCSSString = (color: P3Color): string => {
-  const { r, g, b, alpha } = color;
+  const { r, g, b, alpha } = isInGamut(color) ? color : gamutMapMinDeltaE(p3ToOklch(color), 'p3');
 
   const a = alpha ?? 1;
 

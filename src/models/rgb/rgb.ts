@@ -5,7 +5,8 @@
   xyzToJzCzHz,
   xyzToLab,
   xyzToLCh,
-  xyzToOKLab, xyzToP3
+  xyzToOKLab,
+  xyzToP3
 } from '../xyz';
 import { multiplyMatrixByVector } from '../../utils/linear';
 import { HEX_CHARS, RGB_INVERSE, RGB_XYZ_MATRIX } from './constants';
@@ -28,6 +29,7 @@ import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel } from '../base/channel';
+import { gamutMapMinDeltaE, isInGamut } from '../../gamut';
 
 /**
  * Represents a color in the RGB color space.
@@ -74,7 +76,7 @@ export const isInSRGB = (color: RGBColor): boolean => {
  * @returns {string} The CSS-compatible string representation
  */
 export const rgbToCSSString = (color: RGBColor, forceFullString = false): string => {
-  const { r, g, b, alpha } = color;
+  const { r, g, b, alpha } = isInGamut(color) ? color : gamutMapMinDeltaE(rgbToOKLCh(color), 'rgb');
 
   const rInt = Math.round(r * 255);
   const gInt = Math.round(g * 255);
@@ -86,7 +88,7 @@ export const rgbToCSSString = (color: RGBColor, forceFullString = false): string
     return `rgb(${rInt} ${gInt} ${bInt}${a < 1 ? ' / ' + a.toFixed(3) : ''})`;
   }
 
-  return rgbToHex(color);
+  return rgbToHex(rgbFromVector([r, g, b], alpha));
 };
 
 /**
@@ -125,7 +127,7 @@ export const rgb = (r: number, g: number, b: number, alpha?: number): RGBColor =
     b: channel('b', 'Blue', [0, 1])
   },
 
-  to<T extends ColorBase>(colorSpace: ColorSpace) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<RGBColor, T>(this, colorSpace);
   }
 });
@@ -266,8 +268,7 @@ export const rgbToHex = (color: RGBColor): string => {
   return result;
 };
 
-export const rgbToP3 = (color: RGBColor): P3Color =>
-  xyzToP3(rgbToXYZ(color));
+export const rgbToP3 = (color: RGBColor): P3Color => xyzToP3(rgbToXYZ(color));
 
 /**
  * Calculates the hue component of a color in HSL space based on its RGB representation.

@@ -25,6 +25,7 @@ import type { HWBColor } from '../hwb';
 import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel, ChannelAttribute } from '../base/channel';
+import { gamutMapMinDeltaE, isInGamut } from '../../gamut';
 
 /**
  * Represents a color in the HSL color space.
@@ -48,7 +49,7 @@ export interface HSLColor extends ColorBase {
 }
 
 export const hslToCSSString = (color: HSLColor): string => {
-  const { h, s, l, alpha } = color;
+  const { h, s, l, alpha } = isInGamut(color) ? color : gamutMapMinDeltaE(hslToOKLCh(color), 'hsl');
 
   const hFormatted = h.toFixed(2);
   const sFormatted = (s * 100).toFixed(2);
@@ -81,7 +82,7 @@ export const hsl = (h: number, s: number, l: number, alpha?: number): HSLColor =
     return hslToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: ColorSpace) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<HSLColor, T>(this, colorSpace);
   },
 

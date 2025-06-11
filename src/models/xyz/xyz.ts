@@ -14,6 +14,7 @@ import {
   XYZ_JZAZBZ_LMS_IABZ,
   XYZ_JZAZBZ_LMS_MATRIX,
   XYZ_OKLCH_THROUGH_LMS_MATRIX,
+  XYZ_P3_MATRIX,
   XYZ_RGB_MATRIX
 } from './constants';
 import { type OKLabColor, oklabFromVector, oklabToOKLCh } from '../oklab';
@@ -33,6 +34,8 @@ import { type P3Color, p3FromVector } from '../p3/p3';
 import { delinearizeP3Color } from '../p3/transform';
 import type { ColorBase } from '../base';
 import { channel } from '../base/channel';
+import { BradfordConeModel, type ConeResponseModel } from '../../adaptation/cone-response';
+import { getAdaptationMatrix } from '../../adaptation/chromatic-adaptation';
 
 /**
  * Represents a color in the CIE XYZ color space.
@@ -55,6 +58,8 @@ export interface XYZColor extends ColorBase {
   y: number;
   z: number;
   illuminant?: Illuminant;
+
+  applyChromaticAdaptation(targetIlluminant: Illuminant, coneModel?: ConeResponseModel): XYZColor;
 }
 
 /**
@@ -118,6 +123,17 @@ export const xyz = (
 
   to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<XYZColor, T>(this, colorSpace);
+  },
+
+  applyChromaticAdaptation(targetIlluminant: Illuminant, coneModel = BradfordConeModel): XYZColor {
+    const adaptationMatrix = getAdaptationMatrix(
+      this.illuminant ?? IlluminantD65,
+      targetIlluminant,
+      coneModel
+    );
+    const adaptedXYZ = multiplyMatrixByVector(adaptationMatrix, [this.x, this.y, this.z]);
+
+    return xyzFromVector(adaptedXYZ, this.alpha, targetIlluminant);
   }
 });
 
@@ -166,7 +182,7 @@ export const xyzToRGB = (color: XYZColor): RGBColor => {
  * @returns {P3Color} The color in DCI-P3 RGB space
  */
 export const xyzToP3 = (color: XYZColor): P3Color => {
-  const lRGB = multiplyMatrixByVector(XYZ_RGB_MATRIX, [color.x, color.y, color.z]);
+  const lRGB = multiplyMatrixByVector(XYZ_P3_MATRIX, [color.x, color.y, color.z]);
   return delinearizeP3Color(p3FromVector(lRGB, color.alpha));
 };
 

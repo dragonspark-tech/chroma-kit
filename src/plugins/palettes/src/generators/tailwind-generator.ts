@@ -63,14 +63,14 @@ export const generateTailwindPalette = (
       const h = hueMode === 'replace' ? ΔHue : (base.h + ΔHue) % 360;
 
       let ok = oklch(l, c, h);
-      let rgbSrgb = oklchToRGB(ok, false);
+      let rgbSrgb = oklchToRGB(ok);
 
       if (!isInSRGB(rgbSrgb)) {
         let cSafe = c;
         while (cSafe > 0 && !isInSRGB(rgbSrgb)) {
           cSafe -= 0.002;
           ok = oklch(l, cSafe, h);
-          rgbSrgb = oklchToRGB(ok, false);
+          rgbSrgb = oklchToRGB(ok);
         }
       }
 

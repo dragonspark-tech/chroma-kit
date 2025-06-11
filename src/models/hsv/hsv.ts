@@ -70,7 +70,7 @@ export const hsv = (h: number, s: number, v: number, alpha?: number): HSVColor =
     return hsvToCSSString(this);
   },
 
-  to<T extends ColorBase>(colorSpace: ColorSpace) {
+  to<T extends ColorSpace>(colorSpace: T) {
     return convertColor<HSVColor, T>(this, colorSpace);
   }
 });
@@ -126,8 +126,7 @@ export const hsvToRGB = (color: HSVColor): RGBColor => {
   return rgb(r + m, g + m, b + m, color.alpha);
 };
 
-export const hsvToP3 = (color: HSVColor): P3Color =>
-  xyzToP3(hsvToXYZ(color));
+export const hsvToP3 = (color: HSVColor): P3Color => xyzToP3(hsvToXYZ(color));
 
 /**
  * Converts an HSV color to the HSL color space.
