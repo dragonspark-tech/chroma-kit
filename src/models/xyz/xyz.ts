@@ -21,7 +21,7 @@ import { type OKLabColor, oklabFromVector, oklabToOKLCh } from '../oklab';
 import { LMS_OKLAB_MATRIX } from '../oklab/constants';
 import type { LChColor } from '../lch';
 import type { OKLChColor } from '../oklch';
-import { jzazbz, type JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz';
+import { jzazbz, type JzAzBzColor, jzazbzPQInverse, jzazbzToJzCzHz } from '../jzazbz/jzazbz';
 import { b, d, d0, g } from '../jzazbz/constants';
 import type { JzCzHzColor } from '../jzczhz';
 import type { HSLColor } from '../hsl';

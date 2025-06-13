@@ -70,7 +70,6 @@ export const pow7 = (x: number): number => {
   return x2 * x2 * x2 * x;
 };
 
-
 /**
  * Determines whether two numbers are approximately equal within specified tolerances.
  *
@@ -101,7 +100,7 @@ export const isClose = (
   return (
     diff <= Math.max(relativeTolerance * Math.max(Math.abs(a), Math.abs(b)), absoluteTolerance)
   );
-}
+};
 
 /**
  * Converts an angle from radians to degrees.
@@ -113,8 +112,7 @@ export const isClose = (
  * @param {number} radians - The angle in radians to be converted to degrees.
  * @returns {number} The equivalent angle in degrees.
  */
-export const radiansToDegrees = (radians: number): number =>
-  radians * (180 / Math.PI);
+export const radiansToDegrees = (radians: number): number => radians * (180 / Math.PI);
 
 /**
  * Converts an angle value from degrees to radians.
@@ -125,8 +123,7 @@ export const radiansToDegrees = (radians: number): number =>
  * @param {number} degrees - The angle in degrees to be converted.
  * @returns {number} The equivalent angle in radians.
  */
-export const degreesToRadians = (degrees: number): number =>
-  degrees * (Math.PI / 180);
+export const degreesToRadians = (degrees: number): number => degrees * (Math.PI / 180);
 
 /**
  * Converts rectangular coordinates (x, y) into polar coordinates (r, θ).
@@ -140,7 +137,7 @@ export const rectToPolar = (a: number, b: number): [number, number] => {
   const c = Math.sqrt(a ** 2 + b ** 2);
   const h = radiansToDegrees(Math.atan2(b, a)) % 360;
   return [c, h];
-}
+};
 
 /**
  * Converts polar coordinates to rectangular (Cartesian) coordinates.
@@ -154,7 +151,7 @@ export const polarToRect = (c: number, h: number): [number, number] => {
   const a = c * Math.cos(r);
   const b = c * Math.sin(r);
   return [a, b];
-}
+};
 
 /**
  * Determines the sign of a given number.
@@ -170,8 +167,7 @@ export const polarToRect = (c: number, h: number): [number, number] => {
  * @returns {number} - Returns 1 if the number is positive, -1 if negative,
  * 0 if the number is zero, or unchanged if the input is NaN.
  */
-export const getSign = (x: number): number =>
-  x && x == x ? x / Math.abs(x) : x;
+export const getSign = (x: number): number => (x && x == x ? x / Math.abs(x) : x);
 
 /**
  * Performs a linear interpolation between two values, `p0` and `p1`, based on a given interpolation factor `t`.
@@ -200,4 +196,42 @@ export const linearInterpolation = (p0: number, p1: number, t: number): number =
 export const inverseLinearInterpolation = (p0: number, p1: number, t: number): number => {
   const d = p1 - p0;
   return d ? (t - p0) / d : 0;
+};
+
+
+/**
+ * Returns a number with the magnitude of the first argument and the sign of the second argument.
+ *
+ * If either `magnitude` or `signSource` is `NaN`, the function returns `NaN`.
+ * The sign of `signSource` determines whether the resulting number is positive or negative.
+ * Takes into account special cases where `signSource` is -0.
+ *
+ * @param {number} magnitude - The value whose magnitude is used in the result.
+ * @param {number} signSource - The value whose sign is used in the result.
+ * @returns {number} A number with the magnitude of `magnitude` and the sign of `signSource`.
+ */
+export const copySign = (magnitude: number, signSource: number): number =>
+{
+  if (Number.isNaN(magnitude) || Number.isNaN(signSource)) {
+    return NaN;
+  }
+
+  const absMag = Math.abs(magnitude);
+  const signIsNegative = signSource < 0 || Object.is(signSource, -0);
+
+  return signIsNegative ? -absMag : absMag;
 }
+
+/**
+ * Calculates the power of a number while preserving the sign of the base.
+ *
+ * The function raises the absolute value of the base to the power of the given exponent
+ * and then applies the sign of the base to the result.
+ *
+ * @param {number} base - The base number. Its sign will be preserved in the result.
+ * @param {number} exponent - The exponent to which the base is raised.
+ * @returns {number} The result of raising the absolute value of the base to the given exponent,
+ *                   with the original sign of the base.
+ */
+export const signedPow = (base: number, exponent: number): number =>
+  copySign(Math.abs(base) ** exponent, base);

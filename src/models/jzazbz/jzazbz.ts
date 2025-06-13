@@ -9,11 +9,13 @@ import {
   JZAZBZ_XYZ_LMS_IABZ,
   JZAZBZ_XYZ_LMS_MATRIX,
   m1,
-  m2p
+  m1Inv,
+  m2p,
+  m2pInv
 } from './constants';
 import {
-  xyz,
   type XYZColor,
+  xyzFromVector,
   xyzToLab,
   xyzToLCh,
   xyzToOKLab,
@@ -38,6 +40,7 @@ import type { P3Color } from '../p3/p3';
 import type { ColorBase } from '../base';
 import { channel } from '../base/channel';
 import type { ColorSpace } from '../../foundation';
+import { signedPow } from '../../utils/math';
 
 /**
  * Represents a color in the JzAzBz color space.
@@ -211,22 +214,22 @@ export const jzazbzToHWB = (color: JzAzBzColor, peakLuminance = 10000): HWBColor
  * @returns {XYZColor} The color in XYZ space
  */
 export const jzazbzToXYZ = (color: JzAzBzColor, peakLuminance = 10000): XYZColor => {
-  const JzPrime = color.jz + d0;
-  const Iz = JzPrime / (1 + d - d * JzPrime);
+  const { jz, az, bz } = color;
+  console.log('Input', jz, az, bz);
 
-  const [Lp, Mp, Sp] = multiplyMatrixByVector(JZAZBZ_XYZ_LMS_MATRIX, [Iz, color.az, color.bz]);
+  const Iz = (jz + d0) / (1 + d - d * (jz + d0));
 
-  const L = jzazbzPQForward(Lp, peakLuminance);
-  const M = jzazbzPQForward(Mp, peakLuminance);
-  const S = jzazbzPQForward(Sp, peakLuminance);
+  const PQLMS = multiplyMatrixByVector(JZAZBZ_XYZ_LMS_MATRIX, [Iz, az, bz]);
 
-  const [Xp, Yp, Zp] = multiplyMatrixByVector(JZAZBZ_XYZ_LMS_IABZ, [L, M, S]);
+  const [L, M, S] = PQLMS.map((val) => jzazbzPQForward(val, peakLuminance));
 
-  const Z = Zp;
-  const X = (Xp + (b - 1) * Z) / b;
-  const Y = (Yp + (g - 1) * X) / g;
+  const [Xm, Ym, Za] = multiplyMatrixByVector(JZAZBZ_XYZ_LMS_IABZ, [L, M, S]);
+  const Xa = (Xm + (b - 1) * Za) / b;
+  const Ya = (Ym + (g - 1) * Xa) / g;
 
-  return xyz(X, Y, Z, color.alpha, IlluminantD65);
+  const XYZ = [Xa, Ya, Za].map((val) => Math.max(val / 203, 0));
+
+  return xyzFromVector(XYZ, color.alpha, IlluminantD65);
 };
 
 /**
@@ -326,9 +329,10 @@ export const jzazbzPQInverse = (E: number, peakLuminance = 10000): number => {
 export const jzazbzPQForward = (Ep: number, peakLuminance = 10000): number => {
   if (Ep === 0) return 0;
 
-  const y = Math.pow(Ep, 1 / m2p);
-  const num = c1 - y;
-  const den = c3 * y - c2;
-  const x = num / den; // (C / peakLuminance) ^ m1
-  return peakLuminance * Math.pow(x, 1 / m1);
+  const y = signedPow(Ep, m2pInv);
+  const numerator = c1 - y;
+  const denominator = c3 * y - c2;
+
+  const x = numerator / denominator;
+  return peakLuminance * signedPow(x, m1Inv);
 };

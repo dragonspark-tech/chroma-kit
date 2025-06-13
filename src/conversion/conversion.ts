@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-
 /**
  * This module provides a flexible color conversion system that allows for converting colors
  * between different color spaces. It uses a graph-based approach to find conversion paths
@@ -13,7 +12,7 @@
  * 4. Chaining conversion functions to convert between any supported color spaces
  */
 
-import type { ColorBase } from '../models/base';
+import type { ColorBase } from '../models/base/color';
 import type { Color, ColorSpace, CreatedColor } from '../foundation';
 
 /**

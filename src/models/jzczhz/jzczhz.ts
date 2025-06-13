@@ -10,7 +10,7 @@ import {
   jzazbzToOKLCh,
   jzazbzToRGB,
   jzazbzToXYZ
-} from '../jzazbz';
+} from '../jzazbz/jzazbz';
 import { type XYZColor, xyzToP3 } from '../xyz';
 import type { RGBColor } from '../rgb';
 import type { LabColor } from '../lab';

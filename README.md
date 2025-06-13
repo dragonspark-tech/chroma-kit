@@ -103,8 +103,13 @@ ChromaKit provides a flexible system for parsing color strings. For better tree 
 
 ```js
 import { parseColor } from '@dragonspark/chroma-kit';
-import { registerSRGBParser, registerHSLParser } from '@dragonspark/chroma-kit/semantics/default-parsers';
-import { registerAllParsers } from '@dragonspark/chroma-kit/semantics/register-all-parsers';
+import {
+  registerSRGBParser,
+  registerHSLParser
+} from '@dragonspark/chroma-kit/semantics/default-parsers';
+import {
+  registerAllParsers
+} from '@dragonspark/chroma-kit/semantics/register-all-parsers';
 
 // Register only the parsers you need
 registerSRGBParser();

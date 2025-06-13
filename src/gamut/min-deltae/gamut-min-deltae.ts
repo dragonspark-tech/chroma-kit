@@ -1,7 +1,8 @@
 import { convertColor } from '../../conversion/conversion';
-import { deltaEOK, oklabFromVector, oklch, oklchToOKLab } from '../../fn';
+import { deltaEOK } from '../../deltae/deltae-ok';
 import type { ColorSpace, CreatedColor } from '../../foundation';
-import type { OKLChColor } from '../../models/oklch';
+import { oklabFromVector } from '../../models/oklab';
+import { oklch, oklchToOKLab, type OKLChColor } from '../../models/oklch';
 import { clipGamut } from '../clip/gamut-clip';
 import { isInGamut } from '../in-gamut';
 

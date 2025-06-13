@@ -113,7 +113,7 @@ function assembleFullObjectAST(dict: ChromaShadeDict) {
  * TailwindColors.Slate[500] // -> OKLChColor for Slate 500
  */\n`;
 
-  let colorString = `export const TailwindColors: TailwindPalettes = {`
+  let colorString = `export const TailwindColors = {`
 
   for (const [shade, shadeDict] of Object.entries(dict)) {
     colorString += `\n  ${toSentenceCase(shade)}: TW_${shade.toUpperCase()},`;

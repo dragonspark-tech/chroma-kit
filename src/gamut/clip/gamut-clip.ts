@@ -12,10 +12,7 @@ import { parseV1 } from '../../fn';
  * @returns {number} - The clipped channel value within the specified bounds.
  */
 const clipChannel = (channel: number, min: number | null, max: number | null): number =>
-  Math.max(
-    Math.min(channel, max ?? Infinity),
-    min ?? -Infinity
-  )
+  Math.max(Math.min(channel, max ?? Infinity), min ?? -Infinity);
 
 /**
  * Clips the color channels of a given color object within their specified range.
@@ -51,4 +48,4 @@ export const clipGamut = <T extends Color>(color: T): T => {
   const alphaString = color.alpha !== undefined ? ` / ${color.alpha.toString()}` : '';
 
   return parseV1(`ChromaKit|v1 ${color.space} ${channelString}${alphaString}`) as T;
-}
+};

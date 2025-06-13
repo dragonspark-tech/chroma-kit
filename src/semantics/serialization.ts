@@ -12,7 +12,7 @@
  * "ChromaKit|v1 hsl 0 100 50 / 0.5" (semi-transparent red in HSL)
  */
 
-import { type Color, type ColorSpace, colorVectorMappings } from '../foundation';
+import { type Color, type ColorSpace } from '../foundation';
 import { rgbFromVector } from '../models/rgb';
 import { xyzFromVector } from '../models/xyz';
 import { hslFromVector } from '../models/hsl';
@@ -99,10 +99,10 @@ export function parseV1(src: string): Color {
  * @return {string} A string representing the serialized color in the v1 format.
  */
 export function serializeV1(color: Color): string {
-  const { space, alpha } = color;
+  const { space, alpha, channels } = color;
 
-  const keys = colorVectorMappings[space] as readonly (keyof typeof color)[];
-  const numbers = keys.map((k) => color[k]);
+  const keys = Object.keys(channels);
+  const numbers = keys.map((k) => color[k as keyof typeof color]);
 
   return `ChromaKit|v1 ${space} ${numbers.join(' ')}` + (alpha !== undefined ? ` / ${alpha}` : '');
 }

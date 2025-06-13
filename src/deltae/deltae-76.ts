@@ -1,5 +1,5 @@
 import { isNone } from '../utils/logic';
-import { type Color, colorVectorMappings } from '../foundation';
+import { type Color } from '../foundation';
 
 /**
  * Calculates the CIE76 color difference (Delta E) between two colors.
@@ -13,12 +13,9 @@ import { type Color, colorVectorMappings } from '../foundation';
  * @returns {number} The color difference value (Delta E)
  */
 export const deltaE76 = (color: Color, sample: Color): number => {
-  const { space } = color;
+  const { channels } = color;
 
-  const keys = colorVectorMappings[space];
-
-  // If the color space is not defined in colorVectorMappings, return 0
-  if (!keys) return 0;
+  const keys = Object.keys(channels);
 
   let sum = 0;
   const len = keys.length;

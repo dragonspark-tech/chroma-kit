@@ -12,19 +12,7 @@ import type { HWBColor } from './models/hwb';
 import type { P3Color } from './models/p3/p3';
 
 /**
- * A type representing a color in various color spaces. Color can be expressed in one of the following formats:
- * - RGBColor: Standard Red Green Blue color space.
- * - HSLColor: Hue, Saturation, Lightness color representation.
- * - HSVColor: Hue, Saturation, Value color representation.
- * - HWBColor: Hue, Whiteness, Blackness color model.
- * - XYZColor: CIE 1931 color space.
- * - LabColor: CIE Lab color space.
- * - LChColor: Lightness, Chroma, and Hue color model.
- * - OKLabColor: Perceptually uniform Lab color space.
- * - OKLChColor: Perceptually uniform LCh color space.
- * - JzAzBzColor: Uniform color space designed for high dynamic range.
- * - JzCzHzColor: JzAzBz sibling with chroma and hue components.
- *
+ * A type representing a color in various color spaces.
  * This type provides flexibility to handle multiple color formats depending on application requirements.
  */
 export type Color =
@@ -89,30 +77,3 @@ export type CreatedColor<T extends ColorSpace> = T extends 'rgb'
                       : T extends 'jzczhz'
                         ? JzCzHzColor
                         : never;
-
-/**
- * A mapping of color spaces to their respective channel identifiers.
- *
- * The `colorMappings` object defines a collection of color spaces and their corresponding
- * array of string identifiers representing the channels in that particular color space.
- *
- * Each color space is represented as a key in the object, and its value is an array of
- * strings that denote the individual channel names used for that color space.
- *
- * It uses the `Record` utility type to ensure that each key corresponds to a predefined
- * `ColorSpace` and the associated values are readonly arrays of strings.
- */
-export const colorVectorMappings: Record<ColorSpace, readonly string[]> = {
-  rgb: ['r', 'g', 'b'],
-  p3: ['r', 'g', 'b'],
-  xyz: ['x', 'y', 'z'],
-  hsl: ['h', 's', 'l'],
-  hsv: ['h', 's', 'v'],
-  hwb: ['h', 'w', 'b'],
-  lab: ['l', 'a', 'b'],
-  lch: ['l', 'c', 'h'],
-  oklab: ['l', 'a', 'b'],
-  oklch: ['l', 'c', 'h'],
-  jzazbz: ['jz', 'az', 'bz'],
-  jzczhz: ['jz', 'cz', 'hz']
-} as const;

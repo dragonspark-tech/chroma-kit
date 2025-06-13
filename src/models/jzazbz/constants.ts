@@ -39,6 +39,7 @@ export const d0 = 1.629549953e-11;
  * and is used in the JzAzBz color space to handle high dynamic range content.
  */
 export const m1 = 0.1593017578125;
+export const m1Inv = 6.277394636015326;
 
 /**
  * Exponent used in the Perceptual Quantizer (PQ) function.
@@ -47,7 +48,8 @@ export const m1 = 0.1593017578125;
  * and is used in the JzAzBz color space to handle high dynamic range content.
  * The value is calculated as 1.7 * 2523 / 32, which equals approximately 134.034375.
  */
-export const m2p = (1.7 * 2523) / 32; // 134.034 375
+export const m2p = 134.03437499999998;
+export const m2pInv = 0.007460772656268216;
 
 /**
  * Constant used in the Perceptual Quantizer (PQ) function.
