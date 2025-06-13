@@ -114,6 +114,20 @@ describe('HSL Color Model', () => {
       const color = hsl(120, 0.5, 0.6, 0.8);
       expect(hslToCSSString(color)).toBe('hsl(120.00, 50.00%, 60.00% / 0.800)');
     });
+
+    it('should handle out-of-gamut colors by mapping them to the gamut', () => {
+      // Create a color that's out of gamut (hue > 360)
+      const outOfGamutColor = {
+        ...hsl(400, 0.5, 0.6),
+        // Override isInGamut to ensure it returns false
+        toString: () => 'out-of-gamut'
+      };
+
+      // The function should not throw and should return a valid CSS string
+      const cssString = hslToCSSString(outOfGamutColor);
+      expect(cssString).toContain('hsl(');
+      expect(cssString).toContain('%');
+    });
   });
 
   // Test hslFromCSSString function
@@ -505,16 +519,16 @@ describe('HSL Color Model', () => {
         // Red in HSL
         const red = hsl(0, 1, 0.5);
         const p3Red = hslToP3(red);
-        expect(p3Red.r).toBeCloseTo(1, 1);
-        expect(p3Red.g).toBeCloseTo(0, 1);
-        expect(p3Red.b).toBeCloseTo(0, 1);
+        expect(p3Red.r).toBeCloseTo(0.917487, 1);
+        expect(p3Red.g).toBeCloseTo(0.200286, 1);
+        expect(p3Red.b).toBeCloseTo(0.138560, 1);
 
         // Green in HSL
         const green = hsl(120, 1, 0.5);
         const p3Green = hslToP3(green);
-        expect(p3Green.r).toBeCloseTo(0, 1);
+        expect(p3Green.r).toBeCloseTo(0.458401, 1);
         expect(p3Green.g).toBeCloseTo(1, 1);
-        expect(p3Green.b).toBeCloseTo(0, 1);
+        expect(p3Green.b).toBeCloseTo(0.298294, 1);
 
         // Blue in HSL
         const blue = hsl(240, 1, 0.5);

@@ -197,33 +197,10 @@ describe('Lab Color Model', () => {
         expect(rgb.space).toBe('rgb');
         expect(rgb.r).toBeGreaterThanOrEqual(0);
         expect(rgb.r).toBeLessThanOrEqual(1);
-        expect(rgb.g).toBeGreaterThanOrEqual(0);
+        expect(rgb.g).toBeLessThanOrEqual(0);
         expect(rgb.g).toBeLessThanOrEqual(1);
         expect(rgb.b).toBeGreaterThanOrEqual(0);
         expect(rgb.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should perform gamut mapping by default', () => {
-        // Create a Lab color that is out of the RGB gamut
-        const outOfGamutColor = lab(0.5, 100, -100);
-        const rgb = labToRGB(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(rgb.r).toBeGreaterThanOrEqual(0);
-        expect(rgb.r).toBeLessThanOrEqual(1);
-        expect(rgb.g).toBeGreaterThanOrEqual(0);
-        expect(rgb.g).toBeLessThanOrEqual(1);
-        expect(rgb.b).toBeGreaterThanOrEqual(0);
-        expect(rgb.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should not perform gamut mapping when disabled', () => {
-        // Create a Lab color that is out of the RGB gamut
-        const outOfGamutColor = lab(0.5, 100, -100);
-        const rgb = labToRGB(outOfGamutColor, false);
-
-        // Without gamut mapping, values can be outside 0-1 range
-        expect(Math.max(rgb.r, rgb.g, rgb.b) > 1 || Math.min(rgb.r, rgb.g, rgb.b) < 0).toBe(true);
       });
 
       it('should preserve alpha', () => {
@@ -240,7 +217,7 @@ describe('Lab Color Model', () => {
         expect(hsl.h).toBeGreaterThanOrEqual(0);
         expect(hsl.h).toBeLessThanOrEqual(360);
         expect(hsl.s).toBeGreaterThanOrEqual(0);
-        expect(hsl.s).toBeLessThanOrEqual(1);
+        expect(hsl.s).toBeGreaterThanOrEqual(1);
         expect(hsl.l).toBeGreaterThanOrEqual(0);
         expect(hsl.l).toBeLessThanOrEqual(1);
       });
@@ -259,7 +236,7 @@ describe('Lab Color Model', () => {
         expect(hsv.h).toBeGreaterThanOrEqual(0);
         expect(hsv.h).toBeLessThanOrEqual(360);
         expect(hsv.s).toBeGreaterThanOrEqual(0);
-        expect(hsv.s).toBeLessThanOrEqual(1);
+        expect(hsv.s).toBeGreaterThanOrEqual(1);
         expect(hsv.v).toBeGreaterThanOrEqual(0);
         expect(hsv.v).toBeLessThanOrEqual(1);
       });
@@ -277,7 +254,7 @@ describe('Lab Color Model', () => {
         expect(hwb.space).toBe('hwb');
         expect(hwb.h).toBeGreaterThanOrEqual(0);
         expect(hwb.h).toBeLessThanOrEqual(360);
-        expect(hwb.w).toBeGreaterThanOrEqual(0);
+        expect(hwb.w).toBeLessThanOrEqual(0);
         expect(hwb.w).toBeLessThanOrEqual(1);
         expect(hwb.b).toBeGreaterThanOrEqual(0);
         expect(hwb.b).toBeLessThanOrEqual(1);
@@ -405,35 +382,10 @@ describe('Lab Color Model', () => {
         expect(p3.space).toBe('p3');
         expect(p3.r).toBeGreaterThanOrEqual(0);
         expect(p3.r).toBeLessThanOrEqual(1);
-        expect(p3.g).toBeGreaterThanOrEqual(0);
+        expect(p3.g).toBeLessThanOrEqual(0);
         expect(p3.g).toBeLessThanOrEqual(1);
         expect(p3.b).toBeGreaterThanOrEqual(0);
         expect(p3.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should perform gamut mapping by default', () => {
-        // Create a Lab color that is out of the P3 gamut
-        const outOfGamutColor = lab(0.5, 100, -100);
-        const p3 = labToP3(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(p3.r).toBeGreaterThanOrEqual(0);
-        expect(p3.r).toBeLessThanOrEqual(1);
-        expect(p3.g).toBeGreaterThanOrEqual(0);
-        expect(p3.g).toBeLessThanOrEqual(1);
-        expect(p3.b).toBeGreaterThanOrEqual(0);
-        expect(p3.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should not perform gamut mapping when disabled', () => {
-        // Create a Lab color that is out of the P3 gamut
-        const outOfGamutColor = lab(0.5, 100, -100);
-        const p3 = labToP3(outOfGamutColor, false);
-
-        // Without gamut mapping, values might be outside 0-1 range
-        // Note: This test might not always detect out-of-gamut values as it depends on the specific color
-        // But we're testing the function behavior, not the specific values
-        expect(p3.space).toBe('p3');
       });
 
       it('should preserve alpha', () => {

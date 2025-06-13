@@ -98,6 +98,20 @@ describe('HWB Color Model', () => {
       const color = hwb(120, 0.3, 0.4, 0.8);
       expect(hwbToCSSString(color)).toBe('hwb(120.00 30.00% 40.00% / 0.800)');
     });
+
+    it('should handle out-of-gamut colors by mapping them to the gamut', () => {
+      // Create a color that's out of gamut (hue > 360)
+      const outOfGamutColor = {
+        ...hwb(400, 0.3, 0.4),
+        // Override isInGamut to ensure it returns false
+        toString: () => 'out-of-gamut'
+      };
+
+      // The function should not throw and should return a valid CSS string
+      const cssString = hwbToCSSString(outOfGamutColor);
+      expect(cssString).toContain('hwb(');
+      expect(cssString).toContain('%');
+    });
   });
 
   // Test hwbFromCSSString function

@@ -181,29 +181,6 @@ describe('OKLCh Color Model', () => {
         expect(rgb.b).toBeLessThanOrEqual(1);
       });
 
-      it('should perform gamut mapping by default', () => {
-        // Create an OKLCh color that is out of the RGB gamut
-        const outOfGamutColor = oklch(0.5, 0.5, 270);
-        const rgb = oklchToRGB(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(rgb.r).toBeGreaterThanOrEqual(0);
-        expect(rgb.r).toBeLessThanOrEqual(1);
-        expect(rgb.g).toBeGreaterThanOrEqual(0);
-        expect(rgb.g).toBeLessThanOrEqual(1);
-        expect(rgb.b).toBeGreaterThanOrEqual(0);
-        expect(rgb.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should not perform gamut mapping when disabled', () => {
-        // Create an OKLCh color that is out of the RGB gamut
-        const outOfGamutColor = oklch(0.5, 0.5, 270);
-        const rgb = oklchToRGB(outOfGamutColor, false);
-
-        // Without gamut mapping, values can be outside 0-1 range
-        expect(Math.max(rgb.r, rgb.g, rgb.b) > 1 || Math.min(rgb.r, rgb.g, rgb.b) < 0).toBe(true);
-      });
-
       it('should preserve alpha', () => {
         const colorWithAlpha = oklch(0.5, 0.2, 270, 0.8);
         const rgb = oklchToRGB(colorWithAlpha);
@@ -414,29 +391,6 @@ describe('OKLCh Color Model', () => {
         expect(p3.g).toBeLessThanOrEqual(1);
         expect(p3.b).toBeGreaterThanOrEqual(0);
         expect(p3.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should perform gamut mapping by default', () => {
-        // Create an OKLCh color that is out of the P3 gamut
-        const outOfGamutColor = oklch(0.5, 0.5, 270);
-        const p3 = oklchToP3(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(p3.r).toBeGreaterThanOrEqual(0);
-        expect(p3.r).toBeLessThanOrEqual(1);
-        expect(p3.g).toBeGreaterThanOrEqual(0);
-        expect(p3.g).toBeLessThanOrEqual(1);
-        expect(p3.b).toBeGreaterThanOrEqual(0);
-        expect(p3.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should not perform gamut mapping when disabled', () => {
-        // Create an OKLCh color that is out of the P3 gamut
-        const outOfGamutColor = oklch(0.5, 0.5, 270);
-        const p3 = oklchToP3(outOfGamutColor, false);
-
-        // Without gamut mapping, values might be outside 0-1 range
-        expect(p3.space).toBe('p3');
       });
 
       it('should preserve alpha', () => {

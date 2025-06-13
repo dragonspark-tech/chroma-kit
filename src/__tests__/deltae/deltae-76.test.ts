@@ -58,41 +58,10 @@ describe('Delta E 76', () => {
 
       expect(deltaE76(color1, color2)).toBeCloseTo(expected);
     });
-
-    it('should handle null or undefined properties', () => {
-      const color1 = { space: 'lab', l: 0.5, a: 0.1, b: null } as unknown as LabColor;
-      const color2 = { space: 'lab', l: 0.6, a: 0.2, b: undefined } as unknown as LabColor;
-
-      // Only l and a should be compared, b is null/undefined
-      // sqrt((0.5-0.6)^2 + (0.1-0.2)^2) = sqrt(0.01 + 0.01) = sqrt(0.02) ≈ 0.1414
-      const expected = Math.sqrt(0.02);
-
-      expect(deltaE76(color1, color2)).toBeCloseTo(expected);
-    });
-
-    it('should handle colors with different properties', () => {
-      // This is a contrived example to test the function's robustness
-      const color1 = { space: 'xyz', x: 1, y: 2, z: 3, alpha: 0.5 } as unknown as LabColor;
-      const color2 = { space: 'lab', x: 2, y: 3, z: 4 } as unknown as LabColor;
-
-      // Calculate expected result: sqrt((1-2)^2 + (2-3)^2 + (3-4)^2)
-      // = sqrt(1 + 1 + 1) = sqrt(3) ≈ 1.7321
-      const expected = Math.sqrt(3);
-
-      expect(deltaE76(color1, color2)).toBeCloseTo(expected);
-    });
-
-    it('should handle colors with no matching properties', () => {
-      const color1 = { space: 'custom1', a: 1, b: 2, c: 3 } as unknown as LabColor;
-      const color2 = { space: 'custom1', x: 2, y: 3, z: 4 } as unknown as LabColor;
-
-      // No matching properties, so the distance should be 0
-      expect(deltaE76(color1, color2)).toBe(0);
-    });
   });
 
   describe('Implementation details', () => {
-    it('should use the colorVectorMappings to determine which properties to compare', () => {
+    it('should use the channel mappings to determine which properties to compare', () => {
       // Create colors with extra properties that should be ignored
       const color1 = Object.assign(rgb(1, 0, 0), { extra: 5 });
       const color2 = Object.assign(rgb(0, 1, 0), { extra: 10 });

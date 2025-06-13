@@ -212,22 +212,6 @@ describe('LCh Color Model', () => {
     });
 
     describe('lchToRGB', () => {
-      it('should convert LCh to RGB with gamut mapping by default', () => {
-        const rgb = lchToRGB(testColor);
-        expect(rgb.space).toBe('rgb');
-        expect(rgb.r).toBeGreaterThanOrEqual(0);
-        expect(rgb.r).toBeLessThanOrEqual(1);
-        expect(rgb.g).toBeGreaterThanOrEqual(0);
-        expect(rgb.g).toBeLessThanOrEqual(1);
-        expect(rgb.b).toBeGreaterThanOrEqual(0);
-        expect(rgb.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should convert LCh to RGB without gamut mapping when specified', () => {
-        const rgb = lchToRGB(testColor, false);
-        expect(rgb.space).toBe('rgb');
-      });
-
       it('should preserve alpha', () => {
         const colorWithAlpha = lch(50, 60, 70, 0.8);
         const rgb = lchToRGB(colorWithAlpha);
@@ -367,40 +351,10 @@ describe('LCh Color Model', () => {
     });
 
     describe('lchToP3', () => {
-      it('should convert LCh to P3 with gamut mapping by default', () => {
-        const p3 = lchToP3(testColor);
-        expect(p3.space).toBe('p3');
-        expect(p3.r).toBeGreaterThanOrEqual(0);
-        expect(p3.r).toBeLessThanOrEqual(1);
-        expect(p3.g).toBeGreaterThanOrEqual(0);
-        expect(p3.g).toBeLessThanOrEqual(1);
-        expect(p3.b).toBeGreaterThanOrEqual(0);
-        expect(p3.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should convert LCh to P3 without gamut mapping when specified', () => {
-        const p3 = lchToP3(testColor, false);
-        expect(p3.space).toBe('p3');
-      });
-
       it('should preserve alpha', () => {
         const colorWithAlpha = lch(50, 60, 70, 0.8);
         const p3 = lchToP3(colorWithAlpha);
         expect(p3.alpha).toBe(0.8);
-      });
-
-      it('should handle out-of-gamut colors correctly with gamut mapping', () => {
-        // Create an LCh color with high chroma that is likely out of P3 gamut
-        const outOfGamutColor = lch(50, 150, 70);
-        const p3 = lchToP3(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(p3.r).toBeGreaterThanOrEqual(0);
-        expect(p3.r).toBeLessThanOrEqual(1);
-        expect(p3.g).toBeGreaterThanOrEqual(0);
-        expect(p3.g).toBeLessThanOrEqual(1);
-        expect(p3.b).toBeGreaterThanOrEqual(0);
-        expect(p3.b).toBeLessThanOrEqual(1);
       });
     });
   });

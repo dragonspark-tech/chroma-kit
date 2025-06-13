@@ -253,7 +253,7 @@ describe('parseColor', () => {
     });
 
     it('should throw for unsupported color() formats', () => {
-      expect(() => parseColor('color(display-p3 1 0 0)', 'rgb')).toThrow(
+      expect(() => parseColor('color(rec2020 1 0 0)', 'rgb')).toThrow(
         'Generic CSS Color 4 parsing not implemented yet'
       );
     });

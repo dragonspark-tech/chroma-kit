@@ -487,16 +487,16 @@ describe('HSV Color Model', () => {
         // Red
         const red = hsv(0, 1, 1);
         const p3Red = hsvToP3(red);
-        expect(p3Red.r).toBeCloseTo(1, 1);
-        expect(p3Red.g).toBeCloseTo(0, 1);
-        expect(p3Red.b).toBeCloseTo(0, 1);
+        expect(p3Red.r).toBeCloseTo(0.91748, 1);
+        expect(p3Red.g).toBeCloseTo(0.20028, 1);
+        expect(p3Red.b).toBeCloseTo(0.13856, 1);
 
         // Green
         const green = hsv(120, 1, 1);
         const p3Green = hsvToP3(green);
-        expect(p3Green.r).toBeCloseTo(0, 1);
+        expect(p3Green.r).toBeCloseTo(0.458401, 1);
         expect(p3Green.g).toBeCloseTo(1, 1);
-        expect(p3Green.b).toBeCloseTo(0, 1);
+        expect(p3Green.b).toBeCloseTo(0.298294, 1);
 
         // Blue
         const blue = hsv(240, 1, 1);

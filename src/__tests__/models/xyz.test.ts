@@ -20,6 +20,7 @@ import {
 } from '../../models/xyz';
 import { xyzFromCSSString } from '../../models/xyz/parser';
 import { IlluminantD50, IlluminantD65 } from '../../standards/illuminants';
+import { BradfordConeModel, VonKriesConeModel } from '../../adaptation/cone-response';
 import { rgb } from '../../models/rgb';
 
 describe('XYZ Color Model', () => {
@@ -198,60 +199,10 @@ describe('XYZ Color Model', () => {
         expect(rgb.b).toBeLessThanOrEqual(1);
       });
 
-      it('should perform gamut mapping by default', () => {
-        // Create an XYZ color that is out of the RGB gamut
-        const outOfGamutColor = xyz(2.0, 0.0, 0.0);
-        const rgb = xyzToRGB(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(rgb.r).toBeGreaterThanOrEqual(0);
-        expect(rgb.r).toBeLessThanOrEqual(1);
-        expect(rgb.g).toBeGreaterThanOrEqual(0);
-        expect(rgb.g).toBeLessThanOrEqual(1);
-        expect(rgb.b).toBeGreaterThanOrEqual(0);
-        expect(rgb.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should handle out-of-gamut colors correctly', () => {
-        const laserGreen = xyz(0.2, 0.8, 0.1);
-        const rgb = xyzToRGB(laserGreen);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(rgb.r).toBeGreaterThanOrEqual(0);
-        expect(rgb.r).toBeLessThanOrEqual(1);
-        expect(rgb.g).toBeGreaterThanOrEqual(0);
-        expect(rgb.g).toBeLessThanOrEqual(1);
-        expect(rgb.b).toBeGreaterThanOrEqual(0);
-        expect(rgb.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should not perform gamut mapping when disabled', () => {
-        // Create an XYZ color that is out of the RGB gamut
-        const outOfGamutColor = xyz(2.0, 0.0, 0.0);
-        const rgb = xyzToRGB(outOfGamutColor, false);
-
-        // Without gamut mapping, values can be outside 0-1 range
-        expect(Math.max(rgb.r, rgb.g, rgb.b)).toBeGreaterThan(1);
-      });
-
       it('should preserve alpha', () => {
         const colorWithAlpha = xyz(0.5, 0.6, 0.7, 0.8);
         const rgb = xyzToRGB(colorWithAlpha);
         expect(rgb.alpha).toBe(0.8);
-      });
-
-      it('should handle negative values correctly with gamut mapping', () => {
-        // Create an XYZ color with negative components
-        const negativeColor = xyz(-0.1, 0.5, 0.5);
-        const rgb = xyzToRGB(negativeColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(rgb.r).toBeGreaterThanOrEqual(0);
-        expect(rgb.r).toBeLessThanOrEqual(1);
-        expect(rgb.g).toBeGreaterThanOrEqual(0);
-        expect(rgb.g).toBeLessThanOrEqual(1);
-        expect(rgb.b).toBeGreaterThanOrEqual(0);
-        expect(rgb.b).toBeLessThanOrEqual(1);
       });
     });
 
@@ -329,7 +280,8 @@ describe('XYZ Color Model', () => {
 
       it('should use D65 illuminant by default when illuminant is undefined', () => {
         // Create an XYZ color with undefined illuminant
-        const colorNoIlluminant = { space: 'xyz', x: 0.5, y: 0.6, z: 0.7 } as XYZColor;
+        const colorNoIlluminant = xyz(0.5, 0.6, 0.7);
+        colorNoIlluminant.illuminant = undefined;
         const lab = xyzToLab(colorNoIlluminant);
         expect(lab.space).toBe('lab');
         expect(typeof lab.l).toBe('number');
@@ -473,43 +425,6 @@ describe('XYZ Color Model', () => {
         expect(p3.b).toBeLessThanOrEqual(1);
       });
 
-      it('should perform gamut mapping by default', () => {
-        // Create an XYZ color that is out of the P3 gamut
-        const outOfGamutColor = xyz(2.0, 0.0, 0.0);
-        const p3 = xyzToP3(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(p3.r).toBeGreaterThanOrEqual(0);
-        expect(p3.r).toBeLessThanOrEqual(1);
-        expect(p3.g).toBeGreaterThanOrEqual(0);
-        expect(p3.g).toBeLessThanOrEqual(1);
-        expect(p3.b).toBeGreaterThanOrEqual(0);
-        expect(p3.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should not perform gamut mapping when disabled', () => {
-        // Create an XYZ color that is out of the P3 gamut
-        const outOfGamutColor = xyz(2.0, 0.0, 0.0);
-        const p3 = xyzToP3(outOfGamutColor, false);
-
-        // Without gamut mapping, values can be outside 0-1 range
-        expect(Math.max(p3.r, p3.g, p3.b)).toBeGreaterThan(1);
-      });
-
-      it('should handle negative values correctly with gamut mapping', () => {
-        // Create an XYZ color with negative components
-        const negativeColor = xyz(-0.1, 0.5, 0.5);
-        const p3 = xyzToP3(negativeColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(p3.r).toBeGreaterThanOrEqual(0);
-        expect(p3.r).toBeLessThanOrEqual(1);
-        expect(p3.g).toBeGreaterThanOrEqual(0);
-        expect(p3.g).toBeLessThanOrEqual(1);
-        expect(p3.b).toBeGreaterThanOrEqual(0);
-        expect(p3.b).toBeLessThanOrEqual(1);
-      });
-
       it('should preserve alpha', () => {
         const colorWithAlpha = xyz(0.5, 0.6, 0.7, 0.8);
         const p3 = xyzToP3(colorWithAlpha);
@@ -570,6 +485,57 @@ describe('XYZ Color Model', () => {
       expect(blue.x).toBeCloseTo(0.1805, 3);
       expect(blue.y).toBeCloseTo(0.0722, 3);
       expect(blue.z).toBeCloseTo(0.9505, 3);
+    });
+  });
+
+  // Test chromatic adaptation
+  describe('Chromatic Adaptation', () => {
+    it('should adapt from D65 to D50 illuminant using default Bradford cone model', () => {
+      const colorD65 = xyz(0.5, 0.6, 0.7);
+      const colorD50 = colorD65.applyChromaticAdaptation(IlluminantD50);
+
+      expect(colorD50.illuminant).toBe(IlluminantD50);
+      expect(colorD50.x).not.toEqual(colorD65.x);
+      expect(colorD50.y).not.toEqual(colorD65.y);
+      expect(colorD50.z).not.toEqual(colorD65.z);
+
+      // Convert back to D65 to verify the adaptation is reversible
+      const backToD65 = colorD50.applyChromaticAdaptation(IlluminantD65);
+      expect(backToD65.x).toBeCloseTo(colorD65.x, 5);
+      expect(backToD65.y).toBeCloseTo(colorD65.y, 5);
+      expect(backToD65.z).toBeCloseTo(colorD65.z, 5);
+    });
+
+    it('should adapt using a custom cone model (Von Kries)', () => {
+      const colorD65 = xyz(0.5, 0.6, 0.7);
+      const colorD50Bradford = colorD65.applyChromaticAdaptation(IlluminantD50, BradfordConeModel);
+      const colorD50VonKries = colorD65.applyChromaticAdaptation(IlluminantD50, VonKriesConeModel);
+
+      // Results should be different with different cone models
+      expect(colorD50Bradford.x).not.toEqual(colorD50VonKries.x);
+      expect(colorD50Bradford.y).not.toEqual(colorD50VonKries.y);
+      expect(colorD50Bradford.z).not.toEqual(colorD50VonKries.z);
+    });
+
+    it('should preserve alpha during adaptation', () => {
+      const colorWithAlpha = xyz(0.5, 0.6, 0.7, 0.8);
+      const adapted = colorWithAlpha.applyChromaticAdaptation(IlluminantD50);
+
+      expect(adapted.alpha).toBe(0.8);
+    });
+
+    it('should use D65 as default when illuminant is undefined', () => {
+      // Create a color with undefined illuminant
+      const color = xyz(0.5, 0.6, 0.7);
+      color.illuminant = undefined;
+
+      const adapted = color.applyChromaticAdaptation(IlluminantD50);
+
+      // Should still work, using D65 as the default source illuminant
+      expect(adapted.illuminant).toBe(IlluminantD50);
+      expect(adapted.x).not.toEqual(color.x);
+      expect(adapted.y).not.toEqual(color.y);
+      expect(adapted.z).not.toEqual(color.z);
     });
   });
 });

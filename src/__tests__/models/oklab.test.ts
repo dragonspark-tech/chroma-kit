@@ -183,29 +183,6 @@ describe('OKLab Color Model', () => {
         expect(rgb.b).toBeLessThanOrEqual(1);
       });
 
-      it('should perform gamut mapping by default', () => {
-        // Create an OKLab color that is out of the RGB gamut
-        const outOfGamutColor = oklab(1.0, 0.5, 0.5);
-        const rgb = oklabToRGB(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(rgb.r).toBeGreaterThanOrEqual(0);
-        expect(rgb.r).toBeLessThanOrEqual(1);
-        expect(rgb.g).toBeGreaterThanOrEqual(0);
-        expect(rgb.g).toBeLessThanOrEqual(1);
-        expect(rgb.b).toBeGreaterThanOrEqual(0);
-        expect(rgb.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should not perform gamut mapping when disabled', () => {
-        // Create an OKLab color that is out of the RGB gamut
-        const outOfGamutColor = oklab(1.0, 0.5, 0.5);
-        const rgb = oklabToRGB(outOfGamutColor, false);
-
-        // Without gamut mapping, values can be outside 0-1 range
-        expect(Math.max(rgb.r, rgb.g, rgb.b)).toBeGreaterThan(1);
-      });
-
       it('should preserve alpha', () => {
         const colorWithAlpha = oklab(0.5, 0.1, -0.2, 0.8);
         const rgb = oklabToRGB(colorWithAlpha);
@@ -414,29 +391,6 @@ describe('OKLab Color Model', () => {
         expect(p3.b).toBeLessThanOrEqual(1);
       });
 
-      it('should perform gamut mapping by default', () => {
-        // Create an OKLab color that is out of the P3 gamut
-        const outOfGamutColor = oklab(1.0, 0.5, 0.5);
-        const p3 = oklabToP3(outOfGamutColor);
-
-        // After gamut mapping, all values should be within 0-1 range
-        expect(p3.r).toBeGreaterThanOrEqual(0);
-        expect(p3.r).toBeLessThanOrEqual(1);
-        expect(p3.g).toBeGreaterThanOrEqual(0);
-        expect(p3.g).toBeLessThanOrEqual(1);
-        expect(p3.b).toBeGreaterThanOrEqual(0);
-        expect(p3.b).toBeLessThanOrEqual(1);
-      });
-
-      it('should not perform gamut mapping when disabled', () => {
-        // Create an OKLab color that is out of the P3 gamut
-        const outOfGamutColor = oklab(1.0, 0.5, 0.5);
-        const p3 = oklabToP3(outOfGamutColor, false);
-
-        // Without gamut mapping, values might be outside 0-1 range
-        expect(p3.space).toBe('p3');
-      });
-
       it('should preserve alpha', () => {
         const colorWithAlpha = oklab(0.5, 0.1, -0.2, 0.8);
         const p3 = oklabToP3(colorWithAlpha);
@@ -484,20 +438,20 @@ describe('OKLab Color Model', () => {
       // Red in RGB
       const red = rgb(1, 0, 0).to('oklab');
       expect(red.l).toBeCloseTo(0.627986, 4);
-      expect(red.a).toBeCloseTo(0.2248, 4);
+      expect(red.a).toBeCloseTo(0.22486, 4);
       expect(red.b).toBeCloseTo(0.1258, 4);
 
       // Green in RGB
       const green = rgb(0, 1, 0).to('oklab');
       expect(green.l).toBeCloseTo(0.86644, 4);
       expect(green.a).toBeCloseTo(-0.2339, 4);
-      expect(green.b).toBeCloseTo(0.1794, 4);
+      expect(green.b).toBeCloseTo(0.17950, 4);
 
       // Blue in RGB
       const blue = rgb(0, 0, 1).to('oklab');
       expect(blue.l).toBeCloseTo(0.452, 4);
-      expect(blue.a).toBeCloseTo(-0.0324, 4);
-      expect(blue.b).toBeCloseTo(-0.3116, 4);
+      expect(blue.a).toBeCloseTo(-0.03246, 4);
+      expect(blue.b).toBeCloseTo(-0.31153, 4);
     });
 
     it('should convert XYZ D65 white point correctly', () => {

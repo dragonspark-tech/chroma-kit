@@ -8,7 +8,7 @@ import { lab, type LabColor } from '../../models/lab';
 import { lch, type LChColor } from '../../models/lch';
 import { oklab, type OKLabColor } from '../../models/oklab';
 import { oklch, type OKLChColor } from '../../models/oklch';
-import { jzazbz, type JzAzBzColor } from '../../models/jzazbz';
+import { jzazbz, type JzAzBzColor } from '../../models/jzazbz/jzazbz';
 import { jzczhz, type JzCzHzColor } from '../../models/jzczhz';
 import { hwb, type HWBColor } from '../../models/hwb';
 import { p3, type P3Color } from '../../models/p3/p3';

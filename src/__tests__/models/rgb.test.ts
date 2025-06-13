@@ -103,15 +103,15 @@ describe('RGB Color Model', () => {
     });
 
     it('should return false for p3 colors', () => {
-      expect(isInSRGB(oklchToRGB(oklch(0.6588, 0.2861, 6.35), false))).toBe(false);
-      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.2569, 145.06), false))).toBe(false);
-      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.1692, 232.94), false))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6588, 0.2861, 6.35)))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.2569, 145.06)))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.1692, 232.94)))).toBe(false);
     });
 
     it('should return false for REC2020 colors', () => {
-      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.3447, 6.35), false))).toBe(false);
-      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.3541, 152.47), false))).toBe(false);
-      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.2507, 214.94), false))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.3447, 6.35)))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.3541, 152.47)))).toBe(false);
+      expect(isInSRGB(oklchToRGB(oklch(0.6941, 0.2507, 214.94)))).toBe(false);
     });
   });
 
@@ -686,7 +686,7 @@ describe('RGB Color Model', () => {
         const color = rgb(1, 0, 0);
         const oklab = rgbToOKLab(color);
         expect(oklab.l).toBeCloseTo(0.627986, 4);
-        expect(oklab.a).toBeCloseTo(0.2248, 4);
+        expect(oklab.a).toBeCloseTo(0.224863, 4);
         expect(oklab.b).toBeCloseTo(0.1258, 4);
       });
 
@@ -850,18 +850,18 @@ describe('RGB Color Model', () => {
         const color = rgb(1, 0, 0);
         const p3 = rgbToP3(color);
         expect(p3.space).toBe('p3');
-        expect(p3.r).toBeCloseTo(1, 1);
-        expect(p3.g).toBeCloseTo(0, 1);
-        expect(p3.b).toBeCloseTo(0, 1);
+        expect(p3.r).toBeCloseTo(0.917487, 1);
+        expect(p3.g).toBeCloseTo(0.200286, 1);
+        expect(p3.b).toBeCloseTo(0.13856, 1);
       });
 
       it('should convert pure green to P3', () => {
         const color = rgb(0, 1, 0);
         const p3 = rgbToP3(color);
         expect(p3.space).toBe('p3');
-        expect(p3.r).toBeCloseTo(0, 1);
+        expect(p3.r).toBeCloseTo(0.458401, 1);
         expect(p3.g).toBeCloseTo(1, 1);
-        expect(p3.b).toBeCloseTo(0, 1);
+        expect(p3.b).toBeCloseTo(0.2982, 1);
       });
 
       it('should convert pure blue to P3', () => {
