@@ -31,7 +31,7 @@ export interface ColorPaletteShade {
  * The `arrayValues` property provides an array containing all shade values
  * for the palette in a sequential order.
  */
-export interface ColorPalette {
+export interface TailwindColorPalette {
   50: ColorPaletteShade;
   100: ColorPaletteShade;
   200: ColorPaletteShade;
@@ -45,4 +45,28 @@ export interface ColorPalette {
   950: ColorPaletteShade;
 
   arrayValues: ColorPaletteShade[];
+}
+
+export interface RadixColorPalette {
+  1: ColorPaletteShade;
+  2: ColorPaletteShade;
+  3: ColorPaletteShade;
+  4: ColorPaletteShade;
+  5: ColorPaletteShade;
+  6: ColorPaletteShade;
+  7: ColorPaletteShade;
+  8: ColorPaletteShade;
+  9: ColorPaletteShade;
+  10: ColorPaletteShade;
+  11: ColorPaletteShade;
+  12: ColorPaletteShade;
+
+  arrayValues: ColorPaletteShade[];
+}
+
+export interface RadixColorFamily {
+  light: RadixColorPalette;
+  dark: RadixColorPalette;
+  lightAlpha: RadixColorPalette;
+  darkAlpha: RadixColorPalette;
 }

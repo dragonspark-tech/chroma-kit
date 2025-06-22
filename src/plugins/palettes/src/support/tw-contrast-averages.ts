@@ -5,7 +5,7 @@
  * @property {number} onWhite - The calculated contrast value of the shade against a white background.
  * @property {number} onBlack - The calculated contrast value of the shade against a black background.
  */
-export interface ShadeContrastAverage {
+export interface TwShadeContrastAverage {
   shade: number;
   onWhite: number;
   onBlack: number;
@@ -29,7 +29,7 @@ export interface ShadeContrastAverage {
  * - Higher `shade` values (e.g., 900, 950) with positive `onWhite` contrast values
  *   (indicating higher brightness against a white background).
  */
-export const ShadeContrastAverages: ShadeContrastAverage[] = [
+export const ShadeContrastAverages: TwShadeContrastAverage[] = [
   { shade: 50, onWhite: 0, onBlack: -102.86046980710087 },
   { shade: 100, onWhite: 4.565780844481383, onBlack: -97.17376606285426 },
   { shade: 200, onWhite: 15.878639752193317, onBlack: -87.83909945635801 },

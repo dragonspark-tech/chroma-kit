@@ -2,10 +2,13 @@ import { oklch, type OKLChColor, oklchToRGB } from '../../../../models/oklch';
 import { TailwindColors } from '../../../tailwind';
 import { findClosestTailwindFamily } from '../support/find-shade';
 import type { TailwindPalette } from '../../../tailwind/src/tailwind.types';
-import { ShadeContrastAverages, type ShadeContrastAverage } from '../support/contrast-averages';
+import {
+  ShadeContrastAverages,
+  type TwShadeContrastAverage
+} from '../support/tw-contrast-averages';
 import { getOptimalColorForContrastAPCA } from '../../../a11y/fn';
 import { isInSRGB, rgb, rgbToOKLCh } from '../../../../models/rgb';
-import type { ColorPalette, ColorPaletteShade } from './palette.types';
+import type { TailwindColorPalette, ColorPaletteShade } from './palette.types';
 
 /**
  * Generates a Tailwind-compatible color palette from a given OKLCh color, allowing for optional contrast adjustments.
@@ -13,13 +16,13 @@ import type { ColorPalette, ColorPaletteShade } from './palette.types';
  * @param {OKLChColor} input - The base OKLCh color to generate a palette from.
  * @param {boolean} [adjustContrast=false] - Optional flag to adjust contrast for optimal readability.
  * @param {boolean} [ensureColorInAdjustment=true] - Optional flag to ensure the input color is included in the generated palette adjustments.
- * @returns {ColorPalette} The generated color palette, structured in a Tailwind-compatible format, including the canonical OKLCh colors, RGB strings, and chroma key values across different shade numbers.
+ * @returns {TailwindPalette} The generated color palette, structured in a Tailwind-compatible format, including the canonical OKLCh colors, RGB strings, and chroma key values across different shade numbers.
  */
 export const generateTailwindPalette = (
   input: OKLChColor,
   adjustContrast = true,
   ensureColorInAdjustment = true
-): ColorPalette => {
+): TailwindColorPalette => {
   const availableSchemas: Record<string, TailwindPalette> = Object.fromEntries(
     Object.entries(TailwindColors).filter(
       ([n]) => !['Slate', 'Gray', 'Zinc', 'Neutral', 'Stone'].includes(n)
@@ -31,7 +34,7 @@ export const generateTailwindPalette = (
   const inputHue = input.h;
   const baseHue = closest.shade.color.h;
 
-  let ΔHue = (((inputHue - baseHue) % 360) + 360) % 360; // wrap to [0,360)
+  let ΔHue = (((inputHue - baseHue) % 360) + 360) % 360;
   let hueMode: 'replace' | 'operate' = 'operate';
 
   if (ΔHue === 0) {
@@ -83,7 +86,7 @@ export const generateTailwindPalette = (
 
         const refΔ = ShadeContrastAverages.find(
           (x) => x.shade === shadeNumber
-        ) as ShadeContrastAverage;
+        ) as TwShadeContrastAverage;
 
         rgbSrgb =
           shadeNumber < 500

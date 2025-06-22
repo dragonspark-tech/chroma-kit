@@ -1,10 +1,21 @@
 import { type OKLChColor, oklchToOKLab } from '../../../../models/oklch';
 import { deltaEOKScaled } from '../../../../deltae';
 import type { TailwindPalette } from '../../../tailwind/src/tailwind.types';
+import type { RadixPalette, RadixShade } from '../../../radix/src/radix.types';
 
 export interface TailwindColorApproximation {
   family: string;
   palette: TailwindPalette;
+  shade: {
+    number: number;
+    color: OKLChColor;
+  };
+  delta: number;
+}
+
+export interface RadixColorApproximation {
+  family: string;
+  palette: RadixPalette;
   shade: {
     number: number;
     color: OKLChColor;
@@ -46,6 +57,46 @@ export const findClosestTailwindFamily = (
 
   const finalApproximation = approximations[0];
   const finalFamily = finalApproximation.family;
+  return {
+    family: finalFamily,
+    palette: availableFamilies[finalFamily],
+    shade: {
+      number: finalApproximation.shade,
+      color:
+        availableFamilies[finalFamily][
+          finalApproximation.shade as keyof (typeof availableFamilies)[typeof finalFamily]
+        ]
+    },
+    delta: finalApproximation.delta
+  };
+};
+
+export const findClosestRadixFamily = (
+  inputColor: OKLChColor,
+  availableFamilies: Record<string, RadixPalette>
+) => {
+  const approximations: { family: string; delta: number; shade: number }[] = [];
+  for (const [family, shades] of Object.entries(availableFamilies)) {
+    const deltaShades: { family: string; shade: number; delta: number }[] = [];
+
+    for (const [shade, shadeSystemA] of Object.entries(shades)) {
+      const shadeSystem = shadeSystemA as RadixShade;
+
+      for (const [subsystem, shadeColor] of Object.entries(shadeSystem)) {
+        const delta = deltaEOKScaled(oklchToOKLab(inputColor), oklchToOKLab(shadeColor));
+        deltaShades.push({ family: `${family}-${subsystem}`, shade: parseInt(shade), delta });
+      }
+    }
+
+    deltaShades.sort((a, b) => a.delta - b.delta);
+    approximations.push({ family, delta: deltaShades[0].delta, shade: deltaShades[0].shade });
+  }
+
+  approximations.sort((a, b) => a.delta - b.delta);
+
+  const finalApproximation = approximations[0];
+  const finalFamily = finalApproximation.family;
+
   return {
     family: finalFamily,
     palette: availableFamilies[finalFamily],

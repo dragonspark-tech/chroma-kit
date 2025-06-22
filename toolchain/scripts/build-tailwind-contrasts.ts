@@ -39,7 +39,9 @@ function buildTailwindContrasts() {
 
 function averageShadeContrasts(): ShadeContrasts[] {
   const contrastMap = buildTailwindContrasts();
-  const shadeSums: { [shade: number]: { totalOnWhite: number, totalOnBlack: number, count: number } } = {};
+  const shadeSums: {
+    [shade: number]: { totalOnWhite: number; totalOnBlack: number; count: number };
+  } = {};
 
   for (const color in contrastMap) {
     const bannedColors = ['Slate', 'Gray', 'Zinc', 'Neutral', 'Stone'];
@@ -87,9 +89,9 @@ function buildAST() {
   return type + '\n' + baseDec;
 }
 
-export function buildContrastFile() {
+export function buildTailwindContrastFile() {
   const baseDoc = buildAST();
-  const outputFile = `src/plugins/palettes/src/support/contrast-averages.ts`;
+  const outputFile = `src/plugins/palettes/src/support/tw-contrast-averages.ts`;
 
   writeFileSync(outputFile, baseDoc);
 }
