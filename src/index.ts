@@ -1,4 +1,5 @@
-﻿import './conversion/register-all-conversions';
+﻿export type { ColorChannel, ColorBase, ChannelAttribute, ChannelRange } from './models/base';
+import './conversion/register-all-conversions';
 import './semantics/register-all-parsers';
 
 export {

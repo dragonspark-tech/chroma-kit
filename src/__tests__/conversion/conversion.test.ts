@@ -6,7 +6,7 @@ import {
   convertColor,
   clearConversionRegistry
 } from '../../conversion/conversion';
-import type { ColorBase } from '../../foundation';
+import type { ColorBase } from '../../models/base/color';
 
 // Define simple mock color types for testing
 interface MockColorA extends ColorBase {
@@ -50,10 +50,13 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
 
       // Convert the color using the registered conversion
-      const result = convertColor<MockColorA, MockColorB>(mockColor, 'mockB');
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made
+      const result = convertColor(mockColor, 'mockB');
 
       // Verify the conversion was done correctly
       expect(result.space).toBe('mockB');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.b).toBe(10); // a(5) * 2 = 10
     });
   });
@@ -82,10 +85,13 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
 
       // Convert from A to C (requires path A->B->C)
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result = convertColor<MockColorA, MockColorC>(mockColor, 'mockC');
 
       // Verify the conversion was done correctly
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.space).toBe('mockC');
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.c).toBe(11); // (a(5) * 2) + 1 = 11
     });
 
@@ -105,7 +111,10 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
 
       // Convert the color
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result1 = convertColor<MockColorA, MockColorB>(mockColor, 'mockB');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result1.b).toBe(10);
 
       // Clear the registry before registering a new conversion
@@ -122,9 +131,11 @@ describe('Color Conversion System', () => {
       buildConversionGraph();
 
       // Convert the color again
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result2 = convertColor<MockColorA, MockColorB>(mockColor, 'mockB');
 
       // Verify the new conversion was used
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result2.b).toBe(15); // a(5) * 3 = 15
     });
   });
@@ -143,6 +154,7 @@ describe('Color Conversion System', () => {
       buildConversionGraph();
 
       // Get the conversion function
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const conversionFn = getConversionFunction<MockColorA, MockColorB>('mockA', 'mockB');
 
       // Create a mock color
@@ -152,7 +164,10 @@ describe('Color Conversion System', () => {
       const result = conversionFn(mockColor);
 
       // Verify the conversion was done correctly
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.space).toBe('mockB');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.b).toBe(10); // a(5) * 2 = 10
     });
 
@@ -161,6 +176,7 @@ describe('Color Conversion System', () => {
       buildConversionGraph();
 
       // Get the conversion function
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const conversionFn = getConversionFunction<MockColorA, MockColorA>('mockA', 'mockA');
 
       // Create a mock color
@@ -188,6 +204,7 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
 
       // Convert the color to the same space
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result = convertColor<MockColorA, MockColorA>(mockColor, 'mockA');
 
       // Verify the result is the same as the input
@@ -229,13 +246,18 @@ describe('Color Conversion System', () => {
 
       // Convert the color to mockB and back to mockA
       // This will use the registered conversions
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result = convertColor<MockColorA, MockColorA>(
+        // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
         convertColor(mockColor, 'mockB'),
         'mockA'
       );
 
       // Verify the result has the expected value
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.space).toBe('mockA');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.a).toBe(5); // a(5) -> b(10) -> a(5)
     });
 
@@ -280,6 +302,7 @@ describe('Color Conversion System', () => {
       buildConversionGraph();
 
       // Now get the conversion function directly
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const conversionFn = getConversionFunction<MockColorE, MockColorE>('mockE', 'mockE');
 
       // Call the conversion function
@@ -309,6 +332,7 @@ describe('Color Conversion System', () => {
       buildConversionGraph();
 
       // Get the conversion function from A to C
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const conversionFn = getConversionFunction<MockColorA, MockColorC>('mockA', 'mockC');
 
       // Create a mock color
@@ -318,13 +342,19 @@ describe('Color Conversion System', () => {
       const result = conversionFn(mockColor);
 
       // Verify the conversion was done correctly
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.space).toBe('mockC');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.c).toBe(11); // (a(5) * 2) + 1 = 11
     });
 
     it('should throw an error if no conversion path can be found', () => {
       // Try to get a conversion function for non-existent color spaces
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(() => getConversionFunction('nonExistent', 'mockA')).toThrow();
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(() => getConversionFunction('mockA', 'nonExistent')).toThrow();
     });
 
@@ -374,6 +404,7 @@ describe('Color Conversion System', () => {
 
       // Get a conversion function from A to D
       // The path A->B->C->D exists in the graph, but B->C is missing from the registry
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const conversionFn = getConversionFunction<MockColorA, MockColorD>('mockA', 'mockD');
 
       // Create a mock color
@@ -400,9 +431,11 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5, alpha: 0.5 } as MockColorA;
 
       // Convert the color
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result = convertColor<MockColorA, MockColorB>(mockColor, 'mockB');
 
       // Verify alpha is preserved
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.alpha).toBe(0.5);
     });
 
@@ -424,13 +457,17 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
 
       // Get the conversion function
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const conversionFn = getConversionFunction<MockColorA, MockColorB>('mockA', 'mockB');
 
       // Call the conversion function directly with additional arguments
       const result = conversionFn(mockColor, 3);
 
       // Verify the conversion was done correctly
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.space).toBe('mockB');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.b).toBe(15); // a(5) * 3 = 15
     });
   });
@@ -438,6 +475,8 @@ describe('Color Conversion System', () => {
   describe('convertColor', () => {
     it('should return the same color if source and target spaces are the same', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result = convertColor<MockColorA, MockColorA>(mockColor, 'mockA');
 
       // Should be the same object
@@ -460,10 +499,14 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
 
       // Convert the color
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result = convertColor<MockColorA, MockColorB>(mockColor, 'mockB');
 
       // Verify the conversion was done correctly
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.space).toBe('mockB');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.b).toBe(10); // a(5) * 2 = 10
     });
 
@@ -488,10 +531,14 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
 
       // Convert the color - this should build the graph if it hasn't been built
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result = convertColor<MockColorA, MockColorB>(mockColor, 'mockB');
 
       // Verify the conversion was done correctly
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.space).toBe('mockB');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.b).toBe(10); // a(5) * 2 = 10
     });
 
@@ -511,10 +558,14 @@ describe('Color Conversion System', () => {
       const mockColor = { space: 'mockA', a: 5 } as MockColorA;
 
       // Convert the color with an additional argument
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       const result = convertColor<MockColorA, MockColorB>(mockColor, 'mockB', 3);
 
       // Verify the conversion was done correctly
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.space).toBe('mockB');
+
+      // @ts-expect-error - mockColor will not match the registered conversion function, as it's a made up
       expect(result.b).toBe(15); // a(5) * 3 = 15
     });
   });

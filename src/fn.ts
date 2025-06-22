@@ -1,5 +1,15 @@
+export type { ColorChannel, ColorBase, ChannelAttribute, ChannelRange } from './models/base';
 export { serializeV1, parseV1 } from './semantics/serialization';
 export { registerConversion, type ColorConversionFn } from './conversion/conversion';
+export { getAdaptationMatrix, computeAdaptationMatrix } from './adaptation/chromatic-adaptation';
+export {
+  type ConeResponseModel,
+  BradfordConeModel,
+  VonKriesConeModel,
+  XYZScalingConeModel
+} from './adaptation/cone-response';
+
+export type { Matrix3x3 } from './utils/linear';
 
 export { registerParser } from './semantics/parsing';
 export * from './semantics/default-parsers';

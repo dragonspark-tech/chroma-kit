@@ -82,7 +82,7 @@ const getOptimalColorForContrastGeneric = (
     }
   }
 
-  return hslToRGB(hsl(hue, saturation, closestTone));
+  return hslToRGB(hsl(hue, saturation, closestTone, foreground.alpha));
 };
 
 /**

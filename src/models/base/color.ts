@@ -21,7 +21,7 @@ import type { ColorChannel } from './channel';
 export interface ColorBase {
   space: string;
   isPolar: boolean;
-  dynamicRange: "SDR" | "HDR";
+  dynamicRange: 'SDR' | 'HDR';
 
   channels: Record<string, ColorChannel>;
   alpha?: number;
@@ -50,4 +50,4 @@ export const getColorChannels = <T extends ColorBase>(color: T): number[] => {
   }
 
   return channels;
-}
+};

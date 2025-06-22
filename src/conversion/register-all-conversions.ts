@@ -19,7 +19,8 @@ import {
   xyzToLab,
   xyzToLCh,
   xyzToOKLab,
-  xyzToOKLCh, xyzToP3,
+  xyzToOKLCh,
+  xyzToP3,
   xyzToRGB
 } from '../models/xyz';
 import { labToLCH, labToXYZ } from '../models/lab';

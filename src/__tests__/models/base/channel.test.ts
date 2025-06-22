@@ -21,12 +21,7 @@ describe('ColorChannel', () => {
     });
 
     it('should create a channel with the specified attributes', () => {
-      const testChannel = channel(
-        'h',
-        'hue',
-        [0, 360],
-        [ChannelAttribute.ANGLE]
-      );
+      const testChannel = channel('h', 'hue', [0, 360], [ChannelAttribute.ANGLE]);
       expect(testChannel.attributes).toBe(ChannelAttribute.ANGLE);
     });
 

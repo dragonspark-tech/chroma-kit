@@ -198,7 +198,6 @@ export const inverseLinearInterpolation = (p0: number, p1: number, t: number): n
   return d ? (t - p0) / d : 0;
 };
 
-
 /**
  * Returns a number with the magnitude of the first argument and the sign of the second argument.
  *
@@ -210,8 +209,7 @@ export const inverseLinearInterpolation = (p0: number, p1: number, t: number): n
  * @param {number} signSource - The value whose sign is used in the result.
  * @returns {number} A number with the magnitude of `magnitude` and the sign of `signSource`.
  */
-export const copySign = (magnitude: number, signSource: number): number =>
-{
+export const copySign = (magnitude: number, signSource: number): number => {
   if (Number.isNaN(magnitude) || Number.isNaN(signSource)) {
     return NaN;
   }
@@ -220,7 +218,7 @@ export const copySign = (magnitude: number, signSource: number): number =>
   const signIsNegative = signSource < 0 || Object.is(signSource, -0);
 
   return signIsNegative ? -absMag : absMag;
-}
+};
 
 /**
  * Calculates the power of a number while preserving the sign of the base.

@@ -324,16 +324,23 @@ const text = rgb(0.1, 0.1, 0.1);
 const background = rgb(0.95, 0.95, 0.95);
 
 // Check APCA contrast
-const apcaResult = checkAPCAContrast(text, background, 'normal-text');
-console.log(`APCA compliant: ${apcaResult.compliant}`);
+const apcaCompliant = checkAPCAContrast(text, background, 'BodyText');
+console.log(`APCA compliant: ${apcaCompliant}`);
 
 // Check WCAG 2.1 contrast
-const wcagResult = checkWCAG21Contrast(text, background, 'AA');
-console.log(`WCAG 2.1 compliant: ${wcagResult.compliant}`);
+const wcagCompliant = checkWCAG21Contrast(text, background, 'AANormal');
+console.log(`WCAG 2.1 compliant: ${wcagCompliant}`);
 
 // Find an optimal color that meets contrast requirements
-const optimalColor = getOptimalColorForContrast(text, background, 'WCAG21', 'AA');
+// Target contrast of 60 for APCA (good for body text)
+const optimalColorAPCA = getOptimalColorForContrast(text, background, 60, 'APCA');
+
+// Target contrast of 4.5 for WCAG 2.1 (AA normal text)
+const optimalColorWCAG = getOptimalColorForContrast(text, background, 4.5, 'WCAG21');
 ```
+
+Available content types for APCA: 'BodyText', 'LargeText', 'NonEssentialText', 'UIControls'  
+Available content types for WCAG 2.1: 'AANormal', 'AALarge', 'AAANormal', 'AAALarge'
 
 ### Color Harmonies
 
@@ -341,18 +348,25 @@ The harmonies plugin provides tools for generating color harmonies:
 
 ```js
 import { rgb } from '@dragonspark/chroma-kit';
-import { getComplementary, getAnalogous, getTriadic } from '@dragonspark/chroma-kit/plugins/harmonies';
+import { harmony } from '@dragonspark/chroma-kit/plugins/harmonies';
 
 const color = rgb(0.2, 0.4, 0.8);
 
-// Generate complementary color
-const complementary = getComplementary(color);
+// Generate complementary colors
+const complementary = harmony(color, 'Complementary', 'rgb');
 
 // Generate analogous colors
-const analogous = getAnalogous(color);
+const analogous = harmony(color, 'Analogous', 'rgb');
 
 // Generate triadic colors
-const triadic = getTriadic(color);
+const triadic = harmony(color, 'Triadic', 'rgb');
+
+// Other available harmony types:
+// - 'SplitComplementary'
+// - 'DoubleSplitComplementary'
+// - 'Square'
+// - 'Tetradic'
+// - 'Monochromatic'
 ```
 
 ### Color Palettes
@@ -365,14 +379,17 @@ import { generatePalette } from '@dragonspark/chroma-kit/plugins/palettes';
 
 const baseColor = rgb(0.2, 0.4, 0.8);
 
-// Generate a palette with default settings
-const palette = generatePalette(baseColor);
+// Generate a Tailwind palette
+const tailwindPalette = generatePalette(baseColor, true, true, 'Tailwind v4');
 
-// Generate a palette with custom settings
-const customPalette = generatePalette(baseColor, {
-  family: 'tailwind',
-  shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
-});
+// Generate a Radix UI palette
+const radixPalette = generatePalette(baseColor, true, true, 'Radix UI');
+
+// Parameters:
+// - color: The base color to generate the palette from
+// - adjustContrast: Whether to adjust contrast (default: true)
+// - ensureColorInAdjustment: Whether to ensure the base color is included (default: true)
+// - family: The palette family ('Tailwind v4' or 'Radix UI')
 ```
 
 ### Tailwind Colors
@@ -380,13 +397,13 @@ const customPalette = generatePalette(baseColor, {
 The tailwind plugin provides Tailwind CSS color utilities:
 
 ```js
-import { getTailwindColors } from '@dragonspark/chroma-kit/plugins/tailwind';
+import { TailwindColors } from '@dragonspark/chroma-kit/plugins/tailwind';
 
-// Get all Tailwind colors
-const tailwindColors = getTailwindColors();
+// Access Tailwind colors
+const tailwindColors = TailwindColors;
 
 // Access specific colors
-const blue500 = tailwindColors.blue[500];
+const blue500 = tailwindColors.Blue[500];
 ```
 
 ## ✨ The ChromaKit Difference

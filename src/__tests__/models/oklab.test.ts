@@ -445,7 +445,7 @@ describe('OKLab Color Model', () => {
       const green = rgb(0, 1, 0).to('oklab');
       expect(green.l).toBeCloseTo(0.86644, 4);
       expect(green.a).toBeCloseTo(-0.2339, 4);
-      expect(green.b).toBeCloseTo(0.17950, 4);
+      expect(green.b).toBeCloseTo(0.1795, 4);
 
       // Blue in RGB
       const blue = rgb(0, 0, 1).to('oklab');

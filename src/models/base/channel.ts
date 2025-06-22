@@ -30,7 +30,6 @@ export enum ChannelAttribute {
   MIRROR_PERCENTAGE = 8
 }
 
-
 /**
  * Represents a color channel within a defined structure.
  * This interface is used to encapsulate all properties and information related to a color channel.
@@ -49,7 +48,6 @@ export interface ColorChannel {
 
   attributes: number;
 }
-
 
 /**
  * Creates a color channel object with specified properties.

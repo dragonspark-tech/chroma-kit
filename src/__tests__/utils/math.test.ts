@@ -385,7 +385,7 @@ describe('math', () => {
     it('should handle NaN values', () => {
       expect(copySign(NaN, -1)).toBeNaN();
       expect(copySign(1, NaN)).toBeNaN();
-    })
+    });
   });
 
   describe('signedPow', () => {

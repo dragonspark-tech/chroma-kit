@@ -40,7 +40,6 @@ export type Color =
  */
 export type ColorSpace = Color['space'];
 
-
 /**
  * Represents a type that maps a `ColorSpace` to its corresponding color model.
  *

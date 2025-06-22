@@ -521,7 +521,7 @@ describe('HSL Color Model', () => {
         const p3Red = hslToP3(red);
         expect(p3Red.r).toBeCloseTo(0.917487, 1);
         expect(p3Red.g).toBeCloseTo(0.200286, 1);
-        expect(p3Red.b).toBeCloseTo(0.138560, 1);
+        expect(p3Red.b).toBeCloseTo(0.13856, 1);
 
         // Green in HSL
         const green = hsl(120, 1, 0.5);
