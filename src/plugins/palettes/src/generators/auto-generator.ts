@@ -11,7 +11,7 @@ import { generateRadixPalette } from './radix-generator';
  */
 export type GeneratorFamily = 'Tailwind v4' | 'Radix UI';
 
-type CreatedPalette<T extends GeneratorFamily> = T extends 'Tailwind v4'
+export type CreatedPalette<T extends GeneratorFamily> = T extends 'Tailwind v4'
   ? TailwindColorPalette
   : T extends 'Radix UI'
     ? RadixColorFamily

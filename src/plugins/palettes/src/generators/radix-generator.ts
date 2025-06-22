@@ -76,7 +76,8 @@ export const generateRadixPalette = (
 
         if (
           adjustContrast &&
-          (ensureColorInAdjustment ? shadeNumber !== closestSet.shade.number : true)
+          (ensureColorInAdjustment ? shadeNumber !== closestSet.shade.number : true) &&
+          shadeNumber > 10
         ) {
           const black = rgb(0, 0, 0);
           const white = rgb(1, 1, 1);
@@ -85,15 +86,12 @@ export const generateRadixPalette = (
             (x) => x.shade === shadeNumber
           ) as RadixShadeContrastAverage;
 
-          rgbSrgb =
-            shadeNumber < 500
-              ? getOptimalColorForContrastAPCA(rgbSrgb, black, refΔ.onBlack)
-              : getOptimalColorForContrastAPCA(rgbSrgb, white, refΔ.onWhite);
+          rgbSrgb = category.includes('light')
+            ? getOptimalColorForContrastAPCA(rgbSrgb, black, refΔ.onBlack)
+            : getOptimalColorForContrastAPCA(rgbSrgb, white, refΔ.onWhite);
 
           ok = rgbToOKLCh(rgbSrgb);
         }
-
-        ok = oklch(l, c, h, base.alpha);
 
         return {
           number: shadeNumber,
